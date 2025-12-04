@@ -1,0 +1,185 @@
+<script>
+  let currentPage = 1;
+  let totalItems = 0;
+  const PAGE_SIZE = 10;
+  let searchTimeout;
+
+  // --- NAV LOGIC ---
+  function showPage(pageId) {
+    document.querySelectorAll('[id^="page-"]').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+    if(pageId === 'add') {
+      // Add New Mode
+      document.getElementById('page-form').classList.remove('hidden');
+      document.getElementById('nav-add').classList.add('active');
+      document.getElementById('form-title').innerText = 'Add Client Details';
+      
+      // Reset UI for New Client
+      document.getElementById('clientForm').reset();
+      document.getElementById('clientCode').value = ''; 
+      document.getElementById('activeDate').valueAsDate = new Date();
+      
+      // HIDE PDF Button
+      document.getElementById('btn-export-pdf').classList.add('hidden');
+
+    } else if (pageId === 'directory') {
+      document.getElementById('page-directory').classList.remove('hidden');
+      document.getElementById('nav-directory').classList.add('active');
+      loadDirectory(1);
+    } else {
+      document.getElementById('page-' + pageId).classList.remove('hidden');
+      document.getElementById('nav-' + pageId).classList.add('active');
+      if(pageId === 'dashboard') loadStats();
+    }
+  }
+
+  // --- DIRECTORY LOGIC ---
+  function debounceSearch() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => loadDirectory(1), 400);
+  }
+
+  function loadDirectory(page) {
+    currentPage = page;
+    const search = document.getElementById('dir-search').value;
+    const status = document.getElementById('dir-status').value;
+    const pay = document.getElementById('dir-pay').value;
+    
+    loading(true);
+    google.script.run
+      .withSuccessHandler(renderTable)
+      .withFailureHandler(err => { loading(false); alert('Error: ' + err); })
+      .getClients(page, PAGE_SIZE, search, status, pay);
+  }
+
+  function renderTable(data) {
+    loading(false);
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = '';
+    totalItems = data.total;
+    
+    if(data.clients.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">No clients found.</td></tr>`;
+    } else {
+      data.clients.forEach(c => {
+         const row = document.createElement('tr');
+         row.className = 'table-row';
+         row.onclick = () => openClientDetails(c.code);
+         
+         let statusColor = 'text-gray-600 bg-gray-100';
+         if(c.status === 'Active') statusColor = 'text-green-700 bg-green-50';
+         if(c.status === 'Deceased') statusColor = 'text-red-700 bg-red-50';
+         
+         row.innerHTML = `
+           <td class="table-cell font-mono text-xs">${c.code}</td>
+           <td class="table-cell font-bold">${c.name}</td>
+           <td class="table-cell"><span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${c.status}</span></td>
+           <td class="table-cell">${c.payment}</td>
+           <td class="table-cell text-xs">${c.phone}</td>
+           <td class="table-cell text-xs text-gray-500">${c.email}</td>
+           <td class="table-cell text-right"><i class="ph ph-caret-right text-gray-400"></i></td>
+         `;
+         tbody.appendChild(row);
+      });
+    }
+    
+    const start = (currentPage - 1) * PAGE_SIZE + 1;
+    const end = Math.min(start + PAGE_SIZE - 1, totalItems);
+    document.getElementById('page-info').innerText = totalItems > 0 ? `Showing ${start}-${end} of ${totalItems}` : 'No data';
+    document.getElementById('btn-prev').disabled = currentPage === 1;
+    document.getElementById('btn-next').disabled = end >= totalItems;
+    document.getElementById('btn-prev').classList.toggle('opacity-50', currentPage === 1);
+    document.getElementById('btn-next').classList.toggle('opacity-50', end >= totalItems);
+  }
+
+  function changePage(dir) {
+    loadDirectory(currentPage + dir);
+  }
+
+  // --- EDIT/VIEW LOGIC ---
+  function openClientDetails(code) {
+    loading(true);
+    google.script.run
+      .withSuccessHandler(data => {
+        loading(false);
+        if(!data) return alert('Client not found');
+        
+        // Switch to Form View
+        document.querySelectorAll('[id^="page-"]').forEach(el => el.classList.add('hidden'));
+        document.getElementById('page-form').classList.remove('hidden');
+        document.getElementById('form-title').innerText = 'Edit Client: ' + data.firstName;
+        
+        // SHOW PDF Button
+        document.getElementById('btn-export-pdf').classList.remove('hidden');
+
+        // Populate Form
+        const form = document.getElementById('clientForm');
+        Object.keys(data).forEach(key => {
+           const input = form.elements[key];
+           if(input) {
+             if(input.type === 'checkbox') input.checked = data[key] === 'true' || data[key] === true;
+             else input.value = data[key];
+           }
+        });
+      })
+      .getClientDetails(code);
+  }
+  
+  // --- EXPORT PDF ---
+  function downloadPdf() {
+     const code = document.getElementById('clientCode').value;
+     if(!code) return alert('Please save the client first.');
+     
+     loading(true);
+     google.script.run
+       .withSuccessHandler(function(pdf) {
+          loading(false);
+          // Create link to download
+          const link = document.createElement('a');
+          link.href = 'data:application/pdf;base64,' + pdf.base64;
+          link.download = pdf.name;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+       })
+       .withFailureHandler(function(err) {
+          loading(false);
+          alert('Error creating PDF: ' + err);
+       })
+       .exportClientToPdf(code);
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+    loading(true);
+    const form = document.getElementById('clientForm');
+    const formData = {};
+    new FormData(form).forEach((v,k) => formData[k] = v);
+    
+    google.script.run.withSuccessHandler(res => {
+       loading(false);
+       alert(res.message);
+       if(res.success) showPage('directory');
+    }).saveClientData(formData);
+  }
+
+  function loading(show) {
+    document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
+  }
+
+  // --- INIT ---
+  function calcAge() {
+    const d = document.getElementById('dob').value;
+    if(d) document.getElementById('age').value = Math.abs(new Date(Date.now() - new Date(d).getTime()).getUTCFullYear() - 1970);
+  }
+  function loadStats() {
+    google.script.run.withSuccessHandler(s => {
+       document.getElementById('stat-total').innerText = s.total;
+       document.getElementById('stat-active').innerText = s.active;
+       document.getElementById('stat-pending').innerText = s.pending;
+    }).getDashboardStats();
+  }
+
+  window.onload = function() { loadStats(); };
+</script>
