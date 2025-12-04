@@ -17,7 +17,6 @@ function saveClientData(formData) {
   const sheet = getSheet();
   const useLiving = formData.billingSame === 'true';
 
-  // Make sure headers exist if new sheet
   if (sheet.getLastRow() === 0) {
     const headers = [
       'Client Code', 'Photo URL', 'First Name', 'Middle Name', 'Last Name', 

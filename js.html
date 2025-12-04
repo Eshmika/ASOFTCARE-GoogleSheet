@@ -4,23 +4,64 @@
   const PAGE_SIZE = 10;
   let searchTimeout;
 
+  // --- DATA LISTS ---
+  const LANGUAGES = [
+    "ENGLISH", "ARABIC", "FRENCH", "ARMENIAN", "CHINESE", "CREOLE", 
+    "GEORGIAN", "GERMAN", "GREEK", "HINDI", "ITALIAN", "RUSSIAN", 
+    "SIGN LANGUAGE", "SPANISH", "SWAHILI", "TWI", "UKRAINIAN", "OTHER"
+  ];
+
+  const SKILLS = [
+    "Ambulation", "Bathing – Bed", "Bathing-Shower", "Catheter Care", 
+    "Companion Care", "Dressing", "Feeding", "Homemaker Services", 
+    "Hygiene – Hair Care", "Hygiene-Mouth Care", "Incontinence Care", 
+    "Meal Preparation", "Medication Reminders", "Ostomy Care", 
+    "Respite Care (General)", "Respite Care (Skilled Nursing)", 
+    "Safety Supervision", "Shave", "Toileting", "Transportation", 
+    "Turning & Repositioning", "Wound Care"
+  ];
+
+  // --- POPULATE DROPDOWNS ON LOAD ---
+  function populateDropdowns() {
+    // Populate Language Dropdowns (1, 2, 3)
+    ['lang1', 'lang2', 'lang3'].forEach(id => {
+      const select = document.getElementsByName(id)[0];
+      if (select) {
+        let html = '<option value="">Select Language...</option>';
+        LANGUAGES.forEach(lang => {
+          html += `<option value="${lang}">${lang}</option>`;
+        });
+        select.innerHTML = html;
+      }
+    });
+
+    // Populate Skill Dropdowns (1-6)
+    ['skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6'].forEach(id => {
+      const select = document.getElementsByName(id)[0];
+      if (select) {
+        let html = '<option value="">Select Skill...</option>';
+        SKILLS.forEach(skill => {
+          html += `<option value="${skill}">${skill}</option>`;
+        });
+        select.innerHTML = html;
+      }
+    });
+  }
+
   // --- NAV LOGIC ---
   function showPage(pageId) {
     document.querySelectorAll('[id^="page-"]').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
     if(pageId === 'add') {
-      // Add New Mode
       document.getElementById('page-form').classList.remove('hidden');
       document.getElementById('nav-add').classList.add('active');
       document.getElementById('form-title').innerText = 'Add Client Details';
       
-      // Reset UI for New Client
       document.getElementById('clientForm').reset();
       document.getElementById('clientCode').value = ''; 
       document.getElementById('activeDate').valueAsDate = new Date();
       
-      // HIDE PDF Button
       document.getElementById('btn-export-pdf').classList.add('hidden');
 
     } else if (pageId === 'directory') {
@@ -93,10 +134,6 @@
     document.getElementById('btn-next').classList.toggle('opacity-50', end >= totalItems);
   }
 
-  function changePage(dir) {
-    loadDirectory(currentPage + dir);
-  }
-
   // --- EDIT/VIEW LOGIC ---
   function openClientDetails(code) {
     loading(true);
@@ -105,15 +142,12 @@
         loading(false);
         if(!data) return alert('Client not found');
         
-        // Switch to Form View
         document.querySelectorAll('[id^="page-"]').forEach(el => el.classList.add('hidden'));
         document.getElementById('page-form').classList.remove('hidden');
         document.getElementById('form-title').innerText = 'Edit Client: ' + data.firstName;
         
-        // SHOW PDF Button
         document.getElementById('btn-export-pdf').classList.remove('hidden');
 
-        // Populate Form
         const form = document.getElementById('clientForm');
         Object.keys(data).forEach(key => {
            const input = form.elements[key];
@@ -135,7 +169,6 @@
      google.script.run
        .withSuccessHandler(function(pdf) {
           loading(false);
-          // Create link to download
           const link = document.createElement('a');
           link.href = 'data:application/pdf;base64,' + pdf.base64;
           link.download = pdf.name;
@@ -168,7 +201,6 @@
     document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
   }
 
-  // --- INIT ---
   function calcAge() {
     const d = document.getElementById('dob').value;
     if(d) document.getElementById('age').value = Math.abs(new Date(Date.now() - new Date(d).getTime()).getUTCFullYear() - 1970);
@@ -181,5 +213,8 @@
     }).getDashboardStats();
   }
 
-  window.onload = function() { loadStats(); };
+  window.onload = function() { 
+    populateDropdowns(); 
+    loadStats(); 
+  };
 </script>

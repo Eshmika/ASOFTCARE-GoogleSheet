@@ -4,7 +4,6 @@
     <base target="_top">
     <meta charset="utf-8">
     <title>Care Admin</title>
-    <!-- INCLUDE CSS FILE HERE -->
     <?!= include('css'); ?>
   </head>
   <body class="flex h-screen overflow-hidden">
@@ -38,10 +37,10 @@
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN -->
     <main class="flex-1 overflow-y-auto relative p-8">
       
-      <!-- DASHBOARD -->
+      <!-- PAGE: DASHBOARD -->
       <div id="page-dashboard">
         <h1 class="text-2xl font-bold text-gray-800 mb-6">Dashboard</h1>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -60,9 +59,11 @@
         </div>
       </div>
 
-      <!-- DIRECTORY -->
+      <!-- PAGE: DIRECTORY -->
       <div id="page-directory" class="hidden">
         <h1 class="text-2xl font-bold text-gray-800 mb-6">Client Directory</h1>
+
+        <!-- Search & Filters -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-wrap gap-4 items-center">
            <div class="flex-1 min-w-[200px] relative">
              <i class="ph ph-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
@@ -91,6 +92,8 @@
            </div>
            <button onclick="loadDirectory(1)" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"><i class="ph ph-arrow-clockwise"></i></button>
         </div>
+
+        <!-- Table -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <table class="w-full">
             <thead>
@@ -104,8 +107,11 @@
                 <th class="table-header w-10"></th>
               </tr>
             </thead>
-            <tbody id="table-body"></tbody>
+            <tbody id="table-body">
+              <!-- Rows inserted via JS -->
+            </tbody>
           </table>
+          <!-- Pagination -->
           <div class="p-4 border-t flex justify-between items-center">
             <span class="text-sm text-gray-500" id="page-info">Showing 0 of 0</span>
             <div class="flex space-x-2">
@@ -116,40 +122,67 @@
         </div>
       </div>
 
-      <!-- FORM -->
+      <!-- PAGE: ADD/EDIT CLIENT FORM -->
       <div id="page-form" class="hidden">
         <div class="flex justify-between items-center mb-6">
            <div class="flex items-center space-x-3">
              <button onclick="showPage('directory')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-full"><i class="ph ph-arrow-left"></i></button>
              <h1 class="text-2xl font-bold text-gray-800" id="form-title">Add Client Details</h1>
            </div>
+           
+           <!-- EXPORT PDF BUTTON -->
            <button id="btn-export-pdf" onclick="downloadPdf()" class="hidden bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow flex items-center">
              <i class="ph ph-file-pdf text-lg mr-2"></i> Export PDF
            </button>
         </div>
         
         <form id="clientForm" onsubmit="submitForm(event)" class="space-y-6 max-w-5xl mx-auto">
+          <!-- Hidden Code for Updates -->
           <input type="hidden" name="clientCode" id="clientCode">
+
           <!-- PAGE 1: MAIN INFO -->
           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h2 class="sec-head"><i class="ph ph-identification-card text-brand mr-2"></i> Main Information</h2>
+            
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                <div class="md:col-span-4"><label class="lbl">Photo URL</label><input type="text" name="photoUrl" class="inp" placeholder="https://..."></div>
                <div><label class="lbl">First Name</label><input type="text" name="firstName" required class="inp"></div>
                <div><label class="lbl">Middle Name</label><input type="text" name="middleName" class="inp"></div>
                <div><label class="lbl">Last Name</label><input type="text" name="lastName" required class="inp"></div>
                <div><label class="lbl">Primary Language</label><input type="text" name="primaryLang" class="inp"></div>
+               
                <div><label class="lbl">Birthday</label><input type="date" name="dob" id="dob" onchange="calcAge()" class="inp"></div>
                <div><label class="lbl">Age</label><input type="text" name="age" id="age" readonly class="inp bg-gray-50"></div>
                <div><label class="lbl">SSN</label><input type="text" name="ssn" class="inp"></div>
-               <div><label class="lbl">Gender</label><select name="gender" class="inp"><option>Male</option><option>Female</option></select></div>
-               <div><label class="lbl">Marital Status</label><select name="maritalStatus" class="inp"><option>Single</option><option>Married</option><option>Divorced</option><option>Separate</option><option>Widowed</option><option>Unknown</option></select></div>
-               <div><label class="lbl">Status</label><select name="status" class="inp font-bold text-brand bg-green-50"><option>Active</option><option>Deceased</option><option>Cancelled service</option><option>Temporary hospital stay</option></select></div>
+               
+               <div>
+                 <label class="lbl">Gender</label>
+                 <select name="gender" class="inp"><option>Male</option><option>Female</option></select>
+               </div>
+               <div>
+                 <label class="lbl">Marital Status</label>
+                 <select name="maritalStatus" class="inp"><option>Single</option><option>Married</option><option>Divorced</option><option>Separate</option><option>Widowed</option><option>Unknown</option></select>
+               </div>
+               
+               <div>
+                  <label class="lbl">Status</label>
+                  <select name="status" class="inp font-bold text-brand bg-green-50"><option>Active</option><option>Deceased</option><option>Cancelled service</option><option>Temporary hospital stay</option></select>
+               </div>
                <div><label class="lbl">Active Date</label><input type="date" name="activeDate" id="activeDate" class="inp"></div>
                <div><label class="lbl">Deactive Date</label><input type="date" name="deactiveDate" class="inp"></div>
-               <div><label class="lbl">Payment Type</label><select name="paymentType" class="inp"><option>Private pay</option><option>Zelle</option><option>Check</option><option>VA</option><option>Medicaid</option><option>Lead agency</option><option>LTCI</option></select></div>
-               <div class="md:col-span-2"><label class="lbl">Agreement Status</label><select name="agreementStatus" class="inp"><option>Needs agreement to be signed</option><option>Signed</option><option>Signed paper agreement</option></select></div>
+               
+               <div>
+                 <label class="lbl">Payment Type</label>
+                 <select name="paymentType" class="inp">
+                   <option>Private pay</option><option>Zelle</option><option>Check</option><option>VA</option><option>Medicaid</option><option>Lead agency</option><option>LTCI</option>
+                 </select>
+               </div>
+               <div class="md:col-span-2">
+                 <label class="lbl">Agreement Status</label>
+                 <select name="agreementStatus" class="inp"><option>Needs agreement to be signed</option><option>Signed</option><option>Signed paper agreement</option></select>
+               </div>
             </div>
+
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t">
               <div><label class="lbl">Email 1</label><input type="email" name="email" class="inp"></div>
               <div><label class="lbl">Email 2</label><input type="email" name="email2" class="inp"></div>
@@ -157,36 +190,69 @@
               <div><label class="lbl">Home Phone</label><input type="tel" name="homePhone" class="inp"></div>
             </div>
           </div>
+
           <!-- PAGE 1: ADDRESSES -->
           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
              <h2 class="sec-head"><i class="ph ph-map-pin text-brand mr-2"></i> Addresses</h2>
+             
              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                <div class="bg-gray-50 p-4 rounded-lg">
                  <h3 class="font-bold text-gray-700 mb-2">Living Address</h3>
-                 <div class="space-y-2"><input type="text" name="livingAddress" placeholder="Street Address" class="inp bg-white"><div class="grid grid-cols-3 gap-2"><input type="text" name="livingCity" placeholder="City" class="inp bg-white col-span-1"><input type="text" name="livingState" placeholder="State" class="inp bg-white col-span-1"><input type="text" name="livingZip" placeholder="Zip" class="inp bg-white col-span-1"></div></div>
+                 <div class="space-y-2">
+                   <input type="text" name="livingAddress" placeholder="Street Address" class="inp bg-white">
+                   <div class="grid grid-cols-3 gap-2">
+                     <input type="text" name="livingCity" placeholder="City" class="inp bg-white col-span-1">
+                     <input type="text" name="livingState" placeholder="State" class="inp bg-white col-span-1">
+                     <input type="text" name="livingZip" placeholder="Zip" class="inp bg-white col-span-1">
+                   </div>
+                 </div>
                </div>
                <div class="bg-gray-50 p-4 rounded-lg">
-                 <div class="flex justify-between items-center mb-2"><h3 class="font-bold text-gray-700">Billing Address</h3><label class="flex items-center text-xs text-gray-500 cursor-pointer"><input type="checkbox" name="billingSame" value="true" class="mr-1"> Same as Living</label></div>
-                 <div class="space-y-2"><input type="text" name="billingAddress" placeholder="Street Address" class="inp bg-white"><div class="grid grid-cols-3 gap-2"><input type="text" name="billingCity" placeholder="City" class="inp bg-white col-span-1"><input type="text" name="billingState" placeholder="State" class="inp bg-white col-span-1"><input type="text" name="billingZip" placeholder="Zip" class="inp bg-white col-span-1"></div></div>
+                 <div class="flex justify-between items-center mb-2">
+                   <h3 class="font-bold text-gray-700">Billing Address</h3>
+                   <label class="flex items-center text-xs text-gray-500 cursor-pointer"><input type="checkbox" name="billingSame" value="true" class="mr-1"> Same as Living</label>
+                 </div>
+                 <div class="space-y-2">
+                   <input type="text" name="billingAddress" placeholder="Street Address" class="inp bg-white">
+                   <div class="grid grid-cols-3 gap-2">
+                     <input type="text" name="billingCity" placeholder="City" class="inp bg-white col-span-1">
+                     <input type="text" name="billingState" placeholder="State" class="inp bg-white col-span-1">
+                     <input type="text" name="billingZip" placeholder="Zip" class="inp bg-white col-span-1">
+                   </div>
+                 </div>
                </div>
              </div>
           </div>
+
           <!-- PAGE 2: CONTACTS -->
           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h2 class="sec-head"><i class="ph ph-address-book text-brand mr-2"></i> Additional Contacts</h2>
             <div class="mb-6 pb-6 border-b border-dashed">
               <h3 class="text-sm font-bold text-brand uppercase mb-3">Second Contact</h3>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3"><input type="text" name="con2FirstName" placeholder="First Name" class="inp"><input type="text" name="con2MiddleName" placeholder="Middle" class="inp"><input type="text" name="con2LastName" placeholder="Last Name" class="inp"></div>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3"><input type="email" name="con2Email" placeholder="Email" class="inp"><input type="tel" name="con2Cell" placeholder="Cell Phone" class="inp"><input type="tel" name="con2Home" placeholder="Home Phone" class="inp"></div>
-              <div class="grid grid-cols-1 md:grid-cols-4 gap-2"><input type="text" name="con2Addr" placeholder="Address" class="inp md:col-span-4"><input type="text" name="con2City" placeholder="City" class="inp"><input type="text" name="con2State" placeholder="State" class="inp"><input type="text" name="con2Zip" placeholder="Zip" class="inp"></div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+                <input type="text" name="con2FirstName" placeholder="First Name" class="inp"><input type="text" name="con2MiddleName" placeholder="Middle" class="inp"><input type="text" name="con2LastName" placeholder="Last Name" class="inp">
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+                 <input type="email" name="con2Email" placeholder="Email" class="inp"><input type="tel" name="con2Cell" placeholder="Cell Phone" class="inp"><input type="tel" name="con2Home" placeholder="Home Phone" class="inp">
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                 <input type="text" name="con2Addr" placeholder="Address" class="inp md:col-span-4"><input type="text" name="con2City" placeholder="City" class="inp"><input type="text" name="con2State" placeholder="State" class="inp"><input type="text" name="con2Zip" placeholder="Zip" class="inp">
+              </div>
             </div>
             <div>
               <h3 class="text-sm font-bold text-red-500 uppercase mb-3">Emergency Contact</h3>
-              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-3"><input type="text" name="emergRelation" placeholder="Relationship" class="inp"><input type="text" name="emergFirstName" placeholder="First Name" class="inp"><input type="text" name="emergLastName" placeholder="Last Name" class="inp"><input type="email" name="emergEmail" placeholder="Email" class="inp"></div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3"><input type="tel" name="emergPhone1" placeholder="Phone 1" class="inp"><input type="tel" name="emergPhone2" placeholder="Phone 2" class="inp"></div>
-              <div class="grid grid-cols-1 md:grid-cols-4 gap-2"><input type="text" name="emergAddr" placeholder="Address" class="inp md:col-span-4"><input type="text" name="emergCity" placeholder="City" class="inp"><input type="text" name="emergState" placeholder="State" class="inp"><input type="text" name="emergZip" placeholder="Zip" class="inp"></div>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-3">
+                <input type="text" name="emergRelation" placeholder="Relationship" class="inp"><input type="text" name="emergFirstName" placeholder="First Name" class="inp"><input type="text" name="emergLastName" placeholder="Last Name" class="inp"><input type="email" name="emergEmail" placeholder="Email" class="inp">
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                 <input type="tel" name="emergPhone1" placeholder="Phone 1" class="inp"><input type="tel" name="emergPhone2" placeholder="Phone 2" class="inp">
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                 <input type="text" name="emergAddr" placeholder="Address" class="inp md:col-span-4"><input type="text" name="emergCity" placeholder="City" class="inp"><input type="text" name="emergState" placeholder="State" class="inp"><input type="text" name="emergZip" placeholder="Zip" class="inp">
+              </div>
             </div>
           </div>
+
           <!-- PAGE 3: CARE -->
           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
              <h2 class="sec-head"><i class="ph ph-heartbeat text-brand mr-2"></i> Care & Living Assessment</h2>
@@ -217,6 +283,7 @@
                 </div>
              </div>
           </div>
+
           <!-- PAGE 4: OVERVIEW -->
           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
              <h2 class="sec-head"><i class="ph ph-first-aid text-brand mr-2"></i> Medical Overview</h2>
@@ -225,10 +292,52 @@
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-2"><div class="md:col-span-4"><label class="lbl">Pharmacy Name</label><input type="text" name="pharmName" class="inp"></div><div class="md:col-span-5"><label class="lbl">Location</label><input type="text" name="pharmLoc" class="inp"></div><div class="md:col-span-3"><label class="lbl">Phone</label><input type="text" name="pharmPhone" class="inp"></div></div>
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-2"><div class="md:col-span-4"><label class="lbl">Hospital Name</label><input type="text" name="hospName" class="inp"></div><div class="md:col-span-5"><label class="lbl">Location</label><input type="text" name="hospLoc" class="inp"></div><div class="md:col-span-3"><label class="lbl">Phone</label><input type="text" name="hospPhone" class="inp"></div></div>
              </div>
-             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"><div><label class="lbl">Covid Vaccination</label><input type="text" name="vaxCovid" class="inp"></div><div><label class="lbl">Flu/Cold Vaccination</label><input type="text" name="vaxFlu" class="inp"></div></div>
-             <div class="mb-4"><label class="lbl">Languages Spoken</label><div class="grid grid-cols-3 gap-4"><input type="text" name="lang1" class="inp"><input type="text" name="lang2" class="inp"><input type="text" name="lang3" class="inp"></div></div>
-             <div><label class="lbl">Skills / Interests</label><div class="grid grid-cols-2 md:grid-cols-3 gap-4"><input type="text" name="skill1" class="inp"><input type="text" name="skill2" class="inp"><input type="text" name="skill3" class="inp"><input type="text" name="skill4" class="inp"><input type="text" name="skill5" class="inp"><input type="text" name="skill6" class="inp"></div></div>
+             
+             <!-- UPDATED VACCINATIONS SECTION -->
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+               <div>
+                  <label class="lbl">Covid Vaccination</label>
+                  <select name="vaxCovid" class="inp">
+                    <option value="">Select...</option>
+                    <option value="One dose">One dose</option>
+                    <option value="Fully Vaccinated">Fully Vaccinated</option>
+                    <option value="None">None</option>
+                  </select>
+               </div>
+               <div>
+                  <label class="lbl">Flu/Cold Vaccination</label>
+                  <select name="vaxFlu" class="inp">
+                    <option value="">Select...</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+               </div>
+             </div>
+
+             <!-- UPDATED LANGUAGES SECTION -->
+             <div class="mb-4">
+               <label class="lbl">Languages Spoken</label>
+               <div class="grid grid-cols-3 gap-4">
+                 <select name="lang1" class="inp"><option>Loading...</option></select>
+                 <select name="lang2" class="inp"><option>Loading...</option></select>
+                 <select name="lang3" class="inp"><option>Loading...</option></select>
+               </div>
+             </div>
+
+             <!-- UPDATED SKILLS SECTION -->
+             <div>
+               <label class="lbl">Skills / Interests</label>
+               <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                 <select name="skill1" class="inp"><option>Loading...</option></select>
+                 <select name="skill2" class="inp"><option>Loading...</option></select>
+                 <select name="skill3" class="inp"><option>Loading...</option></select>
+                 <select name="skill4" class="inp"><option>Loading...</option></select>
+                 <select name="skill5" class="inp"><option>Loading...</option></select>
+                 <select name="skill6" class="inp"><option>Loading...</option></select>
+               </div>
+             </div>
           </div>
+
           <div class="flex justify-end py-6">
              <button type="submit" class="bg-brand hover-bg-brand text-white font-bold py-3 px-10 rounded-lg shadow-lg flex items-center transform active:scale-95 transition">
                <i class="ph ph-check text-xl mr-2"></i> Save Profile
