@@ -175,6 +175,7 @@
     document.getElementById('cgForm').reset();
     document.getElementById('cgCode').value = '';
     document.getElementById('cg-form-title').innerText = 'Add Caregiver Details';
+    document.getElementById('btn-cg-pdf').classList.add('hidden');
     document.getElementById('bank-errors').innerHTML = '';
     const dateEl = document.getElementById('cgActiveDate');
     if(dateEl) dateEl.valueAsDate = new Date();
@@ -243,13 +244,16 @@
      updatePagination('cg', totalItems);
   }
 
-  function openCg(code) {
+function openCg(code) {
     loading(true);
     google.script.run.withSuccessHandler(data => {
       loading(false);
       if(!data) return alert('Caregiver not found');
+      
       showPage('page-cg-add');
       document.getElementById('cg-form-title').innerText = 'Edit Caregiver: ' + data.firstName;
+      document.getElementById('btn-cg-pdf').classList.remove('hidden'); 
+
       const form = document.getElementById('cgForm');
       Object.keys(data).forEach(k => {
         if(form.elements[k]) {
@@ -260,6 +264,22 @@
         }
       });
     }).getCaregiverDetails(code);
+  }
+
+  function downloadCgPdf() {
+     const code = document.getElementById('cgCode').value;
+     if(!code) return alert('Please save before exporting.');
+     
+     loading(true);
+     google.script.run.withSuccessHandler(pdf => {
+        loading(false);
+        const link = document.createElement('a');
+        link.href = 'data:application/pdf;base64,' + pdf.base64;
+        link.download = pdf.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+     }).exportCaregiverToPdf(code);
   }
 
   // --- SHARED UTILS ---
