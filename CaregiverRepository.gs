@@ -74,7 +74,8 @@ function saveCaregiverData(formData) {
   return { success: true, message: 'Caregiver Created', code: rowData[0] };
 }
 
-function getCaregivers(page, pageSize, search) {
+// --- GET CAREGIVERS WITH FILTERS ---
+function getCaregivers(page, pageSize, search, statusFilter, titleFilter) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName('Caregivers');
   if (!sheet || sheet.getLastRow() <= 1) return { list: [], total: 0 };
@@ -85,8 +86,21 @@ function getCaregivers(page, pageSize, search) {
     const code = String(row[0]).toLowerCase();
     const fname = String(row[2]).toLowerCase();
     const lname = String(row[4]).toLowerCase();
+    
+    // Status is Col 12 (index 11)
+    const status = String(row[11]); 
+    // Title is Col 27 (index 26)
+    const title = String(row[26]);
+
+    // Search Logic
     const s = search ? search.toLowerCase() : '';
-    return !s || code.includes(s) || fname.includes(s) || lname.includes(s);
+    const matchesSearch = !s || code.includes(s) || fname.includes(s) || lname.includes(s);
+    
+    // Filter Logic
+    const matchesStatus = !statusFilter || status === statusFilter;
+    const matchesTitle = !titleFilter || title === titleFilter;
+
+    return matchesSearch && matchesStatus && matchesTitle;
   });
 
   const total = filtered.length;

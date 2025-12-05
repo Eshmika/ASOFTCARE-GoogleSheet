@@ -210,11 +210,14 @@
   function loadCgDir(page) {
     currentPage = page;
     const search = document.getElementById('cg-search').value;
+    const status = document.getElementById('cg-status-filter').value;
+    const title = document.getElementById('cg-title-filter').value;
+    
     loading(true);
     google.script.run
       .withSuccessHandler(renderCgTable)
       .withFailureHandler(handleError)
-      .getCaregivers(page, PAGE_SIZE, search);
+      .getCaregivers(page, PAGE_SIZE, search, status, title);
   }
 
   function renderCgTable(data) {

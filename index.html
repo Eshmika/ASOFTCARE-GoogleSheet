@@ -254,13 +254,36 @@
       <!-- 4. CAREGIVER DIRECTORY -->
       <div id="page-cg-dir" class="page-section hidden">
         <h1 class="text-2xl font-bold text-gray-800 mb-6">Caregiver Directory</h1>
-        
-        <!-- Search only (No filters requested for CG) -->
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex gap-4">
+
+        <!-- Search & Filters -->        
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-wrap gap-4 items-center">
            <div class="flex-1 min-w-[200px] relative">
              <i class="ph ph-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
-             <input type="text" id="cg-search" placeholder="Search caregiver by name, code, title..." class="inp pl-10 w-full" onkeyup="loadCgDir(1)">
+             <input type="text" id="cg-search" placeholder="Search by name, code..." class="inp pl-10 w-full" onkeyup="loadCgDir(1)">
            </div>
+           
+           <!-- FILTER BY STATUS -->
+           <div class="w-48">
+             <select id="cg-status-filter" class="inp" onchange="loadCgDir(1)">
+               <option value="">All Statuses</option>
+               <option value="Active">Active</option>
+               <option value="Inactive">Inactive</option>
+               <option value="NoCall/NoShow">NoCall/NoShow</option>
+               <option value="Vacation">Vacation</option>
+             </select>
+           </div>
+           
+           <!-- FILTER BY TITLE -->
+           <div class="w-48">
+             <select id="cg-title-filter" class="inp" onchange="loadCgDir(1)">
+               <option value="">All Titles</option>
+               <option value="STNA">STNA</option>
+               <option value="CNA">CNA</option>
+               <option value="HHA">HHA</option>
+               <option value="PCA">PCA</option>
+             </select>
+           </div>
+           
            <button onclick="loadCgDir(1)" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"><i class="ph ph-arrow-clockwise"></i></button>
         </div>
 
