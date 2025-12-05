@@ -111,7 +111,11 @@ function getClients(page, pageSize, search, statusFilter, payFilter) {
     const status = String(row[11]);
     const pay = String(row[14]);
 
-    const matchesSearch = !search || code.includes(search.toLowerCase()) || fname.includes(search.toLowerCase()) || lname.includes(search.toLowerCase());
+    // Flexible search logic
+    const s = search ? search.toLowerCase() : '';
+    const matchesSearch = !s || code.includes(s) || fname.includes(s) || lname.includes(s);
+    
+    // Strict filters
     const matchesStatus = !statusFilter || status === statusFilter;
     const matchesPay = !payFilter || pay === payFilter;
 

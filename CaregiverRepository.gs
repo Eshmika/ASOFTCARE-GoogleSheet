@@ -1,14 +1,11 @@
-// CaregiverRepository.gs - Handles Caregiver Database
+// CaregiverRepository.gs
 
 function getNextCaregiverCode() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName('Caregivers');
-  
   if (!sheet) return 'CG-1001';
-
   const lastRow = sheet.getLastRow();
   if (lastRow <= 1) return 'CG-1001';
-  
   const lastId = sheet.getRange(lastRow, 1).getValue();
   if (typeof lastId === 'string' && lastId.startsWith('CG-')) {
     const num = parseInt(lastId.replace('CG-', ''));
@@ -21,7 +18,6 @@ function saveCaregiverData(formData) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName('Caregivers');
 
-  // Create Sheet if missing
   if (!sheet) {
     sheet = ss.insertSheet('Caregivers');
     const headers = [
@@ -44,7 +40,6 @@ function saveCaregiverData(formData) {
     sheet.setFrozenRows(1);
   }
 
-  // Helper to safely get value
   const val = (k) => formData[k] || '';
 
   const rowData = [
@@ -66,7 +61,6 @@ function saveCaregiverData(formData) {
     val('skill1'), val('skill2'), val('skill3'), val('skill4'), val('skill5'), val('skill6')
   ];
 
-  // Update or Create
   if (val('cgCode')) {
     const ids = sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).getValues().flat();
     const index = ids.indexOf(val('cgCode'));
@@ -116,12 +110,10 @@ function getCaregiverDetails(code) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName('Caregivers');
   if(!sheet) return null;
-  
   const data = sheet.getDataRange().getValues();
   const row = data.find(r => r[0] === code);
   if (!row) return null;
 
-  // Map Array to Object based on Index
   return {
     cgCode: row[0], photoUrl: row[1],
     firstName: row[2], middleName: row[3], lastName: row[4],

@@ -74,18 +74,56 @@
       <!-- 2. CLIENT DIRECTORY -->
       <div id="page-client-dir" class="page-section hidden">
         <h1 class="text-2xl font-bold text-gray-800 mb-6">Client Directory</h1>
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex gap-4">
-           <input type="text" id="client-search" placeholder="Search client by name or code..." class="inp w-full" onkeyup="loadClientDir(1)">
+        
+        <!-- Search & Filters -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-wrap gap-4 items-center">
+           <div class="flex-1 min-w-[200px] relative">
+             <i class="ph ph-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
+             <input type="text" id="client-search" placeholder="Search by name or code..." class="inp pl-10" onkeyup="loadClientDir(1)">
+           </div>
+           <!-- STATUS FILTER -->
+           <div class="w-48">
+             <select id="client-status-filter" class="inp" onchange="loadClientDir(1)">
+               <option value="">All Statuses</option>
+               <option value="Active">Active</option>
+               <option value="Deceased">Deceased</option>
+               <option value="Cancelled service">Cancelled</option>
+               <option value="Temporary hospital stay">Hospital</option>
+             </select>
+           </div>
+           <!-- PAYMENT FILTER -->
+           <div class="w-48">
+             <select id="client-pay-filter" class="inp" onchange="loadClientDir(1)">
+               <option value="">All Payment Types</option>
+               <option value="Private pay">Private pay</option>
+               <option value="Zelle">Zelle</option>
+               <option value="Check">Check</option>
+               <option value="VA">VA</option>
+               <option value="Medicaid">Medicaid</option>
+               <option value="Lead agency">Lead agency</option>
+               <option value="LTCI">LTCI</option>
+             </select>
+           </div>
+           <button onclick="loadClientDir(1)" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"><i class="ph ph-arrow-clockwise"></i></button>
         </div>
+
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <table class="w-full">
             <thead>
               <tr>
-                <th class="table-header">Code</th><th class="table-header">Name</th><th class="table-header">Status</th><th class="table-header">Payment</th><th class="table-header">Phone</th><th></th>
+                <th class="table-header">Code</th><th class="table-header">Name</th><th class="table-header">Status</th><th class="table-header">Payment</th><th class="table-header">Phone</th><th class="table-header">Email</th><th class="table-header w-10"></th>
               </tr>
             </thead>
             <tbody id="client-body"></tbody>
           </table>
+          <!-- CLIENT PAGINATION -->
+          <div class="p-4 border-t flex justify-between items-center">
+            <span class="text-sm text-gray-500" id="client-page-info">Showing 0 of 0</span>
+            <div class="flex space-x-2">
+              <button id="client-btn-prev" class="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50">Prev</button>
+              <button id="client-btn-next" class="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50">Next</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -213,21 +251,38 @@
         </form>
       </div>
 
-      <!-- 4. CAREGIVER DIRECTORY (NEW) -->
+      <!-- 4. CAREGIVER DIRECTORY -->
       <div id="page-cg-dir" class="page-section hidden">
         <h1 class="text-2xl font-bold text-gray-800 mb-6">Caregiver Directory</h1>
+        
+        <!-- Search only (No filters requested for CG) -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex gap-4">
-           <input type="text" id="cg-search" placeholder="Search caregiver by name, code, title..." class="inp w-full" onkeyup="loadCgDir(1)">
+           <div class="flex-1 min-w-[200px] relative">
+             <i class="ph ph-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
+             <input type="text" id="cg-search" placeholder="Search caregiver by name, code, title..." class="inp pl-10 w-full" onkeyup="loadCgDir(1)">
+           </div>
+           <button onclick="loadCgDir(1)" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"><i class="ph ph-arrow-clockwise"></i></button>
         </div>
+
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <table class="w-full">
-            <thead><tr><th class="table-header">Code</th><th class="table-header">Name</th><th class="table-header">Title</th><th class="table-header">Status</th><th class="table-header">Phone</th><th></th></tr></thead>
+            <thead>
+              <tr><th class="table-header">Code</th><th class="table-header">Name</th><th class="table-header">Title</th><th class="table-header">Status</th><th class="table-header">Phone</th><th></th></tr>
+            </thead>
             <tbody id="cg-body"></tbody>
           </table>
+          <!-- CAREGIVER PAGINATION -->
+          <div class="p-4 border-t flex justify-between items-center">
+            <span class="text-sm text-gray-500" id="cg-page-info">Showing 0 of 0</span>
+            <div class="flex space-x-2">
+              <button id="cg-btn-prev" class="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50">Prev</button>
+              <button id="cg-btn-next" class="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50">Next</button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- 5. CAREGIVER FORM (NEW) -->
+      <!-- 5. CAREGIVER FORM -->
       <div id="page-cg-add" class="page-section hidden">
         <div class="flex justify-between items-center mb-6">
            <div class="flex items-center space-x-3">
