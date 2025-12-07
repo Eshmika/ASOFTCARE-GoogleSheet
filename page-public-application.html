@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      :root { --primary: #65c027; }
+      .input-field { width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-top: 0.25rem; }
+      .input-field:focus { outline: none; border-color: var(--primary); ring: 2px solid var(--primary); }
+    </style>
+  </head>
+  <body class="bg-gray-100 py-10 px-4">
+
+    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+      <!-- Header -->
+      <div class="bg-[#65c027] p-6 text-center">
+        <h1 class="text-2xl font-bold text-white">Caregiver Application</h1>
+        <p class="text-green-100">Complete your profile for ID: <?= caregiverId ?></p>
+      </div>
+
+      <!-- Form -->
+      <div class="p-8">
+        <form id="appForm" onsubmit="submitApplication(event)">
+          
+          <!-- Hidden ID Field -->
+          <input type="hidden" name="caregiverId" value="<?= caregiverId ?>">
+
+          <div class="space-y-6">
+            
+            <!-- Address Section -->
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Address Details</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                  <label class="text-sm text-gray-600">Street Address</label>
+                  <input type="text" name="address" required class="input-field" placeholder="123 Main St">
+                </div>
+                <div>
+                  <label class="text-sm text-gray-600">City</label>
+                  <input type="text" name="city" required class="input-field" placeholder="Cleveland">
+                </div>
+                <div>
+                  <label class="text-sm text-gray-600">Zip Code</label>
+                  <input type="text" name="zip" required class="input-field" placeholder="44101">
+                </div>
+              </div>
+            </div>
+
+            <!-- Professional Details -->
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Professional Details</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-sm text-gray-600">Last 4 Digits of SSN</label>
+                  <input type="text" name="ssn" maxlength="4" pattern="\d{4}" required class="input-field" placeholder="XXXX">
+                </div>
+                <div>
+                  <label class="text-sm text-gray-600">Years of Experience</label>
+                  <input type="number" name="experience" required class="input-field" placeholder="e.g. 5">
+                </div>
+                <div class="md:col-span-2">
+                  <label class="text-sm text-gray-600">Certifications (comma separated)</label>
+                  <input type="text" name="certs" class="input-field" placeholder="CPR, First Aid, BLS">
+                </div>
+              </div>
+            </div>
+
+            <!-- Agreement -->
+            <div class="flex items-start gap-3 bg-gray-50 p-4 rounded">
+              <input type="checkbox" required id="agree" class="mt-1 w-5 h-5 text-[#65c027]">
+              <label for="agree" class="text-sm text-gray-600">
+                I certify that the information provided is true and I have read the attached policies sent to my email.
+              </label>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" id="subBtn" class="w-full bg-[#65c027] hover:bg-green-600 text-white font-bold py-3 rounded-lg transition-colors">
+              Submit Application
+            </button>
+
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function submitApplication(e) {
+        e.preventDefault();
+        const btn = document.getElementById('subBtn');
+        btn.disabled = true;
+        btn.textContent = "Saving...";
+
+        const form = document.getElementById('appForm');
+        // Convert form to object
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => data[key] = value);
+
+        google.script.run
+          .withSuccessHandler((res) => {
+            if(res.success) {
+              document.body.innerHTML = `
+                <div class="min-h-screen flex items-center justify-center bg-gray-100">
+                  <div class="bg-white p-10 rounded-xl shadow text-center">
+                    <div class="w-16 h-16 bg-green-100 text-[#65c027] rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">Application Received!</h2>
+                    <p class="text-gray-500 mt-2">Thank you. HR will review your details shortly.</p>
+                  </div>
+                </div>
+              `;
+            } else {
+              Swal.fire('Error', res.message, 'error');
+              btn.disabled = false;
+              btn.textContent = "Submit Application";
+            }
+          })
+          .submitFullApplication(data);
+      }
+    </script>
+  </body>
+</html>

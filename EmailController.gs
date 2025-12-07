@@ -1,32 +1,26 @@
-/**
- * Sends the recruitment email with attachments and form link.
- */
-function sendRecruitmentEmail(data, caregiverId) {  
+function sendRecruitmentEmail(data, caregiverId) {
   
-  const googleFormLink = "https://docs.google.com/forms/"; 
+  // GET THE URL OF THIS WEB APP AUTOMATICALLY
+  const webAppUrl = ScriptApp.getService().getUrl();
+    
+  // Example: https://script.google.com/.../exec?page=apply&id=CG-1005
+  const applicationLink = `${webAppUrl}?page=apply&id=${caregiverId}`;
   
-  const doc1 = Utilities.newBlob("Policy Document Content...", "application/pdf", "Caregiver_Policy.pdf");
-  const doc2 = Utilities.newBlob("Job Description Content...", "application/pdf", "Job_Description.pdf");
-  const doc3 = Utilities.newBlob("Contract Terms Content...", "application/pdf", "Contract_Terms.pdf");
+  const doc1 = Utilities.newBlob("Policy...", "application/pdf", "Policy.pdf");
   
-  const subject = `Next Steps: Caregiver Application (Ref: ${caregiverId})`;
+  const subject = `Action Required: Complete Application (${caregiverId})`;
   
   const htmlBody = `
-    <div style="font-family: Arial, sans-serif; color: #333;">
-      <h2 style="color: #65c027;">Welcome to the Team, ${data.firstName}!</h2>
-      <p>Thank you for registering as a <strong>${data.title}</strong>.</p>
-      <p>Your Caregiver ID is: <strong>${caregiverId}</strong></p>
-      <hr>
-      <h3>Next Steps:</h3>
-      <p>Please complete the full application form by clicking the link below:</p>
-      <p>
-        <a href="${googleFormLink}" style="background-color: #65c027; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-          Complete Application Form
-        </a>
-      </p>
-      <p>We have attached 3 important documents for your review.</p>
+    <div style="font-family: Arial; color: #333;">
+      <h2 style="color: #65c027;">Next Step: Complete Your Profile</h2>
+      <p>Hi ${data.firstName},</p>
+      <p>Please click the button below to complete your secure background and address form.</p>
       <br>
-      <p>Regards,<br>Senior Care HR Team</p>
+      <a href="${applicationLink}" style="background-color: #65c027; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+          Open Application Form
+      </a>
+      <br><br>
+      <p>If the button doesn't work, copy this link:<br>${applicationLink}</p>
     </div>
   `;
   
@@ -34,7 +28,7 @@ function sendRecruitmentEmail(data, caregiverId) {
     to: data.email,
     subject: subject,
     htmlBody: htmlBody,
-    attachments: [doc1, doc2, doc3]
+    attachments: [doc1]
   });
 }
 
