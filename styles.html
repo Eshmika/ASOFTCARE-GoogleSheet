@@ -1,0 +1,85 @@
+<style>
+  /* Custom Theme Configuration */
+  :root {
+    --primary: #65c027;
+    --primary-hover: #54a51f;
+  }
+
+  /* Navigation States */
+  .nav-item.active {
+    background-color: rgba(101, 192, 39, 0.1);
+    color: var(--primary);
+  }
+  
+  .nav-item:not(.active):hover {
+    background-color: #f9fafb;
+    color: #374151;
+  }
+
+  /* Form Elements */
+  .input-field {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    outline: none;
+    transition: all 0.2s;
+  }
+  
+  .input-field:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(101, 192, 39, 0.1);
+  }
+
+  .btn-primary {
+    background-color: var(--primary);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--primary-hover);
+  }
+  
+  .btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  /* Hide/Show logic */
+  .view-section {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .view-section.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Loading Spinner */
+  .spinner {
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top: 3px solid #fff;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>

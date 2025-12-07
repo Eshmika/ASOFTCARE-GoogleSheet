@@ -1,0 +1,89 @@
+<script>
+  // -- Navigation Logic --
+  function navigate(viewName) {
+    // 1. Update Navigation Styles
+    document.querySelectorAll('.nav-item').forEach(el => {
+      el.classList.remove('active');
+    });
+    // Add active class based on index (simplified)
+    const btnMap = {'dashboard': 0, 'recruitment': 1};
+    document.querySelectorAll('.nav-item')[btnMap[viewName]].classList.add('active');
+
+    // 2. Hide all views
+    document.querySelectorAll('.view-section').forEach(el => {
+      el.classList.remove('active');
+    });
+
+    // 3. Show target view
+    document.getElementById('view-' + viewName).classList.add('active');
+
+    // 4. Refresh data if needed
+    if(viewName === 'dashboard') loadDashboardStats();
+  }
+
+  // -- Form Submission Logic --
+  function submitForm(e) {
+    e.preventDefault();
+    
+    const form = document.getElementById('caregiverForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+
+    // Collect Data
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => data[key] = value);
+
+    // UI Loading State
+    submitBtn.disabled = true;
+    btnText.textContent = "Processing...";
+    btnSpinner.classList.remove('hidden');
+
+    // Call Backend
+    google.script.run
+      .withSuccessHandler(response => {
+        submitBtn.disabled = false;
+        btnText.textContent = "Create & Send";
+        btnSpinner.classList.add('hidden');
+
+        if (response.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: `Caregiver created with ID: ${response.id}. Email sent!`,
+            confirmButtonColor: '#65c027'
+          });
+          form.reset();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.message
+          });
+        }
+      })
+      .withFailureHandler(err => {
+        submitBtn.disabled = false;
+        btnText.textContent = "Create & Send";
+        btnSpinner.classList.add('hidden');
+        Swal.fire('Error', 'Server connection failed.', 'error');
+      })
+      .handleCaregiverSubmission(data);
+  }
+
+  // -- Dashboard Stats Logic --
+  function loadDashboardStats() {
+    google.script.run.withSuccessHandler(stats => {
+      document.getElementById('stat-total').textContent = stats.total;
+      document.getElementById('stat-active').textContent = stats.active;
+      document.getElementById('stat-inactive').textContent = stats.inactive;
+      document.getElementById('stat-stna').textContent = stats.stna;
+    }).getDashboardStats();
+  }
+
+  // Initial Load
+  window.onload = function() {
+    loadDashboardStats();
+  };
+</script>
