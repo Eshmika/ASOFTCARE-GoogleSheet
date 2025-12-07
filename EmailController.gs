@@ -1,26 +1,50 @@
 function sendRecruitmentEmail(data, caregiverId) {
   
-  // GET THE URL OF THIS WEB APP AUTOMATICALLY
   const webAppUrl = ScriptApp.getService().getUrl();
-    
-  // Example: https://script.google.com/.../exec?page=apply&id=CG-1005
   const applicationLink = `${webAppUrl}?page=apply&id=${caregiverId}`;
   
-  const doc1 = Utilities.newBlob("Policy...", "application/pdf", "Policy.pdf");
-  
-  const subject = `Action Required: Complete Application (${caregiverId})`;
+  // The account running the script (Admin) must have access to these files.
+  var attachments = [];
+  try {
+    const fileIds = [
+      "1-akwIVsG1ltUON7vqZJBGLcDCc_E9Emq", // File 1
+      "1hK-5vAcGZQD_av4eFDaMGv5rfgMVEc67", // File 2
+      "11NtPiwoABW1RU0roiuH5zhEhYRqIZ999"  // File 3
+    ];
+    
+    fileIds.forEach(id => {
+      attachments.push(DriveApp.getFileById(id).getAs(MimeType.PDF));
+    });
+  } catch (e) {
+    console.log("Error attaching files: " + e.message);
+    // Continue sending email even if attachments fail, but log it.
+  }
+
+  const subject = `Action Required: Application for Allevia Senior Care (${caregiverId})`;
   
   const htmlBody = `
-    <div style="font-family: Arial; color: #333;">
-      <h2 style="color: #65c027;">Next Step: Complete Your Profile</h2>
+    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px;">
+      <h2 style="color: #65c027;">Allevia Senior Care</h2>
+      <p style="font-style: italic;">Because Home is Where the Care Is</p>
+      <hr style="border: 1px solid #eee;">
+      
       <p>Hi ${data.firstName},</p>
-      <p>Please click the button below to complete your secure background and address form.</p>
+      
+      <p>Thank you for your interest in joining our team. Please download the attached documents for your records.</p>
+      
+      <p><strong>Next Step:</strong> Please complete your formal Employment Application by clicking the button below.</p>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${applicationLink}" style="background-color: #65c027; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+            Complete Employment Application
+        </a>
+      </div>
+      
+      <p>If the button above does not work, please copy and paste this link into your browser:</p>
+      <p style="font-size: 12px; color: #666;">${applicationLink}</p>
+      
       <br>
-      <a href="${applicationLink}" style="background-color: #65c027; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-          Open Application Form
-      </a>
-      <br><br>
-      <p>If the button doesn't work, copy this link:<br>${applicationLink}</p>
+      <p>Best regards,<br>Recruitment Team<br>Allevia Senior Care</p>
     </div>
   `;
   
@@ -28,7 +52,7 @@ function sendRecruitmentEmail(data, caregiverId) {
     to: data.email,
     subject: subject,
     htmlBody: htmlBody,
-    attachments: [doc1]
+    attachments: attachments
   });
 }
 

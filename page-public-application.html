@@ -2,122 +2,411 @@
 <html>
   <head>
     <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-      :root { --primary: #65c027; }
-      .input-field { width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-top: 0.25rem; }
-      .input-field:focus { outline: none; border-color: var(--primary); ring: 2px solid var(--primary); }
+      :root { --primary: #65c027; --primary-dark: #4da018; }
+      body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+      
+      /* Custom Form Styling */
+      .section-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 24px; border-top: 4px solid transparent; }
+      .section-card:hover { border-top-color: var(--primary); }
+      
+      .input-label { display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem; }
+      .input-field { width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; transition: all 0.2s; background-color: #f9fafb; }
+      .input-field:focus { outline: none; border-color: var(--primary); background-color: white; box-shadow: 0 0 0 3px rgba(101, 192, 39, 0.15); }
+      
+      .section-title { font-size: 1.125rem; font-weight: 700; color: #111827; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+      .section-title::before { content: ''; display: block; width: 4px; height: 20px; background: var(--primary); border-radius: 2px; }
+
+      .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+      .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #4b5563; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+      .checkbox-item:hover { background-color: #f0fdf4; border-color: var(--primary); }
+      .checkbox-item input { accent-color: var(--primary); width: 16px; height: 16px; }
+
+      .btn-submit { background-color: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 8px; font-weight: 700; font-size: 1.1rem; transition: 0.3s; }
+      .btn-submit:hover { background-color: var(--primary-dark); transform: translateY(-1px); shadow: lg; }
     </style>
   </head>
-  <body class="bg-gray-100 py-10 px-4">
+  <body>
 
-    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-      <!-- Header -->
-      <div class="bg-[#65c027] p-6 text-center">
-        <h1 class="text-2xl font-bold text-white">Caregiver Application</h1>
-        <p class="text-green-100">Complete your profile for ID: <?= caregiverId ?></p>
-      </div>
-
-      <!-- Form -->
-      <div class="p-8">
-        <form id="appForm" onsubmit="submitApplication(event)">
-          
-          <!-- Hidden ID Field -->
-          <input type="hidden" name="caregiverId" value="<?= caregiverId ?>">
-
-          <div class="space-y-6">
-            
-            <!-- Address Section -->
-            <div>
-              <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Address Details</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="md:col-span-2">
-                  <label class="text-sm text-gray-600">Street Address</label>
-                  <input type="text" name="address" required class="input-field" placeholder="123 Main St">
-                </div>
-                <div>
-                  <label class="text-sm text-gray-600">City</label>
-                  <input type="text" name="city" required class="input-field" placeholder="Cleveland">
-                </div>
-                <div>
-                  <label class="text-sm text-gray-600">Zip Code</label>
-                  <input type="text" name="zip" required class="input-field" placeholder="44101">
-                </div>
-              </div>
-            </div>
-
-            <!-- Professional Details -->
-            <div>
-              <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Professional Details</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="text-sm text-gray-600">Last 4 Digits of SSN</label>
-                  <input type="text" name="ssn" maxlength="4" pattern="\d{4}" required class="input-field" placeholder="XXXX">
-                </div>
-                <div>
-                  <label class="text-sm text-gray-600">Years of Experience</label>
-                  <input type="number" name="experience" required class="input-field" placeholder="e.g. 5">
-                </div>
-                <div class="md:col-span-2">
-                  <label class="text-sm text-gray-600">Certifications (comma separated)</label>
-                  <input type="text" name="certs" class="input-field" placeholder="CPR, First Aid, BLS">
-                </div>
-              </div>
-            </div>
-
-            <!-- Agreement -->
-            <div class="flex items-start gap-3 bg-gray-50 p-4 rounded">
-              <input type="checkbox" required id="agree" class="mt-1 w-5 h-5 text-[#65c027]">
-              <label for="agree" class="text-sm text-gray-600">
-                I certify that the information provided is true and I have read the attached policies sent to my email.
-              </label>
-            </div>
-
-            <!-- Submit -->
-            <button type="submit" id="subBtn" class="w-full bg-[#65c027] hover:bg-green-600 text-white font-bold py-3 rounded-lg transition-colors">
-              Submit Application
-            </button>
-
+    <!-- Header / Branding -->
+    <div class="bg-white border-b border-gray-200">
+      <div class="max-w-4xl mx-auto px-4 py-8 text-center">
+        <!-- Logo Placeholder -->
+        <div class="mb-4 flex justify-center">
+          <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-[#65c027]">
+            <img src="https://alleviaseniorcare.com/wp-content/uploads/2025/08/cropped-cropped-Allevia-senior-care-jpg-B.jpg" alt="Allevia Senior Care" >
           </div>
-        </form>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Allevia Senior Care</h1>
+        <p class="text-[#65c027] font-semibold tracking-wide uppercase text-sm mt-1">Because Home is Where the Care Is</p>
+        <p class="mt-4 text-gray-500">Employment Application 2025</p>
       </div>
     </div>
 
-    <script>
-      function submitApplication(e) {
-        e.preventDefault();
-        const btn = document.getElementById('subBtn');
-        btn.disabled = true;
-        btn.textContent = "Saving...";
+    <!-- Main Form -->
+    <div class="max-w-4xl mx-auto px-4 py-8">
+      <form id="fullAppForm" onsubmit="submitApp(event)">
+        <input type="hidden" name="caregiverId" value="<?= caregiverId ?>">
 
-        const form = document.getElementById('appForm');
-        // Convert form to object
+        <!-- 1. General Info -->
+        <div class="section-card">
+          <h2 class="section-title">General Contact Info</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+             <!-- Fields matched to PDF -->
+             <div><label class="input-label">First Name</label><input type="text" name="firstName" class="input-field" placeholder="Given Name"></div>
+             <div><label class="input-label">Middle Initial</label><input type="text" name="middleName" class="input-field" maxlength="5"></div>
+             <div><label class="input-label">Last Name</label><input type="text" name="lastName" class="input-field" placeholder="Family Name"></div>
+             
+             <div><label class="input-label">Date of Birth</label><input type="date" name="dob" class="input-field"></div>
+             <div>
+               <label class="input-label">Gender</label>
+               <select name="gender" class="input-field">
+                 <option value="">Select...</option>
+                 <option value="F">Female</option>
+                 <option value="M">Male</option>
+                 <option value="Other">Other</option>
+               </select>
+             </div>
+             <div><label class="input-label">SSN #</label><input type="text" name="ssn" class="input-field" placeholder="XXX-XX-XXXX"></div>
+
+             <div class="md:col-span-2"><label class="input-label">Address</label><input type="text" name="address" class="input-field"></div>
+             <div><label class="input-label">Apt #</label><input type="text" name="apt" class="input-field"></div>
+             
+             <div><label class="input-label">City</label><input type="text" name="city" class="input-field"></div>
+             <div><label class="input-label">State</label><input type="text" name="state" class="input-field"></div>
+             <div><label class="input-label">Zip Code</label><input type="text" name="zip" class="input-field"></div>
+
+             <div><label class="input-label">Cell Phone</label><input type="tel" name="phone" class="input-field"></div>
+             <div class="md:col-span-2"><label class="input-label">Email</label><input type="email" name="email" class="input-field"></div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+             <div class="flex items-center justify-between">
+               <span class="text-sm font-medium text-gray-700">Eligible to work in the US?</span>
+               <div class="flex gap-4">
+                 <label class="flex items-center gap-2"><input type="radio" name="usEligible" value="Yes"> Yes</label>
+                 <label class="flex items-center gap-2"><input type="radio" name="usEligible" value="No"> No</label>
+               </div>
+             </div>
+             <div class="flex items-center justify-between">
+               <span class="text-sm font-medium text-gray-700">Legal US Citizen?</span>
+               <div class="flex gap-4">
+                 <label class="flex items-center gap-2"><input type="radio" name="usCitizen" value="Yes"> Yes</label>
+                 <label class="flex items-center gap-2"><input type="radio" name="usCitizen" value="No"> No</label>
+               </div>
+             </div>
+          </div>
+        </div>
+
+        <!-- 2. Transportation -->
+        <div class="section-card">
+          <h2 class="section-title">Transportation</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div class="flex flex-col gap-2">
+                <label class="input-label">Do you have a valid Driver's License?</label>
+                <div class="flex gap-4">
+                   <label class="flex items-center gap-2"><input type="radio" name="hasLicense" value="Yes"> Yes</label>
+                   <label class="flex items-center gap-2"><input type="radio" name="hasLicense" value="No"> No</label>
+                </div>
+             </div>
+             
+             <div class="grid grid-cols-2 gap-4">
+                <div><label class="input-label">License State</label><input type="text" name="licenseState" class="input-field"></div>
+                <div><label class="input-label">License #</label><input type="text" name="licenseNum" class="input-field"></div>
+             </div>
+
+             <div class="flex flex-col gap-2">
+                <label class="input-label">Do you have a car?</label>
+                <div class="flex gap-4">
+                   <label class="flex items-center gap-2"><input type="radio" name="hasCar" value="Yes"> Yes</label>
+                   <label class="flex items-center gap-2"><input type="radio" name="hasCar" value="No"> No</label>
+                </div>
+             </div>
+
+             <div><label class="input-label">Car Make & Model</label><input type="text" name="carModel" class="input-field"></div>
+             
+             <div class="md:col-span-2 bg-yellow-50 p-3 rounded text-sm text-yellow-800">
+                <strong>Note:</strong> Some caregiving positions require a valid driver's license, car, and valid insurance.
+             </div>
+          </div>
+        </div>
+
+        <!-- 3. Position & Availability -->
+        <div class="section-card">
+          <h2 class="section-title">Position & Availability</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+             
+             <div>
+               <label class="input-label">Hours Available (Select all that apply)</label>
+               <div class="flex flex-col gap-2 mt-2">
+                  <label><input type="checkbox" name="hoursAvail" value="1-4 hours"> 1-4 hours</label>
+                  <label><input type="checkbox" name="hoursAvail" value="5-8 hours"> 5-8 hours</label>
+                  <label><input type="checkbox" name="hoursAvail" value="9-12 hours"> 9-12 hours</label>
+                  <label><input type="checkbox" name="hoursAvail" value="More"> More</label>
+               </div>
+             </div>
+
+             <div>
+               <label class="input-label">Times Available</label>
+               <div class="flex flex-col gap-2 mt-2">
+                  <label><input type="checkbox" name="timesAvail" value="Mornings"> Mornings</label>
+                  <label><input type="checkbox" name="timesAvail" value="Evenings"> Evenings</label>
+                  <label><input type="checkbox" name="timesAvail" value="Overnights"> Overnights</label>
+               </div>
+             </div>
+             
+             <div class="md:col-span-2">
+               <label class="input-label">Schedule Desired (Days)</label>
+               <div class="flex flex-wrap gap-4 mt-2">
+                 <label><input type="checkbox" name="scheduleDays" value="MON"> MON</label>
+                 <label><input type="checkbox" name="scheduleDays" value="TUE"> TUE</label>
+                 <label><input type="checkbox" name="scheduleDays" value="WED"> WED</label>
+                 <label><input type="checkbox" name="scheduleDays" value="THU"> THU</label>
+                 <label><input type="checkbox" name="scheduleDays" value="FRI"> FRI</label>
+                 <label><input type="checkbox" name="scheduleDays" value="SAT"> SAT</label>
+                 <label><input type="checkbox" name="scheduleDays" value="SUN"> SUN</label>
+               </div>
+             </div>
+
+             <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-50 p-3 rounded flex justify-between">
+                   <span>Available for emergencies?</span>
+                   <div class="flex gap-3">
+                     <label><input type="radio" name="emergencyAvail" value="Yes"> Yes</label>
+                     <label><input type="radio" name="emergencyAvail" value="No"> No</label>
+                   </div>
+                </div>
+                <div class="bg-gray-50 p-3 rounded flex justify-between">
+                   <span>Available for 24hr live-in?</span>
+                   <div class="flex gap-3">
+                     <label><input type="radio" name="liveInAvail" value="Yes"> Yes</label>
+                     <label><input type="radio" name="liveInAvail" value="No"> No</label>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
+
+        <!-- 4. Certifications & Skills -->
+        <div class="section-card">
+          <h2 class="section-title">Certifications & Skills</h2>
+          
+          <label class="input-label mb-3">Certifications Held</label>
+          <div class="checkbox-grid mb-6">
+            <label class="checkbox-item"><input type="checkbox" name="certs" value="CPR & First Aid"> CPR & First Aid</label>
+            <label class="checkbox-item"><input type="checkbox" name="certs" value="Geriatric Aide"> Geriatric Aide</label>
+            <label class="checkbox-item"><input type="checkbox" name="certs" value="Medication Aide"> Medication Aide</label>
+            <label class="checkbox-item"><input type="checkbox" name="certs" value="PCT"> Patient Care Tech</label>
+            <label class="checkbox-item"><input type="checkbox" name="certs" value="CNA"> CNA</label>
+            <label class="checkbox-item"><input type="checkbox" name="certs" value="HHA"> HHA</label>
+            <label class="checkbox-item"><input type="checkbox" name="certs" value="LPN"> LPN</label>
+            <label class="checkbox-item"><input type="checkbox" name="certs" value="RN"> RN</label>
+          </div>
+
+          <label class="input-label mb-3">Skills Experience</label>
+          <div class="checkbox-grid">
+            <label class="checkbox-item"><input type="checkbox" name="skills" value="Bathing"> Bathing/Showering</label>
+            <label class="checkbox-item"><input type="checkbox" name="skills" value="Ambulating"> Ambulating</label>
+            <label class="checkbox-item"><input type="checkbox" name="skills" value="Food Prep"> Food Preparation</label>
+            <label class="checkbox-item"><input type="checkbox" name="skills" value="Meds"> Medication Assist</label>
+            <label class="checkbox-item"><input type="checkbox" name="skills" value="Bed-bath"> Bed-bath</label>
+            <label class="checkbox-item"><input type="checkbox" name="skills" value="Transferring"> Transferring</label>
+            <label class="checkbox-item"><input type="checkbox" name="skills" value="Dementia"> Dementia</label>
+            <label class="checkbox-item"><input type="checkbox" name="skills" value="Hoyer"> Hoyer Lift</label>
+            <label class="checkbox-item"><input type="checkbox" name="skills" value="Gait Belt"> Gait Belt</label>
+            <label class="checkbox-item"><input type="checkbox" name="skills" value="Diabetes"> Diabetes</label>
+            <!-- Add remaining skills from PDF as needed -->
+          </div>
+          
+          <label class="input-label mt-6 mb-3">Languages Spoken</label>
+          <div class="checkbox-grid">
+            <label class="checkbox-item"><input type="checkbox" name="languages" value="English"> English</label>
+            <label class="checkbox-item"><input type="checkbox" name="languages" value="Spanish"> Spanish</label>
+            <label class="checkbox-item"><input type="checkbox" name="languages" value="French"> French</label>
+            <label class="checkbox-item"><input type="checkbox" name="languages" value="Arabic"> Arabic</label>
+            <label class="checkbox-item"><input type="checkbox" name="languages" value="Russian"> Russian</label>
+             <label class="checkbox-item"><input type="checkbox" name="languages" value="Other"> Other</label>
+          </div>
+        </div>
+
+        <!-- 5. Education -->
+        <div class="section-card">
+          <h2 class="section-title">Education</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="input-label">High School (City/State)</label><input type="text" name="hsName" class="input-field"></div>
+            <div><label class="input-label">Degree/Year</label><input type="text" name="hsDegree" class="input-field"></div>
+            
+            <div><label class="input-label">College (City/State)</label><input type="text" name="colName" class="input-field"></div>
+            <div><label class="input-label">Degree/Year</label><input type="text" name="colDegree" class="input-field"></div>
+            
+            <div><label class="input-label">Other (City/State)</label><input type="text" name="otherEdu" class="input-field"></div>
+            <div><label class="input-label">Degree/Cert</label><input type="text" name="otherDegree" class="input-field"></div>
+          </div>
+        </div>
+
+        <!-- 6. Employment (Simplified for UI, logic will combine) -->
+        <div class="section-card">
+          <h2 class="section-title">Employment History (Last Employer)</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div><label class="input-label">Company Name</label><input type="text" name="emp1[company]" class="input-field"></div>
+             <div><label class="input-label">Job Title</label><input type="text" name="emp1[title]" class="input-field"></div>
+             <div><label class="input-label">Supervisor</label><input type="text" name="emp1[supervisor]" class="input-field"></div>
+             <div><label class="input-label">Phone</label><input type="tel" name="emp1[phone]" class="input-field"></div>
+             <div class="md:col-span-2"><label class="input-label">Duties</label><textarea name="emp1[duties]" class="input-field" rows="2"></textarea></div>
+          </div>
+        </div>
+
+        <!-- 7. References -->
+        <div class="section-card">
+          <h2 class="section-title">References</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+             <div class="md:col-span-3 font-semibold text-gray-500 text-sm">Reference 1</div>
+             <div><input type="text" name="ref1[name]" placeholder="Name" class="input-field"></div>
+             <div><input type="text" name="ref1[phone]" placeholder="Phone" class="input-field"></div>
+             <div><input type="text" name="ref1[relation]" placeholder="Relationship" class="input-field"></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+             <div class="md:col-span-3 font-semibold text-gray-500 text-sm">Reference 2</div>
+             <div><input type="text" name="ref2[name]" placeholder="Name" class="input-field"></div>
+             <div><input type="text" name="ref2[phone]" placeholder="Phone" class="input-field"></div>
+             <div><input type="text" name="ref2[relation]" placeholder="Relationship" class="input-field"></div>
+          </div>
+        </div>
+
+        <!-- 8. Emergency Contact -->
+        <div class="section-card">
+          <h2 class="section-title">Emergency Contact</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+             <div><label class="input-label">Name</label><input type="text" name="emName" required class="input-field"></div>
+             <div><label class="input-label">Cell Phone</label><input type="tel" name="emPhone" required class="input-field"></div>
+             <div><label class="input-label">Relationship</label><input type="text" name="emRel" required class="input-field"></div>
+          </div>
+        </div>
+
+        <!-- 9. Legal & Signature -->
+        <div class="section-card bg-red-50 border-red-100">
+           <h2 class="section-title text-red-900">Legal & Certification</h2>
+           
+           <div class="mb-4">
+             <label class="input-label text-red-900">Have you ever been convicted of a felony or misdemeanor?</label>
+             <div class="flex gap-4 mt-2">
+                <label><input type="radio" name="criminalHistory" value="Yes"> Yes</label>
+                <label><input type="radio" name="criminalHistory" value="No"> No</label>
+             </div>
+             <input type="text" name="criminalExplain" placeholder="If yes, please explain..." class="input-field mt-2">
+           </div>
+
+           <div class="text-xs text-gray-600 space-y-2 mt-6 border-t border-red-200 pt-4">
+             <p>I certify the above stated and indicated are true in fact and no misrepresentation of myself has been made.</p>
+             <p>I authorize "Allevia llc" to verify any and all information contained within this application.</p>
+             <p>I understand that the use of illegal drugs is prohibited during employment.</p>
+             <p><strong>Restrictive Covenant:</strong> I agree not to do business directly with any individual or business entity that Allevia llc has introduced to me.</p>
+           </div>
+
+           <div class="mt-6 flex flex-col md:flex-row gap-4 items-end">
+             <div class="flex-1 w-full">
+               <label class="input-label">Digital Signature (Type Full Name)</label>
+               <input type="text" name="signName" required class="input-field border-b-2 border-b-gray-400" placeholder="e.g. Jane Doe">
+             </div>
+             <div class="w-full md:w-48">
+               <label class="input-label">Date</label>
+               <input type="date" required class="input-field">
+             </div>
+           </div>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">Submit Application</button>
+
+      </form>
+    </div>
+
+    <script>
+      function submitApp(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const form = document.getElementById('fullAppForm');
+        
+        // Simple Validation
+        if(!form.signName.value) {
+            Swal.fire('Error', 'Please sign the application.', 'warning');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Processing...";
+        
+        // Advanced FormData extraction (handling checkboxes and nested names)
+        const obj = {};
         const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => data[key] = value);
+        
+        // Custom parser to handle 'skills' arrays and 'emp1[company]' objects
+        for (let [key, value] of formData.entries()) {
+           if(key.includes('[')) {
+             // Handle objects like emp1[company] (Simplified for this script: just flattening keys or basic handling)
+             // For simplicity in Google Apps Script, we passed flat names in the form above where possible.
+             // But for arrays (checkboxes):
+             continue; 
+           }
+           if (obj[key]) {
+             if (!Array.isArray(obj[key])) obj[key] = [obj[key]];
+             obj[key].push(value);
+           } else {
+             obj[key] = value;
+           }
+        }
+        
+        // Manually handle checkboxes to arrays
+        const getChecks = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(c => c.value);
+        obj.skills = getChecks('skills');
+        obj.certs = getChecks('certs');
+        obj.languages = getChecks('languages');
+        obj.hoursAvail = getChecks('hoursAvail');
+        obj.scheduleDays = getChecks('scheduleDays');
+        obj.timesAvail = getChecks('timesAvail');
+
+        // Handle the nested inputs like emp1[company] manually for cleaner GS
+        obj.emp1 = {
+           company: document.querySelector('input[name="emp1[company]"]').value,
+           title: document.querySelector('input[name="emp1[title]"]').value,
+           phone: document.querySelector('input[name="emp1[phone]"]').value
+        };
+        obj.ref1 = {
+           name: document.querySelector('input[name="ref1[name]"]').value,
+           phone: document.querySelector('input[name="ref1[phone]"]').value
+        };
+        obj.ref2 = {
+            name: document.querySelector('input[name="ref2[name]"]').value,
+            phone: document.querySelector('input[name="ref2[phone]"]').value
+        };
 
         google.script.run
-          .withSuccessHandler((res) => {
-            if(res.success) {
-              document.body.innerHTML = `
-                <div class="min-h-screen flex items-center justify-center bg-gray-100">
-                  <div class="bg-white p-10 rounded-xl shadow text-center">
-                    <div class="w-16 h-16 bg-green-100 text-[#65c027] rounded-full flex items-center justify-center mx-auto mb-4">
-                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-800">Application Received!</h2>
-                    <p class="text-gray-500 mt-2">Thank you. HR will review your details shortly.</p>
-                  </div>
-                </div>
-              `;
-            } else {
-              Swal.fire('Error', res.message, 'error');
-              btn.disabled = false;
-              btn.textContent = "Submit Application";
-            }
+          .withSuccessHandler(res => {
+             if(res.success) {
+               document.body.innerHTML = `
+                 <div class="min-h-screen flex items-center justify-center bg-[#f3f4f6] px-4">
+                   <div class="bg-white p-8 rounded-xl shadow-lg text-center max-w-lg">
+                     <div class="w-20 h-20 bg-green-100 text-[#65c027] rounded-full flex items-center justify-center mx-auto mb-6">
+                       <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                     </div>
+                     <h2 class="text-3xl font-bold text-gray-800 mb-2">Application Received</h2>
+                     <p class="text-gray-600">Thank you for applying to Allevia Senior Care. Our HR team has received your details and will be in touch shortly.</p>
+                   </div>
+                 </div>`;
+             } else {
+               Swal.fire('Error', res.message, 'error');
+               btn.disabled = false;
+               btn.textContent = "Submit Application";
+             }
           })
-          .submitFullApplication(data);
+          .withFailureHandler(err => {
+             Swal.fire('Connection Error', err.message, 'error');
+             btn.disabled = false;
+          })
+          .submitFullApplication(obj);
       }
     </script>
   </body>

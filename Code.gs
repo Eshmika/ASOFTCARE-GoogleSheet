@@ -3,25 +3,19 @@
  * If URL has ?page=apply&id=CG-xxxx, it shows the Application Form.
  */
 function doGet(e) {
-  // Check if this is an external caregiver clicking the email link
   if (e.parameter.page === 'apply' && e.parameter.id) {
-    
-    // Validate ID exists before showing form
     const isValid = validateCaregiverId(e.parameter.id);
-    
     if (isValid) {
       var template = HtmlService.createTemplateFromFile('page-public-application');
-      template.caregiverId = e.parameter.id; // Pass ID to the frontend
+      template.caregiverId = e.parameter.id;
       return template.evaluate()
-        .setTitle('Caregiver Application')
+        .setTitle('Application - Allevia Senior Care')
         .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
         .addMetaTag('viewport', 'width=device-width, initial-scale=1');
     } else {
-      return HtmlService.createHtmlOutput("<h1>Error: Invalid or Expired Application Link.</h1>");
+      return HtmlService.createHtmlOutput("<h1 style='font-family:sans-serif; text-align:center; margin-top:50px;'>Error: Invalid or Expired Application Link.</h1>");
     }
   }
-
-  // Default: Show Admin Panel
   return HtmlService.createTemplateFromFile('index')
     .evaluate()
     .setTitle('Senior Care Admin Panel')
