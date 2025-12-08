@@ -143,9 +143,96 @@
     renderCgTable();
   }
 
+  // --- STAGE LOGIC ---
+  function updateStageUI(stageNum, status, textId, btnId, iconId, label) {
+    const icon = document.getElementById(iconId);
+    const btn = document.getElementById(btnId);
+    const text = document.getElementById(textId);
+
+    // Safety check: if icon missing (HTML mismatch), stop here
+    if (!icon) return;
+
+    if (
+      status === "Done" ||
+      status === "Yes" ||
+      status === "Application Completed"
+    ) {
+      icon.className =
+        "w-12 h-12 rounded-full bg-[#65c027] text-white flex items-center justify-center text-xl font-bold border-4 border-white transition-colors shadow-lg";
+      icon.innerHTML = '<i class="ph ph-check"></i>';
+      if (btn) {
+        btn.textContent = "Completed";
+        btn.disabled = true;
+        btn.className =
+          "mt-1 text-xs px-2 py-1 rounded bg-green-50 text-green-600 font-bold";
+      }
+      if (text) {
+        text.textContent = "Completed";
+        text.className = "text-xs text-green-600 font-bold";
+      }
+    } else if (status === "Missing") {
+      icon.className =
+        "w-12 h-12 rounded-full bg-red-500 text-white flex items-center justify-center text-xl font-bold border-4 border-white transition-colors shadow-lg";
+      icon.innerHTML = '<i class="ph ph-warning"></i>';
+      if (text) {
+        text.textContent = "Missing (> 1 Week)";
+        text.className = "text-xs text-red-500 font-bold";
+      }
+    } else {
+      if (btn) {
+        btn.textContent = label;
+        btn.disabled = false;
+        btn.className =
+          "mt-1 text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-600 transition";
+      }
+      icon.className =
+        "w-12 h-12 rounded-full bg-gray-200 text-gray-400 flex items-center justify-center text-xl font-bold border-4 border-white transition-colors";
+      icon.innerHTML =
+        stageNum === 2
+          ? '<i class="ph ph-chats-circle"></i>'
+          : stageNum === 3
+          ? '<i class="ph ph-shield-check"></i>'
+          : stageNum === 4
+          ? '<i class="ph ph-briefcase"></i>'
+          : stageNum;
+    }
+  }
+
+  function advanceStage(stageNum) {
+    if (!currentProfileId) return;
+
+    let field = "";
+    let val = "";
+
+    if (stageNum === 2) {
+      field = "Interview";
+      val = "Yes";
+    }
+    if (stageNum === 3) {
+      field = "Background";
+      val = "Yes";
+    }
+    if (stageNum === 4) {
+      field = "Active";
+      val = "Active";
+    }
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        if (res.success) {
+          loadProfile(currentProfileId);
+          if (stageNum === 4)
+            Swal.fire("Great!", "Caregiver is now Active!", "success");
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .updateCaregiverStage(currentProfileId, field, val);
+  }
+
   // -- 3. Load Profile --
   function loadProfile(id) {
-    console.log("Fetching profile for ID:", id); // Debug
+    currentProfileId = id;
 
     switchCgView("profile");
     document.getElementById("profileLoading").classList.remove("hidden");
@@ -153,36 +240,36 @@
 
     google.script.run
       .withSuccessHandler((data) => {
-        console.log("Profile Data Recieved:", data); // Debug
-
         if (!data) {
-          Swal.fire(
-            "Error",
-            "Caregiver details not found in database.",
-            "error"
-          );
+          Swal.fire("Error", "Caregiver details not found.", "error");
           switchCgView("list");
           return;
         }
 
-        const set = (id, val) =>
-          (document.getElementById(id).textContent = val || "--");
+        // CRITICAL FIX: Safety Check Set Function
+        const set = (id, val) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = val || "--";
+        };
 
         set("p-name", data["First Name"] + " " + data["Last Name"]);
         set("p-initials", (data["First Name"] || "U").charAt(0));
         set("p-title", data["Title"]);
         set("p-id", data["Caregiver ID"]);
-        set("p-app-status", data["App Status"]);
 
         const badge = document.getElementById("p-status-badge");
-        badge.textContent = data["Status"];
-        badge.className = `px-3 py-1 rounded-full text-xs font-bold ${
-          data["Status"] === "Active"
-            ? "bg-green-100 text-green-700"
-            : "bg-gray-100 text-gray-600"
-        }`;
+        if (badge) {
+          badge.textContent = data["Status"];
+          badge.className = `px-3 py-1 rounded-full text-xs font-bold ${
+            data["Status"] === "Active"
+              ? "bg-green-100 text-green-700"
+              : "bg-gray-100 text-gray-600"
+          }`;
+        }
 
-        document.getElementById("p-email-btn").href = "mailto:" + data["Email"];
+        const emailBtn = document.getElementById("p-email-btn");
+        if (emailBtn) emailBtn.href = "mailto:" + data["Email"];
+
         set("p-email", data["Email"]);
         set("p-phone", data["Phone"]);
         set(
@@ -197,8 +284,45 @@
           `License: ${data["Driver License?"]} | Car: ${data["Has Car?"]}`
         );
 
+        // Stages
+        let appStatus = data["App Status"];
+        if (appStatus !== "Application Completed") {
+          const created = new Date(data["Created At"]);
+          const now = new Date();
+          const diffDays = (now - created) / (1000 * 60 * 60 * 24);
+          if (diffDays > 7) appStatus = "Missing";
+        }
+        updateStageUI(1, appStatus, "stage-text-1", null, "stage-icon-1", "");
+        updateStageUI(
+          2,
+          data["Interview Status"],
+          null,
+          "stage-btn-2",
+          "stage-icon-2",
+          "Mark Done"
+        );
+        updateStageUI(
+          3,
+          data["Background Check"],
+          null,
+          "stage-btn-3",
+          "stage-icon-3",
+          "Mark Passed"
+        );
+
+        const activeState = data["Status"] === "Active" ? "Done" : "Pending";
+        updateStageUI(
+          4,
+          activeState,
+          null,
+          "stage-btn-4",
+          "stage-icon-4",
+          "Activate"
+        );
+
         const makeTags = (containerId, str) => {
           const div = document.getElementById(containerId);
+          if (!div) return;
           div.innerHTML = "";
           if (!str) return;
           str
@@ -214,22 +338,16 @@
         };
         makeTags("p-certs", data["Certifications"]);
         makeTags("p-days", data["Schedule Desired"]);
-
         set("p-skills", data["Skills Checklist"]);
         set("p-langs", data["Languages"]);
-        set(
-          "p-edu",
-          data["High School"] || data["College"] || data["Other Edu"]
-        );
+        set("p-edu", data["High School"] || data["College"]);
         set("p-emp", data["Employer 1"]);
-
         set("p-hours", data["Hours Avail"]);
         set("p-times", data["Times Avail"]);
         set(
           "p-extra-avail",
           `Emerg: ${data["Emergency Avail?"]} | Live-In: ${data["Live-in Avail?"]}`
         );
-
         set("p-emergency-name", data["Emergency Contact"]);
         set(
           "p-emergency-contact",

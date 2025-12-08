@@ -61,6 +61,8 @@ function getOrCreateSheet() {
       "Signature Name",
       "Signature Date",
       "Agreed to Terms",
+      "Interview Status",
+      "Background Check",
     ];
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   }
@@ -204,30 +206,56 @@ function getCaregiverList() {
     .reverse();
 }
 
-// 4. GET DETAILS (Robust Search)
+// 4. GET DETAILS
 function getCaregiverDetails(id) {
   const sheet = getOrCreateSheet();
-
-  // Get all data as text
-  const data = sheet.getDataRange().getDisplayValues();
+  const data = sheet.getDataRange().getDisplayValues(); // Get text
   const headers = data[0];
 
   const searchId = String(id).trim().toUpperCase();
 
-  // Find row
-  const row = data.find((r, i) => {
-    if (i === 0) return false;
-    return String(r[0]).trim().toUpperCase() === searchId;
-  });
+  const rowIndex = data.findIndex(
+    (r, i) => i > 0 && String(r[0]).trim().toUpperCase() === searchId
+  );
 
-  if (!row) return null;
+  if (rowIndex === -1) return null;
 
+  const row = data[rowIndex];
   let caregiver = {};
   headers.forEach((header, index) => {
     caregiver[header] = row[index];
   });
 
   return caregiver;
+}
+
+// 5. NEW: UPDATE STAGE STATUS
+function updateCaregiverStage(id, stage, value) {
+  const sheet = getOrCreateSheet();
+  const data = sheet.getDataRange().getDisplayValues();
+  const headers = data[0];
+
+  const searchId = String(id).trim().toUpperCase();
+  const rowIndex = data.findIndex(
+    (r, i) => i > 0 && String(r[0]).trim().toUpperCase() === searchId
+  );
+
+  if (rowIndex === -1) return { success: false, message: "ID not found" };
+
+  const r = rowIndex + 1;
+
+  // Find column index
+  let colIndex = -1;
+
+  if (stage === "Interview") colIndex = headers.indexOf("Interview Status");
+  if (stage === "Background") colIndex = headers.indexOf("Background Check");
+  if (stage === "Active") colIndex = headers.indexOf("Status"); // This updates main status
+
+  if (colIndex === -1) return { success: false, message: "Column not found" };
+
+  sheet.getRange(r, colIndex + 1).setValue(value);
+
+  return { success: true, newValue: value };
 }
 
 function getDashboardStats() {
