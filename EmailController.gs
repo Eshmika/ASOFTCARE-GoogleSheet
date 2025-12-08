@@ -1,27 +1,32 @@
 function sendRecruitmentEmail(data, caregiverId) {
-  
   const webAppUrl = ScriptApp.getService().getUrl();
   const applicationLink = `${webAppUrl}?page=apply&id=${caregiverId}`;
-  
-  // The account running the script (Admin) must have access to these files.
+
+  // --- ATTACHMENT LOGIC ---
   var attachments = [];
-  try {
-    const fileIds = [
-      "1-akwIVsG1ltUON7vqZJBGLcDCc_E9Emq", // File 1
-      "1hK-5vAcGZQD_av4eFDaMGv5rfgMVEc67", // File 2
-      "11NtPiwoABW1RU0roiuH5zhEhYRqIZ999"  // File 3
-    ];
-    
-    fileIds.forEach(id => {
-      attachments.push(DriveApp.getFileById(id).getAs(MimeType.PDF));
-    });
-  } catch (e) {
-    console.log("Error attaching files: " + e.message);
-    // Continue sending email even if attachments fail, but log it.
-  }
+
+  // These are the File IDs you provided
+  const fileIds = [
+    "1-akwIVsG1ltUON7vqZJBGLcDCc_E9Emq", // Application / Policy
+    "1hK-5vAcGZQD_av4eFDaMGv5rfgMVEc67", // Job Description
+    "11NtPiwoABW1RU0roiuH5zhEhYRqIZ999", // Contract / Other
+  ];
+
+  fileIds.forEach((id) => {
+    try {
+      // getBlob() is better than getAs() for files that are already PDFs
+      const file = DriveApp.getFileById(id);
+      attachments.push(file.getBlob());
+    } catch (e) {
+      console.log(
+        `Warning: Could not attach file ID ${id}. Error: ${e.message}`
+      );
+      // We continue loop so the email is still sent even if one file is missing
+    }
+  });
 
   const subject = `Action Required: Application for Allevia Senior Care (${caregiverId})`;
-  
+
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px;">
       <h2 style="color: #65c027;">Allevia Senior Care</h2>
@@ -47,12 +52,12 @@ function sendRecruitmentEmail(data, caregiverId) {
       <p>Best regards,<br>Recruitment Team<br>Allevia Senior Care</p>
     </div>
   `;
-  
+
   MailApp.sendEmail({
     to: data.email,
     subject: subject,
     htmlBody: htmlBody,
-    attachments: attachments
+    attachments: attachments,
   });
 }
 
