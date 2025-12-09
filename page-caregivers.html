@@ -284,7 +284,7 @@
             >
               1
             </div>
-            <p class="mt-2 text-sm font-bold text-gray-700">Application</p>
+            <p class="mt-2 text-sm font-bold text-gray-700">New Application</p>
             <p id="stage-text-1" class="text-xs text-gray-400">Pending</p>
           </div>
 
@@ -298,7 +298,9 @@
             >
               <i class="ph ph-chats-circle"></i>
             </div>
-            <p class="mt-2 text-sm font-bold text-gray-700">Interview</p>
+            <p class="mt-2 text-sm font-bold text-gray-700">
+              Interview Completed
+            </p>
             <button
               id="stage-btn-2"
               onclick="advanceStage(2)"
@@ -318,7 +320,9 @@
             >
               <i class="ph ph-shield-check"></i>
             </div>
-            <p class="mt-2 text-sm font-bold text-gray-700">Background</p>
+            <p class="mt-2 text-sm font-bold text-gray-700">
+              Passed Background Check
+            </p>
             <button
               id="stage-btn-3"
               onclick="advanceStage(3)"
@@ -338,7 +342,9 @@
             >
               <i class="ph ph-briefcase"></i>
             </div>
-            <p class="mt-2 text-sm font-bold text-gray-700">Activation</p>
+            <p class="mt-2 text-sm font-bold text-gray-700">
+              Converted to Active Caregiver
+            </p>
             <button
               id="stage-btn-4"
               onclick="advanceStage(4)"
@@ -377,8 +383,32 @@
               <p class="text-sm font-medium" id="p-dob">--</p>
             </div>
             <div>
-              <p class="text-xs text-gray-400 uppercase">License / Car</p>
-              <p class="text-sm font-medium" id="p-transport">--</p>
+              <p class="text-xs text-gray-400 uppercase">SSN</p>
+              <p class="text-sm font-medium" id="p-ssn">--</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">License</p>
+              <p class="text-sm font-medium" id="p-license">--</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Car</p>
+              <p class="text-sm font-medium" id="p-car">--</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">
+                US Eligible / US Citizen
+              </p>
+              <p class="text-sm font-medium" id="p-us-eligible">--</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">
+                Reference Contact Details
+              </p>
+              <p class="text-sm font-medium" id="p-reference-contact">--</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Criminal Conviction</p>
+              <p class="text-sm font-medium" id="p-criminal-conviction">--</p>
             </div>
           </div>
         </div>
@@ -404,8 +434,16 @@
               <p class="text-sm font-medium" id="p-langs">--</p>
             </div>
             <div>
-              <p class="text-xs text-gray-400 uppercase">Education</p>
-              <p class="text-sm font-medium" id="p-edu">--</p>
+              <p class="text-xs text-gray-400 uppercase">High School</p>
+              <p class="text-sm font-medium" id="p-highSchool">--</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">College</p>
+              <p class="text-sm font-medium" id="p-college">--</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Other Education</p>
+              <p class="text-sm font-medium" id="p-otherEducation">--</p>
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Last Employer</p>
@@ -578,6 +616,15 @@
               id="edit-email"
               class="input-field"
             />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Title</label
+            ><select name="title" id="edit-title" class="input-field">
+              <option value="STNA">STNA</option>
+              <option value="CNA">CNA</option>
+              <option value="HHA">HHA</option>
+              <option value="PCA">PCA</option>
+            </select>
           </div>
         </div>
       </div>

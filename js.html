@@ -173,7 +173,7 @@
       setVal("edit-dob", `${yyyy}-${mm}-${dd}`);
     }
 
-    setVal("edit-gender", d["Gender"]);
+    setVal("edit-gender", d["Gender"]);          
     setVal("edit-ssn", d["SSN"]);
     setVal("edit-address", d["Address"]);
     setVal("edit-apt", d["Apt"]);
@@ -182,6 +182,7 @@
     setVal("edit-zip", d["Zip"]);
     setVal("edit-phone", d["Phone"]);
     setVal("edit-email", d["Email"]);
+    setVal("edit-title", d["Title"]);  
 
     setVal("edit-hasLicense", d["Driver License?"]);
     setVal("edit-hasCar", d["Has Car?"]);
@@ -399,7 +400,14 @@
           if (el) el.textContent = val || "--";
         };
 
-        set("p-name", data["First Name"] + " " + data["Last Name"]);
+        set(
+          "p-name",
+          data["First Name"] +
+            " " +
+            data["Middle Int"] +
+            " " +
+            data["Last Name"]
+        );
         set("p-initials", (data["First Name"] || "U").charAt(0));
         set("p-title", data["Title"]);
         set("p-id", data["Caregiver ID"]);
@@ -437,9 +445,26 @@
           } ${data["Zip"] || ""}`
         );
         set("p-dob", `${data["DOB"] || "--"} (${data["Gender"] || "--"})`);
+        set("p-ssn", data["SSN"]);
         set(
-          "p-transport",
-          `License: ${data["Driver License?"]} | Car: ${data["Has Car?"]}`
+          "p-license",
+          `Driver License: ${data["Driver License?"]} | License State: ${data["License State"]} | License #: ${data["License #"]}`
+        );
+        set(
+          "p-car",
+          `Has Car: ${data["Has Car?"]} | Model: ${data["Car Make/Model"]} | Insurance: ${data["Has Insurance?"]}`
+        );
+        set(
+          "p-us-eligible",
+          `US Eligible: ${data["US Eligible?"]} | US Citizen: ${data["US Citizen?"]}`
+        );
+        set(
+          "p-reference-contact",
+          `Reference 1: ${data["Reference 1"]} | Reference 2: ${data["Reference 2"]}`
+        );
+        set(
+          "p-criminal-conviction",
+          `Criminal Conviction: ${data["Criminal Conviction?"]} | Conviction Details: ${data["Conviction Details"]}`
         );
 
         // Stages
@@ -504,8 +529,22 @@
         makeTags("p-days", data["Schedule Desired"]);
         set("p-skills", data["Skills Checklist"]);
         set("p-langs", data["Languages"]);
-        set("p-edu", data["High School"] || data["College"]);
-        set("p-emp", data["Employer 1"]);
+        set(
+          "p-highSchool",
+          `High School: ${data["High School"]} | HS Degree: ${data["HS Degree"]}`
+        );
+        set(
+          "p-college",
+          `College: ${data["College"]} | Degree: ${data["College Degree"]}`
+        );
+        set(
+          "p-otherEducation",
+          `Other Education: ${data["Other Edu"]} | Degree: ${data["Other Degree"]}`
+        );
+        set(
+          "p-emp",
+          `Employer 1: ${data["Employer 1"]} | Employer 2: ${data["Employer 2"]} | Employer 3: ${data["Employer 3"]}`
+        );
         set("p-hours", data["Hours Avail"]);
         set("p-times", data["Times Avail"]);
         set(
