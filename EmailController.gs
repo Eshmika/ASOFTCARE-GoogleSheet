@@ -83,6 +83,58 @@ function sendRecruitmentEmail(data, caregiverId) {
   });
 }
 
+function sendClientWelcomeEmail(data, clientId) {
+  console.log(`Sending Client Email to ${data.email}`);
+
+  var attachments = [];
+  // Use same file IDs or new ones if you have specific client docs
+  const fileIds = [
+    "1-akwIVsG1ltUON7vqZJBGLcDCc_E9Emq",
+    "1hK-5vAcGZQD_av4eFDaMGv5rfgMVEc67",
+    "11NtPiwoABW1RU0roiuH5zhEhYRqIZ999",
+  ];
+
+  fileIds.forEach((id) => {
+    try {
+      const file = DriveApp.getFileById(id);
+      attachments.push(file.getBlob());
+    } catch (e) {
+      console.error(`Error attaching file ${id}: ${e.message}`);
+    }
+  });
+
+  const subject = `Welcome to Allevia Senior Care - Registration Successful (${clientId})`;
+
+  const htmlBody = `
+    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+      <div style="background-color: #65c027; padding: 24px; text-align: center;">
+        <h2 style="color: white; margin: 0;">Allevia Senior Care</h2>
+        <p style="color: #f0fdf4; margin: 5px 0 0;">Client Registration</p>
+      </div>
+      
+      <div style="padding: 30px;">
+        <p>Dear <strong>${data.firstName} ${data.lastName}</strong>,</p>
+        
+        <p>Welcome to the Allevia family. Your client profile has been successfully created.</p>
+        
+        <div style="background-color: #f8fafc; padding: 15px; border-left: 4px solid #65c027; margin: 20px 0;">
+          <p style="margin: 0; font-size: 14px;"><strong>Client ID:</strong> ${clientId}</p>
+          <p style="margin: 5px 0 0; font-size: 14px;"><strong>Service Type:</strong> ${data.type}</p>
+        </div>
+
+        <p><strong>Next Steps:</strong> Please find the attached registration documents. Kindly review and sign them at your earliest convenience.</p>
+      </div>
+    </div>
+  `;
+
+  MailApp.sendEmail({
+    to: data.email,
+    subject: subject,
+    htmlBody: htmlBody,
+    attachments: attachments,
+  });
+}
+
 // function testEmailPermission() {
 //   MailApp.getRemainingDailyQuota(); // This forces the email permission check
 //   console.log("Permissions granted!");

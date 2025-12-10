@@ -41,6 +41,11 @@
             <i class="ph ph-users-three text-xl"></i>
             Caregivers
           </button>
+
+          <button onclick="navigate('clients')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium">
+            <i class="ph ph-users text-xl"></i>
+            Clients
+          </button>
         </nav>
 
         <!--<div class="p-4 border-t border-gray-100">
@@ -70,6 +75,7 @@
         <div id="content-area">
           <?!= include('page-dashboard'); ?>
           <?!= include('page-caregivers'); ?>
+          <?!= include('page-clients'); ?>
         </div>
       </main>
     </div>

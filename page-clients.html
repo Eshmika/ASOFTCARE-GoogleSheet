@@ -1,0 +1,248 @@
+<div id="view-clients" class="view-section">
+  <!-- CLIENT LIST -->
+  <div id="cl-subview-list">
+    <div
+      class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
+    >
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Client Management</h1>
+        <p class="text-gray-500">View and manage service recipients.</p>
+      </div>
+      <button
+        onclick="switchClView('add')"
+        class="btn-primary shadow-lg shadow-green-100"
+      >
+        <i class="ph ph-plus-circle text-lg"></i> Add Client
+      </button>
+    </div>
+
+    <!-- Toolbar -->
+    <div
+      class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-col md:flex-row gap-4"
+    >
+      <div class="relative flex-1">
+        <i
+          class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+        ></i>
+        <input
+          type="text"
+          id="clSearch"
+          onkeyup="renderClTable()"
+          placeholder="Search clients..."
+          class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:border-[#65c027]"
+        />
+      </div>
+      <select
+        id="clFilterStatus"
+        onchange="renderClTable()"
+        class="bg-gray-50 border border-gray-200 text-sm rounded-lg p-2 focus:border-[#65c027]"
+      >
+        <option value="All">All Status</option>
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+        <option value="Cancelled service">Cancelled</option>
+        <option value="Temporary hospital stay">Hospital Stay</option>
+      </select>
+      <select
+        id="clFilterType"
+        onchange="renderClTable()"
+        class="bg-gray-50 border border-gray-200 text-sm rounded-lg p-2 focus:border-[#65c027]"
+      >
+        <option value="All">All Types</option>
+        <option value="Lead Agency">Lead Agency</option>
+        <option value="LTCI">LTCI</option>
+        <option value="Medicare">Medicare</option>
+        <option value="Private Pay">Private Pay</option>
+        <option value="VA">VA</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div
+      class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+    >
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr
+              class="bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase"
+            >
+              <th class="p-4">Client Name</th>
+              <th class="p-4">Type</th>
+              <th class="p-4">Contact</th>
+              <th class="p-4">City</th>
+              <th class="p-4">Status</th>
+            </tr>
+          </thead>
+          <tbody
+            id="clTableBody"
+            class="text-sm text-gray-700 divide-y divide-gray-50"
+          ></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD CLIENT FORM -->
+  <div id="cl-subview-add" class="hidden">
+    <div class="mb-6 flex items-center gap-4">
+      <button
+        onclick="switchClView('list')"
+        class="p-2 rounded-full hover:bg-gray-200 text-gray-600"
+      >
+        <i class="ph ph-arrow-left text-xl"></i>
+      </button>
+      <h1 class="text-2xl font-bold text-gray-800">Add New Client</h1>
+    </div>
+
+    <form
+      id="clientForm"
+      onsubmit="submitClientForm(event)"
+      class="max-w-5xl bg-white rounded-xl shadow-md border border-gray-100 p-8 space-y-8"
+    >
+      <!-- Personal Info -->
+      <div>
+        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+          Client Information
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="input-label">First Name</label
+            ><input type="text" name="firstName" required class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Middle Name</label
+            ><input type="text" name="middleName" class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Last Name</label
+            ><input type="text" name="lastName" required class="input-field" />
+          </div>
+
+          <div>
+            <label class="input-label">Date of Birth</label
+            ><input type="date" name="dob" required class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Gender</label
+            ><select name="gender" class="input-field">
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+          <div>
+            <label class="input-label">Status</label>
+            <select name="status" class="input-field">
+              <option>Active</option>
+              <option>Inactive</option>
+              <option>Cancelled service</option>
+              <option>Temporary hospital stay</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="input-label">Email</label
+            ><input type="email" name="email" class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Phone</label
+            ><input type="tel" name="phone" required class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Type</label>
+            <select name="type" class="input-field">
+              <option>Lead Agency</option>
+              <option>LTCI</option>
+              <option>Medicare</option>
+              <option>Private Pay</option>
+              <option>VA</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-3 grid grid-cols-3 gap-4">
+            <div class="col-span-1">
+              <label class="input-label">Address</label
+              ><input type="text" name="address" class="input-field" />
+            </div>
+            <div>
+              <label class="input-label">City</label
+              ><input type="text" name="city" class="input-field" />
+            </div>
+            <div>
+              <label class="input-label">Zip</label
+              ><input type="text" name="zip" class="input-field" />
+            </div>
+          </div>
+
+          <div
+            class="md:col-span-3 grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded"
+          >
+            <div>
+              <label class="input-label">Living Alone?</label
+              ><select name="livingAlone" class="input-field">
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+            </div>
+            <div>
+              <label class="input-label">Language</label>
+              <select name="languages" class="input-field">
+                <option>ENGLISH</option>
+                <option>ARABIC</option>
+                <option>FRENCH</option>
+                <option>ARMENIAN</option>
+                <option>CHINISE</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Contact -->
+      <div>
+        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+          Emergency Contact
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="input-label">Name</label
+            ><input type="text" name="emName" required class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Relationship</label
+            ><input type="text" name="emRel" class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Email</label
+            ><input type="email" name="emEmail" class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Phone</label
+            ><input type="tel" name="emPhone" required class="input-field" />
+          </div>
+
+          <div class="md:col-span-2 grid grid-cols-3 gap-4">
+            <div>
+              <label class="input-label">Address</label
+              ><input type="text" name="emAddress" class="input-field" />
+            </div>
+            <div>
+              <label class="input-label">City</label
+              ><input type="text" name="emCity" class="input-field" />
+            </div>
+            <div>
+              <label class="input-label">Zip</label
+              ><input type="text" name="emZip" class="input-field" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-4">
+        <button type="submit" id="saveClientBtn" class="btn-primary">
+          Register Client & Send Email
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

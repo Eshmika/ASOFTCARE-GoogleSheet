@@ -6,10 +6,11 @@
   const cgRowsPerPage = 5;
   let currentProfileId = null;
   let currentProfileData = null;
+  let clData = [];
 
   // -- Navigation --
   const originalNavigate = window.navigate || function () {};
-  window.navigate = function (viewName) {
+  window.navigate = function (viewName) {   
     document
       .querySelectorAll(".nav-item")
       .forEach((el) => el.classList.remove("active"));
@@ -17,19 +18,20 @@
       .querySelectorAll(".view-section")
       .forEach((el) => el.classList.remove("active"));
 
-    // Active Tab Style
     const btn = document.querySelector(
       `button[onclick="navigate('${viewName}')"]`
     );
     if (btn) btn.classList.add("active");
 
-    // Show View
     const target = document.getElementById("view-" + viewName);
     if (target) target.classList.add("active");
 
     if (viewName === "caregivers") {
       loadCaregiverList();
       switchCgView("list");
+    } else if (viewName === "clients") {
+      loadClientList();
+      switchClView("list");
     } else if (viewName === "dashboard") {
       loadDashboardStats();
     }
@@ -634,4 +636,99 @@
   window.onload = function () {
     loadDashboardStats();
   };
+
+  function switchClView(subView) {
+    document.getElementById("cl-subview-list").classList.add("hidden");
+    document.getElementById("cl-subview-add").classList.add("hidden");
+    document.getElementById("cl-subview-" + subView).classList.remove("hidden");
+  }
+
+  function loadClientList() {
+    const tbody = document.getElementById("clTableBody");
+    tbody.innerHTML =
+      '<tr><td colspan="5" class="p-4 text-center">Loading...</td></tr>';
+
+    google.script.run
+      .withSuccessHandler((data) => {
+        clData = data;
+        renderClTable();
+      })
+      .getClientList();
+  }
+
+  function renderClTable() {
+    const search = document.getElementById("clSearch").value.toLowerCase();
+    const statusFilter = document.getElementById("clFilterStatus").value;
+    const typeFilter = document.getElementById("clFilterType").value;
+
+    const filtered = clData.filter((item) => {
+      const matchSearch =
+        item.name.toLowerCase().includes(search) ||
+        item.email.toLowerCase().includes(search);
+      const matchStatus =
+        statusFilter === "All" || item.status === statusFilter;
+      const matchType = typeFilter === "All" || item.type === typeFilter;
+      return matchSearch && matchStatus && matchType;
+    });
+
+    const tbody = document.getElementById("clTableBody");
+    tbody.innerHTML = "";
+
+    if (filtered.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="5" class="p-8 text-center text-gray-400">No clients found.</td></tr>';
+      return;
+    }
+
+    filtered.forEach((row) => {
+      let statusColor = "bg-gray-100 text-gray-600";
+      if (row.status === "Active") statusColor = "bg-green-100 text-green-700";
+      if (row.status === "Inactive") statusColor = "bg-red-100 text-red-700";
+      if (row.status === "Cancelled service")
+        statusColor = "bg-gray-200 text-gray-800";
+
+      tbody.innerHTML += `
+      <tr class="hover:bg-gray-50 border-b border-gray-50">
+        <td class="p-4">
+          <div class="font-bold text-gray-800">${row.name}</div>
+          <div class="text-xs text-gray-400">${row.id}</div>
+        </td>
+        <td class="p-4 text-sm text-gray-600">${row.type}</td>
+        <td class="p-4">
+           <div class="text-xs text-gray-500">${row.email}</div>
+           <div class="text-xs text-gray-400">${row.phone}</div>
+        </td>
+        <td class="p-4 text-sm text-gray-600">${row.city}</td>
+        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${row.status}</span></td>
+      </tr>
+    `;
+    });
+  }
+
+  function submitClientForm(e) {
+    e.preventDefault();
+    const btn = document.getElementById("saveClientBtn");
+    btn.disabled = true;
+    btn.textContent = "Processing...";
+
+    const form = document.getElementById("clientForm");
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => (data[key] = value));
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.disabled = false;
+        btn.textContent = "Register Client & Send Email";
+        if (res.success) {
+          Swal.fire("Success", "Client Registered!", "success");
+          form.reset();
+          switchClView("list");
+          loadClientList();
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .handleClientSubmission(data);
+  }
 </script>
