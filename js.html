@@ -10,7 +10,7 @@
 
   // -- Navigation --
   const originalNavigate = window.navigate || function () {};
-  window.navigate = function (viewName) {   
+  window.navigate = function (viewName) {
     document
       .querySelectorAll(".nav-item")
       .forEach((el) => el.classList.remove("active"));
@@ -42,7 +42,9 @@
     document.getElementById("cg-subview-add").classList.add("hidden");
     document.getElementById("cg-subview-profile").classList.add("hidden");
     document.getElementById("cg-subview-edit").classList.add("hidden");
-    document.getElementById("cg-subview-" + subView).classList.remove("hidden");
+
+    const target = document.getElementById("cg-subview-" + subView);
+    if (target) target.classList.remove("hidden");
   }
 
   // -- 1. Load List --
@@ -638,16 +640,20 @@
   };
 
   function switchClView(subView) {
-    document.getElementById("cl-subview-list").classList.add("hidden");
-    document.getElementById("cl-subview-add").classList.add("hidden");
-    document.getElementById("cl-subview-" + subView).classList.remove("hidden");
+    const list = document.getElementById("cl-subview-list");
+    const add = document.getElementById("cl-subview-add");
+    if (list) list.classList.add("hidden");
+    if (add) add.classList.add("hidden");
+
+    const target = document.getElementById("cl-subview-" + subView);
+    if (target) target.classList.remove("hidden");
   }
 
   function loadClientList() {
     const tbody = document.getElementById("clTableBody");
-    tbody.innerHTML =
-      '<tr><td colspan="5" class="p-4 text-center">Loading...</td></tr>';
-
+    if (tbody)
+      tbody.innerHTML =
+        '<tr><td colspan="5" class="p-4 text-center">Loading...</td></tr>';
     google.script.run
       .withSuccessHandler((data) => {
         clData = data;
@@ -657,9 +663,15 @@
   }
 
   function renderClTable() {
-    const search = document.getElementById("clSearch").value.toLowerCase();
-    const statusFilter = document.getElementById("clFilterStatus").value;
-    const typeFilter = document.getElementById("clFilterType").value;
+    const searchEl = document.getElementById("clSearch");
+    const statusEl = document.getElementById("clFilterStatus");
+    const typeEl = document.getElementById("clFilterType");
+
+    if (!searchEl) return;
+
+    const search = searchEl.value.toLowerCase();
+    const statusFilter = statusEl.value;
+    const typeFilter = typeEl.value;
 
     const filtered = clData.filter((item) => {
       const matchSearch =
@@ -686,22 +698,24 @@
       if (row.status === "Inactive") statusColor = "bg-red-100 text-red-700";
       if (row.status === "Cancelled service")
         statusColor = "bg-gray-200 text-gray-800";
+      if (row.status === "Temporary hospital stay")
+        statusColor = "bg-orange-100 text-orange-800";
 
       tbody.innerHTML += `
-      <tr class="hover:bg-gray-50 border-b border-gray-50">
-        <td class="p-4">
-          <div class="font-bold text-gray-800">${row.name}</div>
-          <div class="text-xs text-gray-400">${row.id}</div>
-        </td>
-        <td class="p-4 text-sm text-gray-600">${row.type}</td>
-        <td class="p-4">
-           <div class="text-xs text-gray-500">${row.email}</div>
-           <div class="text-xs text-gray-400">${row.phone}</div>
-        </td>
-        <td class="p-4 text-sm text-gray-600">${row.city}</td>
-        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${row.status}</span></td>
-      </tr>
-    `;
+        <tr class="hover:bg-gray-50 border-b border-gray-50">
+          <td class="p-4">
+            <div class="font-bold text-gray-800">${row.name}</div>
+            <div class="text-xs text-gray-400">${row.id}</div>
+          </td>
+          <td class="p-4 text-sm text-gray-600">${row.type}</td>
+          <td class="p-4">
+             <div class="text-xs text-gray-500">${row.email}</div>
+             <div class="text-xs text-gray-400">${row.phone}</div>
+          </td>
+          <td class="p-4 text-sm text-gray-600">${row.city}</td>
+          <td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${row.status}</span></td>
+        </tr>
+      `;
     });
   }
 
