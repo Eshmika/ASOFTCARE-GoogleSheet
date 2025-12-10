@@ -7,6 +7,7 @@
   let currentProfileId = null;
   let currentProfileData = null;
   let clData = [];
+  let currentClientData = null;
 
   // -- Navigation --
   const originalNavigate = window.navigate || function () {};
@@ -642,8 +643,13 @@
   function switchClView(subView) {
     const list = document.getElementById("cl-subview-list");
     const add = document.getElementById("cl-subview-add");
+    const profile = document.getElementById("cl-subview-profile");
+    const edit = document.getElementById("cl-subview-edit");
+
     if (list) list.classList.add("hidden");
     if (add) add.classList.add("hidden");
+    if (profile) profile.classList.add("hidden");
+    if (edit) edit.classList.add("hidden");
 
     const target = document.getElementById("cl-subview-" + subView);
     if (target) target.classList.remove("hidden");
@@ -702,7 +708,7 @@
         statusColor = "bg-orange-100 text-orange-800";
 
       tbody.innerHTML += `
-        <tr class="hover:bg-gray-50 border-b border-gray-50">
+        <tr onclick="loadClientProfile('${row.id}')" class="hover:bg-gray-50 border-b border-gray-50 cursor-pointer">
           <td class="p-4">
             <div class="font-bold text-gray-800">${row.name}</div>
             <div class="text-xs text-gray-400">${row.id}</div>
@@ -744,5 +750,130 @@
         }
       })
       .handleClientSubmission(data);
+  }
+
+  function loadClientProfile(id) {
+    switchClView("profile");
+    document.getElementById("clProfileLoading").classList.remove("hidden");
+    document.getElementById("clProfileContent").classList.add("hidden");
+
+    google.script.run
+      .withSuccessHandler((data) => {
+        currentClientData = data;
+        renderClientProfile(data);
+      })
+      .getClientDetails(id);
+  }
+
+  function renderClientProfile(data) {
+    if (!data) return;
+
+    // Helper to set text content safely
+    const set = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val || "--";
+    };
+
+    set("cp-initials", (data.firstName?.[0] || "") + (data.lastName?.[0] || ""));
+    set("cp-name", `${data.firstName} ${data.middleName || ""} ${data.lastName}`);
+    set("cp-id", data.id);
+    set("cp-status", data.status);
+    set("cp-email", data.email);
+    set("cp-phone", data.phone);
+    set("cp-address", `${data.address || ""}, ${data.city || ""} ${data.zip || ""}`);
+    
+    // Format DOB
+    let dob = data.dob;
+    if (dob) {
+        const d = new Date(dob);
+        if (!isNaN(d.getTime())) {
+            dob = d.toLocaleDateString();
+        }
+    }
+    set("cp-dob", dob);
+    
+    set("cp-gender", data.gender);
+    set("cp-type", data.type);
+    set("cp-living", data.livingAlone === "Yes" ? "Living Alone" : "Not Living Alone");
+    set("cp-languages", data.languages);
+
+    set("cp-emName", data.emName);
+    set("cp-emRel", data.emRel);
+    set("cp-emPhone", data.emPhone);
+    set("cp-emEmail", data.emEmail);
+    set("cp-emAddress", `${data.emAddress || ""}, ${data.emCity || ""} ${data.emZip || ""}`);
+
+    document.getElementById("clProfileLoading").classList.add("hidden");
+    document.getElementById("clProfileContent").classList.remove("hidden");
+  }
+
+  function editClientProfile() {
+    if (!currentClientData) return;
+    switchClView("edit");
+
+    const d = currentClientData;
+    const setVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val || "";
+    };
+
+    setVal("ce-id", d.id);
+    setVal("ce-firstName", d.firstName);
+    setVal("ce-middleName", d.middleName);
+    setVal("ce-lastName", d.lastName);
+    setVal("ce-status", d.status);
+    
+    // Format DOB for input[type="date"]
+    let dob = "";
+    if (d.dob) {
+        const dateObj = new Date(d.dob);
+        if (!isNaN(dateObj.getTime())) {
+            dob = dateObj.toISOString().split('T')[0];
+        }
+    }
+    setVal("ce-dob", dob);
+    
+    setVal("ce-gender", d.gender);
+    setVal("ce-email", d.email);
+    setVal("ce-phone", d.phone);
+    setVal("ce-address", d.address);
+    setVal("ce-city", d.city);
+    setVal("ce-zip", d.zip);
+    setVal("ce-type", d.type);
+    setVal("ce-livingAlone", d.livingAlone);
+    setVal("ce-languages", d.languages);
+    setVal("ce-emName", d.emName);
+    setVal("ce-emRel", d.emRel);
+    setVal("ce-emEmail", d.emEmail);
+    setVal("ce-emPhone", d.emPhone);
+    setVal("ce-emAddress", d.emAddress);
+    setVal("ce-emCity", d.emCity);
+    setVal("ce-emZip", d.emZip);
+  }
+
+  function submitEditClientForm(e) {
+    e.preventDefault();
+    const btn = document.getElementById("updateClientBtn");
+    btn.disabled = true;
+    btn.textContent = "Updating...";
+
+    const form = document.getElementById("clientEditForm");
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => (data[key] = value));
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.disabled = false;
+        btn.textContent = "Update Client";
+        if (res.success) {
+          Swal.fire("Success", "Client Updated!", "success");
+          // Reload profile with new data
+          loadClientProfile(data.id);
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .updateClient(data);
   }
 </script>

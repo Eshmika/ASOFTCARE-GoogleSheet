@@ -245,4 +245,298 @@
       </div>
     </form>
   </div>
+
+  <!-- CLIENT PROFILE VIEW -->
+  <div id="cl-subview-profile" class="hidden">
+    <div class="mb-6 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <button
+          onclick="switchClView('list')"
+          class="p-2 rounded-full hover:bg-gray-200 text-gray-600"
+        >
+          <i class="ph ph-arrow-left text-xl"></i>
+        </button>
+        <h1 class="text-2xl font-bold text-gray-800">Client Profile</h1>
+      </div>
+      <button
+        onclick="editClientProfile()"
+        class="btn-primary shadow-lg shadow-green-100"
+      >
+        <i class="ph ph-pencil-simple text-lg"></i> Edit Profile
+      </button>
+    </div>
+
+    <div id="clProfileLoading" class="text-center py-12 hidden">
+      <i class="ph ph-spinner animate-spin text-3xl text-gray-400"></i>
+      <p class="text-gray-500 mt-2">Loading profile...</p>
+    </div>
+
+    <div id="clProfileContent" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Main Info Card -->
+      <div class="md:col-span-1 space-y-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+          <div class="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl text-gray-400 font-bold">
+            <span id="cp-initials">--</span>
+          </div>
+          <h2 id="cp-name" class="text-xl font-bold text-gray-800">Loading...</h2>
+          <p id="cp-id" class="text-sm text-gray-500 mb-2">CL-XXXX</p>
+          <span id="cp-status" class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">
+            Status
+          </span>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">Contact Info</h3>
+          <div class="space-y-3 text-sm">
+            <div>
+              <label class="block text-gray-500 text-xs">Email</label>
+              <div id="cp-email" class="font-medium text-gray-700">--</div>
+            </div>
+            <div>
+              <label class="block text-gray-500 text-xs">Phone</label>
+              <div id="cp-phone" class="font-medium text-gray-700">--</div>
+            </div>
+            <div>
+              <label class="block text-gray-500 text-xs">Address</label>
+              <div id="cp-address" class="font-medium text-gray-700">--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Column -->
+      <div class="md:col-span-2 space-y-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">Personal Details</h3>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <label class="block text-gray-500 text-xs">Date of Birth</label>
+              <div id="cp-dob" class="font-medium text-gray-700">--</div>
+            </div>
+            <div>
+              <label class="block text-gray-500 text-xs">Gender</label>
+              <div id="cp-gender" class="font-medium text-gray-700">--</div>
+            </div>
+            <div>
+              <label class="block text-gray-500 text-xs">Client Type</label>
+              <div id="cp-type" class="font-medium text-gray-700">--</div>
+            </div>
+            <div>
+              <label class="block text-gray-500 text-xs">Living Arrangement</label>
+              <div id="cp-living" class="font-medium text-gray-700">--</div>
+            </div>
+            <div class="col-span-2">
+              <label class="block text-gray-500 text-xs">Languages</label>
+              <div id="cp-languages" class="font-medium text-gray-700">--</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">Emergency Contact</h3>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <label class="block text-gray-500 text-xs">Name</label>
+              <div id="cp-emName" class="font-medium text-gray-700">--</div>
+            </div>
+            <div>
+              <label class="block text-gray-500 text-xs">Relationship</label>
+              <div id="cp-emRel" class="font-medium text-gray-700">--</div>
+            </div>
+            <div>
+              <label class="block text-gray-500 text-xs">Phone</label>
+              <div id="cp-emPhone" class="font-medium text-gray-700">--</div>
+            </div>
+            <div>
+              <label class="block text-gray-500 text-xs">Email</label>
+              <div id="cp-emEmail" class="font-medium text-gray-700">--</div>
+            </div>
+            <div class="col-span-2">
+              <label class="block text-gray-500 text-xs">Address</label>
+              <div id="cp-emAddress" class="font-medium text-gray-700">--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT CLIENT FORM -->
+  <div id="cl-subview-edit" class="hidden">
+    <div class="mb-6 flex items-center gap-4">
+      <button
+        onclick="switchClView('profile')"
+        class="p-2 rounded-full hover:bg-gray-200 text-gray-600"
+      >
+        <i class="ph ph-arrow-left text-xl"></i>
+      </button>
+      <h1 class="text-2xl font-bold text-gray-800">Edit Client</h1>
+    </div>
+
+    <form
+      id="clientEditForm"
+      onsubmit="submitEditClientForm(event)"
+      class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 space-y-8"
+    >
+      <input type="hidden" name="id" id="ce-id" />
+      
+      <!-- Personal Info -->
+      <div>
+        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+          Personal Information
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="input-label">First Name</label
+            ><input type="text" name="firstName" id="ce-firstName" required class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Middle Name</label
+            ><input type="text" name="middleName" id="ce-middleName" class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Last Name</label
+            ><input type="text" name="lastName" id="ce-lastName" required class="input-field" />
+          </div>
+
+          <div>
+            <label class="input-label">Status</label>
+            <select name="status" id="ce-status" class="input-field">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Cancelled service">Cancelled service</option>
+              <option value="Temporary hospital stay">
+                Temporary hospital stay
+              </option>
+            </select>
+          </div>
+          <div>
+            <label class="input-label">Date of Birth</label
+            ><input type="date" name="dob" id="ce-dob" required class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Gender</label>
+            <select name="gender" id="ce-gender" class="input-field">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div>
+        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+          Contact Information
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="input-label">Email</label
+            ><input type="email" name="email" id="ce-email" class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Phone</label
+            ><input type="tel" name="phone" id="ce-phone" required class="input-field" />
+          </div>
+          <div class="md:col-span-2 grid grid-cols-3 gap-4">
+            <div>
+              <label class="input-label">Address</label
+              ><input type="text" name="address" id="ce-address" class="input-field" />
+            </div>
+            <div>
+              <label class="input-label">City</label
+              ><input type="text" name="city" id="ce-city" class="input-field" />
+            </div>
+            <div>
+              <label class="input-label">Zip</label
+              ><input type="text" name="zip" id="ce-zip" class="input-field" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service Details -->
+      <div>
+        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+          Service Details
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="input-label">Client Type</label>
+            <select name="type" id="ce-type" class="input-field">
+              <option value="Lead Agency">Lead Agency</option>
+              <option value="LTCI">LTCI</option>
+              <option value="Medicare">Medicare</option>
+              <option value="Private Pay">Private Pay</option>
+              <option value="VA">VA</option>
+            </select>
+          </div>
+          <div>
+            <label class="input-label">Living Alone?</label>
+            <select name="livingAlone" id="ce-livingAlone" class="input-field">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <label class="input-label">Languages Spoken</label
+            ><input
+              type="text"
+              name="languages"
+              id="ce-languages"
+              placeholder="e.g. English, Spanish"
+              class="input-field"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Contact -->
+      <div>
+        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+          Emergency Contact
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="input-label">Name</label
+            ><input type="text" name="emName" id="ce-emName" required class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Relationship</label
+            ><input type="text" name="emRel" id="ce-emRel" class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Email</label
+            ><input type="email" name="emEmail" id="ce-emEmail" class="input-field" />
+          </div>
+          <div>
+            <label class="input-label">Phone</label
+            ><input type="tel" name="emPhone" id="ce-emPhone" required class="input-field" />
+          </div>
+
+          <div class="md:col-span-2 grid grid-cols-3 gap-4">
+            <div>
+              <label class="input-label">Address</label
+              ><input type="text" name="emAddress" id="ce-emAddress" class="input-field" />
+            </div>
+            <div>
+              <label class="input-label">City</label
+              ><input type="text" name="emCity" id="ce-emCity" class="input-field" />
+            </div>
+            <div>
+              <label class="input-label">Zip</label
+              ><input type="text" name="emZip" id="ce-emZip" class="input-field" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-4">
+        <button type="submit" id="updateClientBtn" class="btn-primary">
+          Update Client
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

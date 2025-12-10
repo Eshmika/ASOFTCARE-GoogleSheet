@@ -89,9 +89,19 @@ function sendClientWelcomeEmail(data, clientId) {
   var attachments = [];
   // Use same file IDs or new ones if you have specific client docs
   const fileIds = [
-    "1-akwIVsG1ltUON7vqZJBGLcDCc_E9Emq",
-    "1hK-5vAcGZQD_av4eFDaMGv5rfgMVEc67",
-    "11NtPiwoABW1RU0roiuH5zhEhYRqIZ999",
+    "1k4IZdrjQSms38CUoNH6fEOBAAmUmgewf",
+    "139dpgbPksf5bKPJFTA4XTSO3hJLtn3sS",
+    "1hE8OY6pSg2G3pVBYtGLiiSB_z3eephuu",
+    "1HpOWueHbO1u9_jaYN9eLjL3R3hooPbq-",
+    "1ImB8W3OQ9AsZMJZL5cfe1fgB3zj2jO7Y",
+    "1hlQRUN-Q7HqXHnpsFJsfSHjgJ-k4TudT",
+    "1TWSTlXxwbzXnP66WdMXMedlWSC-h_W6D",
+    "1CJqLRnil4-14uwVNUn4RM5OM2_p9rHSW",
+    "144-f4h2tz57_X9159j2vQBhQnhorl7VB",
+    "1A1lAQUknKwKEELsvqRSCRr4XDfr-E0wb",
+    "1eImrE6-veG9YMydn8sJvmj307AeYOLhh",
+    "1KgHNBUBxzA_uaT_ndf1GMf2KiJI-pimP",
+    "1ksWSuifLPBESZrF8HbZRed2OjyuOES6A",
   ];
 
   fileIds.forEach((id) => {
