@@ -260,101 +260,7 @@
         </div>
       </div>
 
-      <!-- NEW: STAGES PIPELINE -->
-      <div
-        id="pipeline-panel"
-        class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6"
-      >
-        <h3 class="font-bold text-gray-800 mb-6">Recruitment Pipeline</h3>
-        <div
-          class="relative flex flex-col md:flex-row items-start md:items-center justify-between w-full"
-        >
-          <!-- Line Background -->
-          <div
-            class="absolute top-6 left-0 w-full h-1 bg-gray-100 hidden md:block -z-0"
-          ></div>
-
-          <!-- Stage 1: Application -->
-          <div
-            class="relative z-10 flex flex-col items-center flex-1 w-full md:w-auto mb-4 md:mb-0"
-          >
-            <div
-              id="stage-icon-1"
-              class="w-12 h-12 rounded-full bg-gray-200 text-white flex items-center justify-center text-xl font-bold border-4 border-white transition-colors"
-            >
-              1
-            </div>
-            <p class="mt-2 text-sm font-bold text-gray-700">New Application</p>
-            <p id="stage-text-1" class="text-xs text-gray-400">Pending</p>
-          </div>
-
-          <!-- Stage 2: Interview -->
-          <div
-            class="relative z-10 flex flex-col items-center flex-1 w-full md:w-auto mb-4 md:mb-0"
-          >
-            <div
-              id="stage-icon-2"
-              class="w-12 h-12 rounded-full bg-gray-200 text-gray-400 flex items-center justify-center text-xl font-bold border-4 border-white transition-colors"
-            >
-              <i class="ph ph-chats-circle"></i>
-            </div>
-            <p class="mt-2 text-sm font-bold text-gray-700">
-              Interview Completed
-            </p>
-            <button
-              id="stage-btn-2"
-              onclick="advanceStage(2)"
-              class="mt-1 text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-600 transition"
-            >
-              Update
-            </button>
-          </div>
-
-          <!-- Stage 3: Background -->
-          <div
-            class="relative z-10 flex flex-col items-center flex-1 w-full md:w-auto mb-4 md:mb-0"
-          >
-            <div
-              id="stage-icon-3"
-              class="w-12 h-12 rounded-full bg-gray-200 text-gray-400 flex items-center justify-center text-xl font-bold border-4 border-white transition-colors"
-            >
-              <i class="ph ph-shield-check"></i>
-            </div>
-            <p class="mt-2 text-sm font-bold text-gray-700">
-              Passed Background Check
-            </p>
-            <button
-              id="stage-btn-3"
-              onclick="advanceStage(3)"
-              class="mt-1 text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-600 transition"
-            >
-              Update
-            </button>
-          </div>
-
-          <!-- Stage 4: Active -->
-          <div
-            class="relative z-10 flex flex-col items-center flex-1 w-full md:w-auto"
-          >
-            <div
-              id="stage-icon-4"
-              class="w-12 h-12 rounded-full bg-gray-200 text-gray-400 flex items-center justify-center text-xl font-bold border-4 border-white transition-colors"
-            >
-              <i class="ph ph-briefcase"></i>
-            </div>
-            <p class="mt-2 text-sm font-bold text-gray-700">
-              Converted to Active Caregiver
-            </p>
-            <button
-              id="stage-btn-4"
-              onclick="advanceStage(4)"
-              class="mt-1 text-xs px-2 py-1 rounded bg-gray-100 hover:bg-green-100 text-gray-600 hover:text-green-700 transition"
-            >
-              Update
-            </button>
-          </div>
-        </div>
-      </div>
+      <!-- Pipeline Removed -->
 
       <!-- Details Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -1324,5 +1230,119 @@
         </button>
       </div>
     </form>
+  </div>
+
+  <!-- CAREGIVER STAGES VIEW -->
+  <div id="cg-subview-stages" class="hidden">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">Application Stages</h1>
+      <p class="text-gray-500">Manage caregiver recruitment pipeline.</p>
+    </div>
+
+    <div class="space-y-4">
+      <!-- Stage 1: New Application -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <button onclick="toggleStage('stage-new')" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">1</div>
+            <span class="font-bold text-gray-700">New Application</span>
+            <span id="count-stage-new" class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">0</span>
+          </div>
+          <i id="icon-stage-new" class="ph ph-caret-down text-gray-400 transition-transform"></i>
+        </button>
+        <div id="content-stage-new" class="hidden border-t border-gray-100">
+          <div class="p-4">
+            <table class="w-full text-left text-sm">
+              <thead class="text-gray-500 border-b border-gray-100">
+                <tr>
+                  <th class="pb-2">Name</th>
+                  <th class="pb-2">Status</th>
+                  <th class="pb-2 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="list-stage-new" class="divide-y divide-gray-50"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 2: Interview Completed -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <button onclick="toggleStage('stage-interview')" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold">2</div>
+            <span class="font-bold text-gray-700">Interview Completed</span>
+            <span id="count-stage-interview" class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">0</span>
+          </div>
+          <i id="icon-stage-interview" class="ph ph-caret-down text-gray-400 transition-transform"></i>
+        </button>
+        <div id="content-stage-interview" class="hidden border-t border-gray-100">
+          <div class="p-4">
+            <table class="w-full text-left text-sm">
+              <thead class="text-gray-500 border-b border-gray-100">
+                <tr>
+                  <th class="pb-2">Name</th>
+                  <th class="pb-2">Interview Status</th>
+                  <th class="pb-2 text-right">Interview Passed?</th>
+                </tr>
+              </thead>
+              <tbody id="list-stage-interview" class="divide-y divide-gray-50"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 3: Passed Background Check -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <button onclick="toggleStage('stage-background')" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">3</div>
+            <span class="font-bold text-gray-700">Passed Background Check</span>
+            <span id="count-stage-background" class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">0</span>
+          </div>
+          <i id="icon-stage-background" class="ph ph-caret-down text-gray-400 transition-transform"></i>
+        </button>
+        <div id="content-stage-background" class="hidden border-t border-gray-100">
+          <div class="p-4">
+            <table class="w-full text-left text-sm">
+              <thead class="text-gray-500 border-b border-gray-100">
+                <tr>
+                  <th class="pb-2">Name</th>
+                  <th class="pb-2">Background Status</th>
+                  <th class="pb-2 text-right">Background Check Passed?</th>
+                </tr>
+              </thead>
+              <tbody id="list-stage-background" class="divide-y divide-gray-50"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 4: Converted to Active -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <button onclick="toggleStage('stage-active')" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold">4</div>
+            <span class="font-bold text-gray-700">Converted to Active Caregiver</span>
+            <span id="count-stage-active" class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">0</span>
+          </div>
+          <i id="icon-stage-active" class="ph ph-caret-down text-gray-400 transition-transform"></i>
+        </button>
+        <div id="content-stage-active" class="hidden border-t border-gray-100">
+          <div class="p-4">
+            <table class="w-full text-left text-sm">
+              <thead class="text-gray-500 border-b border-gray-100">
+                <tr>
+                  <th class="pb-2">Name</th>
+                  <th class="pb-2">Status</th>
+                  <th class="pb-2 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="list-stage-active" class="divide-y divide-gray-50"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

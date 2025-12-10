@@ -210,6 +210,9 @@ function getCaregiverList() {
       title: row[5],
       status: row[6],
       city: row[15] || "--",
+      appStatus: row[8], // App Status
+      interviewStatus: row[53], // Interview Status (Check index)
+      backgroundCheck: row[54], // Background Check (Check index)
     }))
     .reverse();
 }

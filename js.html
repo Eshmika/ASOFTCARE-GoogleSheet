@@ -30,6 +30,10 @@
     if (viewName === "caregivers") {
       loadCaregiverList();
       switchCgView("list");
+    } else if (viewName === "caregiver-stages") {
+      document.getElementById("view-caregivers").classList.add("active");
+      loadCaregiverStages();
+      switchCgView("stages");
     } else if (viewName === "clients") {
       loadClientList();
       switchClView("list");
@@ -43,6 +47,8 @@
     document.getElementById("cg-subview-add").classList.add("hidden");
     document.getElementById("cg-subview-profile").classList.add("hidden");
     document.getElementById("cg-subview-edit").classList.add("hidden");
+    const stages = document.getElementById("cg-subview-stages");
+    if (stages) stages.classList.add("hidden");
 
     const target = document.getElementById("cg-subview-" + subView);
     if (target) target.classList.remove("hidden");
@@ -875,5 +881,136 @@
         }
       })
       .updateClient(data);
+  }
+
+  // -- Caregiver Stages Logic --
+  function loadCaregiverStages() {
+    google.script.run
+      .withSuccessHandler((data) => {
+        cgData = data;
+        renderCaregiverStages();
+      })
+      .getCaregiverList();
+  }
+
+  function renderCaregiverStages() {
+    const stages = {
+        new: [],
+        interview: [],
+        background: [],
+        active: []
+    };
+
+    cgData.forEach(cg => {
+        // Stage 1: New Application
+        // Condition: App Status is Pending OR (Completed but no Interview Status yet)
+        if (cg.appStatus === "Pending Application" || (cg.appStatus === "Application Completed" && !cg.interviewStatus)) {
+            stages.new.push(cg);
+        }
+        // Stage 2: Interview Completed
+        // Condition: Interview Status exists (Scheduled/Passed/Failed) AND Background Check is empty
+        // Note: If Interview Failed, they stay here until moved or status changed manually? 
+        // For now, if Interview Status is set, they are in this bucket unless Background is set.
+        else if (cg.interviewStatus && !cg.backgroundCheck) {
+            stages.interview.push(cg);
+        }
+        // Stage 3: Passed Background Check
+        // Condition: Background Check exists AND Status is NOT Active
+        else if (cg.backgroundCheck && cg.status !== "Active") {
+            stages.background.push(cg);
+        }
+        // Stage 4: Active
+        // Condition: Status is Active
+        else if (cg.status === "Active") {
+            stages.active.push(cg);
+        }
+    });
+
+    renderStageList("new", stages.new);
+    renderStageList("interview", stages.interview);
+    renderStageList("background", stages.background);
+    renderStageList("active", stages.active);
+
+    document.getElementById("count-stage-new").textContent = stages.new.length;
+    document.getElementById("count-stage-interview").textContent = stages.interview.length;
+    document.getElementById("count-stage-background").textContent = stages.background.length;
+    document.getElementById("count-stage-active").textContent = stages.active.length;
+  }
+
+  function renderStageList(stage, list) {
+    const tbody = document.getElementById(`list-stage-${stage}`);
+    tbody.innerHTML = "";
+    
+    if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-gray-400">No caregivers in this stage.</td></tr>';
+        return;
+    }
+
+    list.forEach(cg => {
+        let actionHtml = "";
+        if (stage === "new") {
+            actionHtml = `<button onclick="updateStageStatus('${cg.id}', 'Interview', 'Scheduled')" class="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-200 font-bold">Move to Interview</button>`;
+        } else if (stage === "interview") {
+            // If already passed/failed, show status, else show buttons
+            if (cg.interviewStatus === "Passed") {
+                 actionHtml = `<span class="text-xs text-green-600 font-bold mr-2">Passed</span> <button onclick="updateStageStatus('${cg.id}', 'Background', 'Pending')" class="text-xs bg-purple-100 text-purple-600 px-3 py-1 rounded-full hover:bg-purple-200 font-bold">Start Background Check</button>`;
+            } else if (cg.interviewStatus === "Failed") {
+                 actionHtml = `<span class="text-xs text-red-600 font-bold">Interview Failed</span>`;
+            } else {
+                actionHtml = `
+                    <div class="flex justify-end gap-2">
+                        <button onclick="updateStageStatus('${cg.id}', 'Interview', 'Passed')" class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200 font-bold">Pass</button>
+                        <button onclick="updateStageStatus('${cg.id}', 'Interview', 'Failed')" class="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full hover:bg-red-200 font-bold">Fail</button>
+                    </div>`;
+            }
+        } else if (stage === "background") {
+             if (cg.backgroundCheck === "Passed") {
+                 actionHtml = `<span class="text-xs text-green-600 font-bold mr-2">Passed</span> <button onclick="updateStageStatus('${cg.id}', 'Active', 'Active')" class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200 font-bold">Activate Caregiver</button>`;
+             } else if (cg.backgroundCheck === "Failed") {
+                 actionHtml = `<span class="text-xs text-red-600 font-bold">Background Check Failed</span>`;
+             } else {
+                actionHtml = `
+                    <div class="flex justify-end gap-2">
+                        <button onclick="updateStageStatus('${cg.id}', 'Background', 'Passed')" class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200 font-bold">Pass</button>
+                        <button onclick="updateStageStatus('${cg.id}', 'Background', 'Failed')" class="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full hover:bg-red-200 font-bold">Fail</button>
+                    </div>`;
+             }
+        } else if (stage === "active") {
+             actionHtml = `<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-bold">Active</span>`;
+        }
+
+        tbody.innerHTML += `
+            <tr class="hover:bg-gray-50">
+                <td class="p-3 font-medium text-gray-700">
+                    <div>${cg.name}</div>
+                    <div class="text-xs text-gray-400">${cg.id}</div>
+                </td>
+                <td class="p-3 text-gray-500 text-xs">
+                    ${stage === 'interview' ? cg.interviewStatus : (stage === 'background' ? cg.backgroundCheck : cg.status)}
+                </td>
+                <td class="p-3 text-right">${actionHtml}</td>
+            </tr>
+        `;
+    });
+  }
+
+  function toggleStage(stageId) {
+    const content = document.getElementById(`content-${stageId}`);
+    const icon = document.getElementById(`icon-${stageId}`);
+    content.classList.toggle("hidden");
+    icon.classList.toggle("rotate-180");
+  }
+
+  function updateStageStatus(id, stage, value) {
+      // Optimistic update or wait? Let's wait for simplicity.
+      google.script.run
+        .withSuccessHandler(() => {
+            // If we passed interview, we might want to auto-trigger next step or just reload
+            // If we passed background, we might want to auto-trigger active
+            
+            // For better UX, let's just reload the list
+            loadCaregiverStages();
+        })
+        .updateCaregiverStage(id, stage, value);
   }
 </script>
