@@ -4,31 +4,7 @@ function sendRecruitmentEmail(data, caregiverId) {
   const webAppUrl = ScriptApp.getService().getUrl();
   const applicationLink = `${webAppUrl}?page=apply&id=${caregiverId}`;
 
-  // 2. Prepare Attachments
-  var attachments = [];
-
-  // These are the exact IDs extracted from your links
-  const fileIds = [
-    "1-akwIVsG1ltUON7vqZJBGLcDCc_E9Emq", // Application for Employment 2025.pdf
-    "1hK-5vAcGZQD_av4eFDaMGv5rfgMVEc67", // Job Description
-    "11NtPiwoABW1RU0roiuH5zhEhYRqIZ999", // Policy / Other
-  ];
-
-  fileIds.forEach((id) => {
-    try {
-      // Fetch file and convert to Blob
-      const file = DriveApp.getFileById(id);
-      console.log(`Successfully fetched file: ${file.getName()}`);
-      attachments.push(file.getBlob());
-    } catch (e) {
-      // Log error but continue so email still sends
-      console.error(
-        `ERROR: Could not attach file ID ${id}. Check Share settings. Details: ${e.message}`
-      );
-    }
-  });
-
-  // 3. Email Content
+  // 2. Email Content
   const subject = `Complete Your Application`;
 
   const htmlBody = `
@@ -74,13 +50,79 @@ function sendRecruitmentEmail(data, caregiverId) {
     </div>
   `;
 
-  // 4. Send
+  // 3. Send
   MailApp.sendEmail({
     to: data.email,
     subject: subject,
     htmlBody: htmlBody,
-    attachments: attachments,
   });
+}
+
+function sendOnboardingEmail(caregiverId) {
+  try {
+    const details = getCaregiverDetails(caregiverId);
+    if (!details) return { success: false, message: "Caregiver not found" };
+
+    const subject = `Action Required: On boarding Caregiver Complete sign & review`;
+    
+    // Placeholder links 
+    const linkContract = "https://drive.google.com/file/d/1-akwIVsG1ltUON7vqZJBGLcDCc_E9Emq/view?usp=sharing";
+    const linkW9 = "https://drive.google.com/file/d/11NtPiwoABW1RU0roiuH5zhEhYRqIZ999/view?usp=sharing";
+    const linkBackground = "https://drive.google.com/file/d/1hK-5vAcGZQD_av4eFDaMGv5rfgMVEc67/view?usp=sharing";
+
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+        <div style="background-color: #65c027; padding: 24px; text-align: center;">
+          <h2 style="color: white; margin: 0; font-size: 24px;">Allevia Senior Care</h2>
+          <p style="color: #f0fdf4; margin: 5px 0 0; font-style: italic;">Onboarding Process</p>
+        </div>
+        
+        <div style="padding: 30px; background-color: #ffffff;">
+          <p style="margin-top: 0;">Dear <strong>${details["First Name"]}</strong>,</p>
+          
+          <p>To finalize your application with Allevia Senior Care, please fill, review and sign the following forms.</p>
+          
+          <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #65c027;">Step 1: Independent Contractor Agreement</h3>
+            <p style="font-size: 14px; margin-bottom: 10px;">Review and sign to confirm your role as an independent caregiver.</p>
+            <a href="${linkContract}" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Sign Agreement</a>
+            
+            <h3 style="margin-top: 20px; color: #65c027;">Step 2: IRS W‑9 Form</h3>
+            <p style="font-size: 14px; margin-bottom: 10px;">Submit this form so we can correctly report your earnings as an independent contractor. The IRS requires this so you receive a 1099‑NEC for tax filing.</p>
+            <a href="${linkW9}" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Submit W-9</a>
+
+            <h3 style="margin-top: 20px; color: #65c027;">Step 3: Ohio Background Check (Dave Yost)</h3>
+            <p style="font-size: 14px; margin-bottom: 10px;">The Ohio Attorney General’s office manages caregiver background checks.</p>
+            <ul style="font-size: 14px; padding-left: 20px; margin-bottom: 10px;">
+              <li>Sign the consent form (this authorized us to view your background).</li>
+            </ul>
+            <p style="font-size: 13px; background-color: #fff; padding: 10px; border: 1px dashed #ccc; border-radius: 4px;">
+              <strong>Note:</strong> The link provided is where you self pay for your background or If you already have a copy that is less than one year old, you may upload it instead. This step is required by state law to ensure the safety of our clients.
+            </p>
+            <a href="${linkBackground}" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Start Background Check</a>
+          </div>
+
+          <p>Once all items are submitted, your application status will be updated to Complete.</p>
+          <p>We appreciate your prompt attention to these steps and look forward to welcoming you to our team.</p>
+
+          <br>
+          <p style="margin-bottom: 5px;">Best regards,</p>
+          <p style="margin: 0; font-weight: bold;">Ines k. M & Allevia Teams</p>
+          <p style="margin: 0; color: #666; font-size: 14px;">Managing Director | Allevia Senior Care</p>
+        </div>
+      </div>
+    `;
+
+    MailApp.sendEmail({
+      to: details["Email"],
+      subject: subject,
+      htmlBody: htmlBody
+    });
+
+    return { success: true, message: "Onboarding email sent!" };
+  } catch (e) {
+    return { success: false, message: e.toString() };
+  }
 }
 
 function resendCaregiverEmail(caregiverId) {
