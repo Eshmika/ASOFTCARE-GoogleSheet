@@ -47,6 +47,7 @@
           <option value="All">All Status</option>
           <option value="Active">Active</option>
           <option value="Inactive">Inactive</option>
+          <option value="No call">No call</option>
           <option value="Vacation">Vacation</option>
         </select>
       </div>
@@ -65,7 +66,7 @@
               <th class="p-4">Caregiver</th>
               <th class="p-4">Title</th>
               <th class="p-4">Contact</th>
-              <th class="p-4">City</th>
+              <th class="p-4">City/Zipcode</th>
               <th class="p-4">Status</th>
               <th class="p-4 text-right">Actions</th>
             </tr>
@@ -465,6 +466,15 @@
           <div>
             <label class="block text-sm font-medium text-gray-700">SSN #</label
             ><input type="text" name="ssn" id="edit-ssn" class="input-field" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Status</label>
+            <select name="status" id="edit-status" class="input-field">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="No call">No call</option>
+              <option value="Vacation">Vacation</option>
+            </select>
           </div>
 
           <div class="md:col-span-2">

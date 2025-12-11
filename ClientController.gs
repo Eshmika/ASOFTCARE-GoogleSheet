@@ -111,6 +111,7 @@ function getClientList() {
       status: row[4],
       type: row[9],
       city: row[11],
+      zip: row[12],
     }))
     .reverse();
 }
