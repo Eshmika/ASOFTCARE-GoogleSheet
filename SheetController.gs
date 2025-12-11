@@ -73,16 +73,11 @@ function getOrCreateSheet() {
 function handleCaregiverSubmission(data) {
   const sheet = getOrCreateSheet();
   const lastRow = sheet.getLastRow();
-  let newId = "CG-1001";
-
-  if (lastRow > 1) {
-    const lastIdStr = sheet.getRange(lastRow, 1).getValue().toString();
-    const parts = lastIdStr.split("-");
-    if (parts.length > 1) {
-      const lastNum = parseInt(parts[1]);
-      if (!isNaN(lastNum)) newId = "CG-" + (lastNum + 1);
-    }
-  }
+  
+  // Generate ID: CG + Random 4 digits
+  // Example: CG1234
+  const randomPart = Math.floor(1000 + Math.random() * 9000); // 4 digit random
+  const newId = `CG${randomPart}`;
 
   sheet.appendRow([
     newId,

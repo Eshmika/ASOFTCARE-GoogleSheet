@@ -9,6 +9,153 @@
   let clData = [];
   let currentClientData = null;
 
+  // -- Input Masking & Validation --
+  function setupInputMasks() {
+    // Helper to attach listeners
+    const attach = (selector, type) => {
+      const els = document.querySelectorAll(selector);
+      els.forEach(el => {
+        // Remove existing listeners to avoid duplicates if called multiple times
+        // (Simple way is just to overwrite oninput, though addEventListener is better if we track them)
+        el.oninput = (e) => handleInputMask(e, type);
+      });
+    };
+
+    // Caregiver Inputs
+    attach('input[name="ssn"]', 'ssn');
+    attach('input[name="phone"]', 'phone');
+    attach('input[name="zip"]', 'zip');
+    
+    // Client Inputs
+    // Note: Client form uses same names
+    attach('#clientForm input[name="phone"]', 'phone');
+    attach('#clientForm input[name="zip"]', 'zip');
+    
+    // Edit Forms (IDs)
+    attach('#edit-ssn', 'ssn');
+    attach('#edit-phone', 'phone');
+    attach('#edit-zip', 'zip');
+    attach('#ce-phone', 'phone');
+    attach('#ce-zip', 'zip');
+  }
+
+  function handleInputMask(e, type) {
+    let val = e.target.value.replace(/\D/g, ''); // Strip non-digits
+    
+    if (type === 'ssn') {
+      // Max 9 digits
+      if (val.length > 9) val = val.substring(0, 9);
+      
+      // Format: xxx-xx-xxxx
+      if (val.length > 5) {
+        val = val.replace(/^(\d{3})(\d{2})(\d+)/, '$1-$2-$3');
+      } else if (val.length > 3) {
+        val = val.replace(/^(\d{3})(\d+)/, '$1-$2');
+      }
+      e.target.value = val;
+    } 
+    else if (type === 'phone') {
+      // Max 10 digits
+      if (val.length > 10) val = val.substring(0, 10);
+      
+      // Format: (xxx) xxx-xxxx
+      if (val.length > 6) {
+        val = val.replace(/^(\d{3})(\d{3})(\d+)/, '($1) $2-$3');
+      } else if (val.length > 3) {
+        val = val.replace(/^(\d{3})(\d+)/, '($1) $2');
+      }
+      e.target.value = val;
+    }
+    else if (type === 'zip') {
+      // Max 5 digits
+      if (val.length > 5) val = val.substring(0, 5);
+      e.target.value = val;
+    }
+  }
+
+  // Initialize masks on load
+  window.addEventListener('DOMContentLoaded', setupInputMasks);
+
+  // -- Google Maps Autocomplete --
+  window.initAutocomplete = function() {
+    // Helper to setup autocomplete
+    const setup = (addrId, cityId, stateId, zipId) => {
+      const input = document.getElementById(addrId);
+      if (!input) return;
+
+      // Check if google is defined (in case API fails to load)
+      if (typeof google === 'undefined' || !google.maps || !google.maps.places) return;
+
+      const autocomplete = new google.maps.places.Autocomplete(input, {
+        types: ['address'],
+        componentRestrictions: { country: 'us' },
+        fields: ['address_components', 'geometry', 'name']
+      });
+
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        fillInAddress(place, cityId, stateId, zipId);
+      });
+    };
+
+    // Caregiver Edit Profile
+    setup('edit-address', 'edit-city', 'edit-state', 'edit-zip');
+
+    // Client Add Form
+    setup('add-cl-address', 'add-cl-city', null, 'add-cl-zip');
+    setup('add-cl-emAddress', 'add-cl-emCity', null, 'add-cl-emZip');
+
+    // Client Edit Form
+    setup('ce-address', 'ce-city', null, 'ce-zip');
+    setup('ce-emAddress', 'ce-emCity', null, 'ce-emZip');
+  };
+
+  function fillInAddress(place, cityId, stateId, zipId) {
+    let address1 = "";
+    let postcode = "";
+    let city = "";
+    let state = "";
+
+    if (place.address_components) {
+      for (const component of place.address_components) {
+        const componentType = component.types[0];
+
+        switch (componentType) {
+          case "street_number": {
+            address1 = `${component.long_name} ${address1}`;
+            break;
+          }
+          case "route": {
+            address1 += component.short_name;
+            break;
+          }
+          case "postal_code": {
+            postcode = `${component.long_name}`;
+            break;
+          }
+          case "locality":
+            city = component.long_name;
+            break;
+          case "administrative_area_level_1": {
+            state = component.short_name;
+            break;
+          }
+        }
+      }
+    }
+    
+    if (cityId && document.getElementById(cityId)) {
+      document.getElementById(cityId).value = city;
+    }
+    if (stateId && document.getElementById(stateId)) {
+      document.getElementById(stateId).value = state;
+    }
+    if (zipId && document.getElementById(zipId)) {
+      // Max 5 digits as requested
+      document.getElementById(zipId).value = postcode.substring(0, 5);
+    }
+  }
+
   // -- Navigation --
   const originalNavigate = window.navigate || function () {};
   window.navigate = function (viewName) {
@@ -26,6 +173,9 @@
 
     const target = document.getElementById("view-" + viewName);
     if (target) target.classList.add("active");
+
+    // Re-attach masks when switching views (just in case dynamic content)
+    setupInputMasks();
 
     if (viewName === "caregivers") {
       loadCaregiverList();

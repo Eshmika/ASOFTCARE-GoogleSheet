@@ -45,16 +45,11 @@ function getOrCreateClientSheet() {
 function handleClientSubmission(data) {
   const sheet = getOrCreateClientSheet();
   const lastRow = sheet.getLastRow();
-  let newId = "CL-1001";
-
-  if (lastRow > 1) {
-    const lastIdStr = sheet.getRange(lastRow, 1).getValue().toString();
-    const parts = lastIdStr.split("-");
-    if (parts.length > 1) {
-      const lastNum = parseInt(parts[1]);
-      if (!isNaN(lastNum)) newId = "CL-" + (lastNum + 1);
-    }
-  }
+  
+  // Generate ID: CL + Random 4 digits
+  // Example: CL1234
+  const randomPart = Math.floor(1000 + Math.random() * 9000); // 4 digit random
+  const newId = `CL${randomPart}`;
 
   // Format Array for Sheet
   const rowData = [
