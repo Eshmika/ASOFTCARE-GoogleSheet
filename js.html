@@ -73,6 +73,11 @@
     const statusFilter = document.getElementById("cgFilterStatus").value;
 
     cgFiltered = cgData.filter((item) => {
+      // Only show caregivers who have been converted to Active/Inactive/etc.
+      // Exclude "Applicant", "Pending", or empty statuses unless they are in the final stages.
+      const validStatuses = ["Active", "Inactive", "No call", "Vacation"];
+      if (!validStatuses.includes(item.status)) return false;
+
       const matchSearch =
         item.name.toLowerCase().includes(search) ||
         item.email.toLowerCase().includes(search) ||
@@ -902,25 +907,25 @@
     };
 
     cgData.forEach(cg => {
-        // Stage 1: New Application
-        // Condition: App Status is Pending
-        if (cg.appStatus === "Pending Application") {
-            stages.new.push(cg);
-        }
-        // Stage 2: Interview Completed (Ready for Interview / In Interview Process)
-        // Condition: App Status is Completed AND Background Check is empty
-        else if (cg.appStatus === "Application Completed" && !cg.backgroundCheck) {
-            stages.interview.push(cg);
+        // Stage 4: Active / Inactive / No call / Vacation
+        // Condition: Status is one of the final states.
+        if (["Active", "Inactive", "No call", "Vacation"].includes(cg.status)) {
+            stages.active.push(cg);
         }
         // Stage 3: Passed Background Check
-        // Condition: Background Check exists AND Status is NOT Active
-        else if (cg.backgroundCheck && cg.status !== "Active") {
+        // Condition: Interview Passed, but not yet Active
+        else if (cg.interviewStatus === "Passed") {
             stages.background.push(cg);
         }
-        // Stage 4: Active
-        // Condition: Status is Active
-        else if (cg.status === "Active") {
-            stages.active.push(cg);
+        // Stage 2: Interview Completed
+        // Condition: App Completed
+        else if (cg.appStatus === "Application Completed") {
+            stages.interview.push(cg);
+        }
+        // Stage 1: New Application
+        // Condition: Pending OR Applicant
+        else if (cg.appStatus === "Pending Application" || cg.status === "Applicant") {
+            stages.new.push(cg);
         }
     });
 
@@ -974,7 +979,13 @@
                     </div>`;
              }
         } else if (stage === "active") {
-             actionHtml = `<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-bold">Active</span>`;
+             let statusColor = "bg-gray-100 text-gray-700";
+             if (cg.status === "Active") statusColor = "bg-green-100 text-green-700";
+             else if (cg.status === "Inactive") statusColor = "bg-red-100 text-red-700";
+             else if (cg.status === "No call") statusColor = "bg-yellow-100 text-yellow-700";
+             else if (cg.status === "Vacation") statusColor = "bg-blue-100 text-blue-700";
+             
+             actionHtml = `<span class="text-xs ${statusColor} px-2 py-1 rounded font-bold">${cg.status}</span>`;
         }
 
         tbody.innerHTML += `
