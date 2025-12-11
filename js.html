@@ -205,6 +205,8 @@
       loadDashboardStats();
     } else if (viewName === "communication") {
       loadCommunicationView();
+    } else if (viewName === "shifts") {
+      loadShiftView();
     }
   };
 
@@ -1311,5 +1313,115 @@
         }
       })
       .sendCustomEmail(type, id, subject, message);
+  }
+
+  // -- Shift Management Logic --
+
+  function loadShiftView() {
+    // Load Clients
+    const clientSelect = document.getElementById("shiftClient");
+    clientSelect.innerHTML = '<option value="">Loading...</option>';
+    google.script.run.withSuccessHandler((data) => {
+      let html = '<option value="">Select Client...</option>';
+      data.forEach(item => {
+        html += `<option value="${item.id}">${item.name}</option>`;
+      });
+      clientSelect.innerHTML = html;
+    }).getClientList();
+
+    // Load Caregivers
+    const cgSelect = document.getElementById("shiftCaregiver");
+    cgSelect.innerHTML = '<option value="">Loading...</option>';
+    google.script.run.withSuccessHandler((data) => {
+      let html = '<option value="">Select Caregiver...</option>';
+      data.forEach(item => {
+        html += `<option value="${item.id}">${item.name}</option>`;
+      });
+      cgSelect.innerHTML = html;
+    }).getCaregiverList();
+  }
+
+  function calculateShiftHours() {
+    const clockIn = document.getElementById("clockIn").value;
+    const clockOut = document.getElementById("clockOut").value;
+    const hoursInput = document.getElementById("shiftHours");
+
+    if (clockIn && clockOut) {
+      const start = new Date(`1970-01-01T${clockIn}:00`);
+      const end = new Date(`1970-01-01T${clockOut}:00`);
+      
+      let diff = (end - start) / 1000 / 60 / 60; // hours
+      if (diff < 0) diff += 24; // Handle overnight
+
+      hoursInput.value = diff.toFixed(2);
+      calculateShiftCosts(); // Recalculate costs when hours change
+    }
+  }
+
+  function calculateShiftCosts() {
+    const billingType = document.getElementById("billingType").value;
+    const hours = parseFloat(document.getElementById("shiftHours").value) || 0;
+    const clientRate = parseFloat(document.getElementById("clientRate").value) || 0;
+    const caregiverRate = parseFloat(document.getElementById("caregiverRate").value) || 0;
+
+    // Calculate Agency & Softcare Share
+    // Logic: (Client Rate - Caregiver Rate) split 80% Agency, 20% Softcare
+    const margin = Math.max(0, clientRate - caregiverRate);
+    const agency = margin * 0.8;
+    const softcare = margin * 0.2;
+
+    document.getElementById("agencyShare").value = agency.toFixed(2);
+    document.getElementById("softcareShare").value = softcare.toFixed(2);
+
+    // Calculate Totals
+    let totalClient = 0;
+    let totalCaregiver = 0;
+
+    if (billingType === "Hourly") {
+      totalClient = clientRate * hours;
+      totalCaregiver = caregiverRate * hours;
+    } else {
+      // Fixed Rate
+      totalClient = clientRate;
+      totalCaregiver = caregiverRate;
+    }
+
+    document.getElementById("totalClientPrice").value = "$" + totalClient.toFixed(2);
+    document.getElementById("totalCaregiverPrice").value = "$" + totalCaregiver.toFixed(2);
+  }
+
+  function submitShift(e) {
+    e.preventDefault();
+    const btn = document.getElementById("btnSaveShift");
+    const originalText = btn.innerHTML;
+    
+    const form = document.getElementById("shiftForm");
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // Add calculated values
+    data.agencyShare = document.getElementById("agencyShare").value;
+    data.softcareShare = document.getElementById("softcareShare").value;
+    data.totalClientPrice = document.getElementById("totalClientPrice").value.replace('$','');
+    data.totalCaregiverPrice = document.getElementById("totalCaregiverPrice").value.replace('$','');
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Saving...';
+
+    google.script.run
+      .withSuccessHandler(() => {
+        Swal.fire("Success", "Shift saved successfully!", "success");
+        form.reset();
+        document.getElementById("totalClientPrice").value = "$0.00";
+        document.getElementById("totalCaregiverPrice").value = "$0.00";
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      })
+      .withFailureHandler((err) => {
+        Swal.fire("Error", "Failed to save shift: " + err.message, "error");
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      })
+      .saveShift(data);
   }
 </script>
