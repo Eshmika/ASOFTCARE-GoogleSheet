@@ -1,3 +1,4 @@
+//Caregiver email
 function sendRecruitmentEmail(data, caregiverId) {
   // 1. Setup Links
   const webAppUrl = ScriptApp.getService().getUrl();
@@ -28,7 +29,7 @@ function sendRecruitmentEmail(data, caregiverId) {
   });
 
   // 3. Email Content
-  const subject = `Action Required: Application for Allevia Senior Care (${caregiverId})`;
+  const subject = `Complete Your Application`;
 
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -40,28 +41,27 @@ function sendRecruitmentEmail(data, caregiverId) {
       
       <!-- Body -->
       <div style="padding: 30px; background-color: #ffffff;">
-        <p style="margin-top: 0;">Hi <strong>${data.firstName}</strong>,</p>
+        <p style="margin-top: 0;">Dear <strong>${data.firstName}</strong>,</p>
         
-        <p>Thank you for starting your journey with us. We have successfully created your caregiver profile.</p>
-        
-        <!-- Info Box -->
-        <div style="background-color: #f8fafc; padding: 15px; border-left: 4px solid #65c027; margin: 20px 0; border-radius: 4px;">
-          <p style="margin: 0; font-size: 14px; color: #555;"><strong>Caregiver ID:</strong> ${caregiverId}</p>
-          <p style="margin: 5px 0 0; font-size: 14px; color: #555;"><strong>Status:</strong> Pending Application</p>
-        </div>
-
-        <p><strong>Step 1:</strong> Please download and review the attached PDF documents.</p>
-        
-        <p><strong>Step 2:</strong> Complete your formal background and employment application:</p>
+        <p>Thank you for your interest in joining Allevia Senior Care. To move forward, please complete your online application using the link below:</p>
         
         <!-- Button -->
         <div style="text-align: center; margin: 30px 0;">
           <a href="${applicationLink}" style="background-color: #65c027; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 6px rgba(101, 192, 39, 0.2);">
-              Complete Application
+              👉 Application Form
           </a>
         </div>
         
-        <p style="font-size: 13px; color: #888; border-top: 1px solid #eee; padding-top: 20px;">
+        <p>Once your application is submitted, we will review it and contact you with the next steps.</p>
+        
+        <p>We appreciate your prompt attention and look forward to learning more about you.</p>
+
+        <br>
+        <p style="margin-bottom: 5px;">Best regards,</p>
+        <p style="margin: 0; font-weight: bold;">Ines k. M & Allevia Teams</p>
+        <p style="margin: 0; color: #666; font-size: 14px;">Managing Director | Allevia Senior Care</p>
+        
+        <p style="font-size: 13px; color: #888; border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px;">
           If the button doesn't work, copy this link:<br>
           <a href="${applicationLink}" style="color: #65c027;">${applicationLink}</a>
         </p>
@@ -81,6 +81,25 @@ function sendRecruitmentEmail(data, caregiverId) {
     htmlBody: htmlBody,
     attachments: attachments,
   });
+}
+
+function resendCaregiverEmail(caregiverId) {
+  try {
+    const details = getCaregiverDetails(caregiverId);
+    if (!details) return { success: false, message: "Caregiver not found" };
+
+    const data = {
+      firstName: details["First Name"],
+      lastName: details["Last Name"],
+      email: details["Email"],
+      phone: details["Phone"]
+    };
+
+    sendRecruitmentEmail(data, caregiverId);
+    return { success: true, message: "Email resent successfully" };
+  } catch (e) {
+    return { success: false, message: e.toString() };
+  }
 }
 
 function sendClientWelcomeEmail(data, clientId) {
