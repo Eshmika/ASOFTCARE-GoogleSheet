@@ -303,8 +303,14 @@
              <div class="text-xs text-gray-500">${row.email}</div>
              <div class="text-xs text-gray-400">${row.phone}</div>
           </td>
-          <td class="p-4 text-gray-600">${row.city} / ${row.zip}</td>
+          <td class="p-4">
+            <div>
+              <p class="font-bold text-gray-800">${row.city}</p>
+              <p class="text-xs text-gray-400">${row.zip}</p>
+            </div>
+          </td>
           <td class="p-4 text-xs text-gray-500">${row.lastReviewed || "--"}</td>
+          <td class="p-4 text-xs text-gray-500 font-medium">${row.lastClientSeen || "--"}</td>
           <td class="p-4">
             <span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${
           row.status
@@ -629,6 +635,7 @@
         set("p-initials", (data["First Name"] || "U").charAt(0));
         set("p-title", data["Title"]);
         set("p-id", data["Caregiver ID"]);
+        set("p-last-client", data["Last Client Seen"]);
 
         const pipelinePanel = document.getElementById("pipeline-panel");
         if (data["Status"] === "Active") {
@@ -881,7 +888,7 @@
 
     if (filtered.length === 0) {
       tbody.innerHTML =
-        '<tr><td colspan="8" class="p-8 text-center text-gray-400">No clients found.</td></tr>';
+        '<tr><td colspan="7" class="p-8 text-center text-gray-400">No clients found.</td></tr>';
       return;
     }
 
@@ -897,16 +904,28 @@
       tbody.innerHTML += `
         <tr class="hover:bg-gray-50 border-b border-gray-50">
           <td class="p-4">
-            <div class="font-bold text-gray-800">${row.name}</div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-500">
+                ${row.name.charAt(0)}
+              </div>
+              <div>
+                <p class="font-bold text-gray-800">${row.name}</p>
+                <p class="text-xs text-gray-400">${row.id}</p>
+              </div>
+            </div>
           </td>
           <td class="p-4">
              <div class="text-xs text-gray-500">${row.email}</div>
              <div class="text-xs text-gray-400">${row.phone}</div>
           </td>
           <td class="p-4 text-sm text-gray-600">${row.type}</td>
-          <td class="p-4 text-sm text-gray-600">${row.city} / ${row.zip || ""}</td>
+          <td class="p-4">
+            <div>
+              <p class="font-bold text-gray-800">${row.city}</p>
+              <p class="text-xs text-gray-400">${row.zip || ""}</p>
+            </div>
+          </td>
           <td class="p-4 text-xs text-gray-500">${row.lastReviewed || "--"}</td>
-          <td class="p-4 text-sm text-gray-500">${row.id}</td>
           <td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${row.status}</span></td>
           <td class="p-4 text-right">
              <button onclick="loadClientProfile('${row.id}')" class="text-xs bg-green-50 text-green-600 px-3 py-1 rounded-full hover:bg-green-100 font-bold border border-green-200 transition-colors">Details</button>

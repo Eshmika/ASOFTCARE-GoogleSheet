@@ -231,6 +231,9 @@ function getCaregiverList() {
   const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   const reviewIdx = headers.indexOf("Last Reviewed");
 
+  // Pre-fetch Last Client Seen Map
+  const lastClientMap = getAllLastClientsSeen();
+
   // Use getDisplayValues to treat everything as String (prevents number/string mismatch)
   const data = sheet
     .getRange(2, 1, lastRow - 1, sheet.getLastColumn())
@@ -250,7 +253,8 @@ function getCaregiverList() {
       appStatus: row[8], // App Status
       interviewStatus: row[53], // Interview Status (Check index)
       backgroundCheck: row[54], // Background Check (Check index)
-      lastReviewed: reviewIdx > -1 ? row[reviewIdx] : "--"
+      lastReviewed: reviewIdx > -1 ? row[reviewIdx] : "--",
+      lastClientSeen: lastClientMap[row[0].trim()] || "--"
     }))
     .reverse();
 }
@@ -275,7 +279,55 @@ function getCaregiverDetails(id) {
     caregiver[header] = row[index];
   });
 
+  // Add Last Client Seen
+  const lastClientMap = getAllLastClientsSeen();
+  caregiver["Last Client Seen"] = lastClientMap[searchId] || "--";
+
   return caregiver;
+}
+
+// Helper to get Last Client Seen Map
+function getAllLastClientsSeen() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const shiftSheet = ss.getSheetByName("Shifts_DB");
+  const clientSheet = ss.getSheetByName("Clients_DB");
+  
+  if (!shiftSheet || !clientSheet) return {};
+
+  // Get Clients Map: ID -> Name
+  const clientData = clientSheet.getDataRange().getDisplayValues();
+  const clientMap = {};
+  // Client ID=0, First=1, Middle=2, Last=3
+  for (let i = 1; i < clientData.length; i++) {
+    const row = clientData[i];
+    clientMap[row[0]] = row[1] + " " + row[3];
+  }
+
+  // Get Shifts
+  const shiftData = shiftSheet.getDataRange().getValues(); 
+  // Shift ID=0, Client ID=1, Caregiver ID=2, Start Date=3
+  
+  const lastSeenMap = {}; // CaregiverID -> { date, clientName }
+
+  for (let i = 1; i < shiftData.length; i++) {
+    const row = shiftData[i];
+    const cid = String(row[1]); 
+    const gid = String(row[2]); 
+    const date = new Date(row[3]);
+
+    if (!lastSeenMap[gid] || date > lastSeenMap[gid].date) {
+      lastSeenMap[gid] = {
+        date: date,
+        clientName: clientMap[cid] || cid 
+      };
+    }
+  }
+  
+  const result = {};
+  for (const key in lastSeenMap) {
+    result[key] = lastSeenMap[key].clientName;
+  }
+  return result;
 }
 
 // 5. NEW: UPDATE STAGE STATUS
