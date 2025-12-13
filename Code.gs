@@ -8,6 +8,11 @@ function doGet(e) {
     if (isValid) {
       var template = HtmlService.createTemplateFromFile('page-public-application');
       template.caregiverId = e.parameter.id;
+      
+      // Fetch existing details to pre-fill
+      var details = getCaregiverDetails(e.parameter.id);
+      template.caregiverData = details || {};
+
       return template.evaluate()
         .setTitle('Application - Allevia Senior Care')
         .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)

@@ -62,9 +62,9 @@
           <h2 class="section-title">General Contact Info</h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
              <!-- Fields matched to PDF -->
-             <div><label class="input-label">First Name</label><input type="text" name="firstName" class="input-field" placeholder="Given Name"></div>
+             <div><label class="input-label">First Name</label><input type="text" name="firstName" class="input-field bg-gray-100" placeholder="Given Name" value="<?= caregiverData['First Name'] || '' ?>" readonly></div>
              <div><label class="input-label">Middle Initial</label><input type="text" name="middleName" class="input-field" maxlength="5"></div>
-             <div><label class="input-label">Last Name</label><input type="text" name="lastName" class="input-field" placeholder="Family Name"></div>
+             <div><label class="input-label">Last Name</label><input type="text" name="lastName" class="input-field bg-gray-100" placeholder="Family Name" value="<?= caregiverData['Last Name'] || '' ?>" readonly></div>
              
              <div><label class="input-label">Date of Birth</label><input type="date" name="dob" class="input-field"></div>
              <div>
@@ -85,8 +85,8 @@
              <div><label class="input-label">State</label><input type="text" name="state" id="app-state" class="input-field"></div>
              <div><label class="input-label">Zip Code</label><input type="text" name="zip" id="app-zip" class="input-field" maxlength="5"></div>
 
-             <div><label class="input-label">Cell Phone</label><input type="tel" name="phone" class="input-field" maxlength="14"></div>
-             <div class="md:col-span-2"><label class="input-label">Email</label><input type="email" name="email" class="input-field"></div>
+             <div><label class="input-label">Cell Phone</label><input type="tel" name="phone" class="input-field bg-gray-100" maxlength="14" value="<?= caregiverData['Phone'] || '' ?>" readonly></div>
+             <div class="md:col-span-2"><label class="input-label">Email</label><input type="email" name="email" class="input-field bg-gray-100" value="<?= caregiverData['Email'] || '' ?>" readonly></div>
 
              <div><label class="input-label">Routing Number</label><input type="text" name="routingNum" class="input-field" maxlength="9" placeholder="9 digits"></div>
              <div class="md:col-span-2"><label class="input-label">Bank Account</label><input type="text" name="accountNum" class="input-field" maxlength="12" placeholder="Max 12 digits"></div>

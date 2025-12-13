@@ -276,7 +276,7 @@ function getCaregiverDetails(id) {
   const row = data[rowIndex];
   let caregiver = {};
   headers.forEach((header, index) => {
-    caregiver[header] = row[index];
+    caregiver[header.trim()] = row[index];
   });
 
   // Add Last Client Seen
