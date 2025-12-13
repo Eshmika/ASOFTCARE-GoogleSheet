@@ -1071,9 +1071,55 @@
           </div>
         </div>
 
+        <? if (mode === 'print') { ?>
+        <div class="no-print text-center mt-8 mb-8">
+          <button
+            type="button"
+            onclick="window.print()"
+            class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold shadow-lg hover:bg-blue-700 transition flex items-center justify-center gap-2 mx-auto"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="currentColor"
+              viewBox="0 0 256 256"
+            >
+              <path
+                d="M222.14,67.86A8,8,0,0,0,216,64H184V32a8,8,0,0,0-8-8H80a8,8,0,0,0-8,8V64H40a8,8,0,0,0-6.14,3.86,8.06,8.06,0,0,0,.48,8.49l26.34,35.12A8,8,0,0,0,67.08,114.8L64,116.34V208a8,8,0,0,0,8,8H184a8,8,0,0,0,8-8V116.34l-3.08-1.54a8,8,0,0,0,6.4-3.35l26.34-35.12A8.06,8.06,0,0,0,222.14,67.86ZM88,40h80V64H88ZM176,200H80V128h96Zm24.34-96H55.66l-18-24H218.34Z"
+              ></path>
+            </svg>
+            Print Application
+          </button>
+        </div>
+        <style>
+          @media print {
+            .no-print {
+              display: none !important;
+            }
+            body {
+              background: white;
+            }
+            .section-card {
+              box-shadow: none;
+              border: 1px solid #eee;
+              break-inside: avoid;
+            }
+            .input-field {
+              border: none;
+              background: transparent !important;
+              padding: 0;
+            }
+            .input-label {
+              color: #000;
+            }
+          }
+        </style>
+        <? } else { ?>
         <button type="submit" id="submitBtn" class="btn-submit">
           Submit Application
         </button>
+        <? } ?>
       </form>
     </div>
 

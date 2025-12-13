@@ -14,7 +14,7 @@
     // Helper to attach listeners
     const attach = (selector, type) => {
       const els = document.querySelectorAll(selector);
-      els.forEach(el => {
+      els.forEach((el) => {
         // Remove existing listeners to avoid duplicates if called multiple times
         // (Simple way is just to overwrite oninput, though addEventListener is better if we track them)
         el.oninput = (e) => handleInputMask(e, type);
@@ -22,65 +22,61 @@
     };
 
     // Caregiver Inputs
-    attach('input[name="ssn"]', 'ssn');
-    attach('input[name="phone"]', 'phone');
-    attach('input[name="zip"]', 'zip');
-    
+    attach('input[name="ssn"]', "ssn");
+    attach('input[name="phone"]', "phone");
+    attach('input[name="zip"]', "zip");
+
     // Client Inputs
     // Note: Client form uses same names
-    attach('#clientForm input[name="phone"]', 'phone');
-    attach('#clientForm input[name="zip"]', 'zip');
-    
+    attach('#clientForm input[name="phone"]', "phone");
+    attach('#clientForm input[name="zip"]', "zip");
+
     // Edit Forms (IDs)
-    attach('#edit-ssn', 'ssn');
-    attach('#edit-phone', 'phone');
-    attach('#edit-zip', 'zip');
-    attach('input[name="routingNum"]', 'routing');
-    attach('input[name="accountNum"]', 'account');
-    attach('#edit-routingNum', 'routing');
-    attach('#edit-accountNum', 'account');
-    attach('#ce-phone', 'phone');
-    attach('#ce-zip', 'zip');
+    attach("#edit-ssn", "ssn");
+    attach("#edit-phone", "phone");
+    attach("#edit-zip", "zip");
+    attach('input[name="routingNum"]', "routing");
+    attach('input[name="accountNum"]', "account");
+    attach("#edit-routingNum", "routing");
+    attach("#edit-accountNum", "account");
+    attach("#ce-phone", "phone");
+    attach("#ce-zip", "zip");
   }
 
   function handleInputMask(e, type) {
-    let val = e.target.value.replace(/\D/g, ''); // Strip non-digits
-    
-    if (type === 'ssn') {
+    let val = e.target.value.replace(/\D/g, ""); // Strip non-digits
+
+    if (type === "ssn") {
       // Max 9 digits
       if (val.length > 9) val = val.substring(0, 9);
-      
+
       // Format: xxx-xx-xxxx
       if (val.length > 5) {
-        val = val.replace(/^(\d{3})(\d{2})(\d+)/, '$1-$2-$3');
+        val = val.replace(/^(\d{3})(\d{2})(\d+)/, "$1-$2-$3");
       } else if (val.length > 3) {
-        val = val.replace(/^(\d{3})(\d+)/, '$1-$2');
+        val = val.replace(/^(\d{3})(\d+)/, "$1-$2");
       }
       e.target.value = val;
-    } 
-    else if (type === 'phone') {
+    } else if (type === "phone") {
       // Max 10 digits
       if (val.length > 10) val = val.substring(0, 10);
-      
+
       // Format: (xxx) xxx-xxxx
       if (val.length > 6) {
-        val = val.replace(/^(\d{3})(\d{3})(\d+)/, '($1) $2-$3');
+        val = val.replace(/^(\d{3})(\d{3})(\d+)/, "($1) $2-$3");
       } else if (val.length > 3) {
-        val = val.replace(/^(\d{3})(\d+)/, '($1) $2');
+        val = val.replace(/^(\d{3})(\d+)/, "($1) $2");
       }
       e.target.value = val;
-    }
-    else if (type === 'zip') {
+    } else if (type === "zip") {
       // Max 5 digits
       if (val.length > 5) val = val.substring(0, 5);
       e.target.value = val;
-    }
-    else if (type === 'routing') {
+    } else if (type === "routing") {
       // Max 9 digits
       if (val.length > 9) val = val.substring(0, 9);
       e.target.value = val;
-    }
-    else if (type === 'account') {
+    } else if (type === "account") {
       // Max 12 digits
       if (val.length > 12) val = val.substring(0, 12);
       e.target.value = val;
@@ -88,40 +84,41 @@
   }
 
   // Initialize masks on load
-  window.addEventListener('DOMContentLoaded', setupInputMasks);
+  window.addEventListener("DOMContentLoaded", setupInputMasks);
 
   // -- Google Maps Autocomplete --
-  window.initAutocomplete = function() {
+  window.initAutocomplete = function () {
     // Helper to setup autocomplete
     const setup = (addrId, cityId, stateId, zipId) => {
       const input = document.getElementById(addrId);
       if (!input) return;
 
       // Check if google is defined (in case API fails to load)
-      if (typeof google === 'undefined' || !google.maps || !google.maps.places) return;
+      if (typeof google === "undefined" || !google.maps || !google.maps.places)
+        return;
 
       const autocomplete = new google.maps.places.Autocomplete(input, {
-        types: ['address'],
-        componentRestrictions: { country: 'us' },
-        fields: ['address_components', 'geometry', 'name']
+        types: ["address"],
+        componentRestrictions: { country: "us" },
+        fields: ["address_components", "geometry", "name"],
       });
 
-      autocomplete.addListener('place_changed', () => {
+      autocomplete.addListener("place_changed", () => {
         const place = autocomplete.getPlace();
         fillInAddress(place, cityId, stateId, zipId);
       });
     };
 
     // Caregiver Edit Profile
-    setup('edit-address', 'edit-city', 'edit-state', 'edit-zip');
+    setup("edit-address", "edit-city", "edit-state", "edit-zip");
 
     // Client Add Form
-    setup('add-cl-address', 'add-cl-city', null, 'add-cl-zip');
-    setup('add-cl-emAddress', 'add-cl-emCity', null, 'add-cl-emZip');
+    setup("add-cl-address", "add-cl-city", null, "add-cl-zip");
+    setup("add-cl-emAddress", "add-cl-emCity", null, "add-cl-emZip");
 
     // Client Edit Form
-    setup('ce-address', 'ce-city', null, 'ce-zip');
-    setup('ce-emAddress', 'ce-emCity', null, 'ce-emZip');
+    setup("ce-address", "ce-city", null, "ce-zip");
+    setup("ce-emAddress", "ce-emCity", null, "ce-emZip");
   };
 
   function fillInAddress(place, cityId, stateId, zipId) {
@@ -157,7 +154,7 @@
         }
       }
     }
-    
+
     if (cityId && document.getElementById(cityId)) {
       document.getElementById(cityId).value = city;
     }
@@ -310,14 +307,18 @@
             </div>
           </td>
           <td class="p-4 text-xs text-gray-500">${row.lastReviewed || "--"}</td>
-          <td class="p-4 text-xs text-gray-500 font-medium">${row.lastClientSeen || "--"}</td>
+          <td class="p-4 text-xs text-gray-500 font-medium">${
+            row.lastClientSeen || "--"
+          }</td>
           <td class="p-4">
             <span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${
           row.status
         }</span>
           </td>
           <td class="p-4 text-right">
-             <button onclick="loadProfile('${row.id}')" class="text-xs bg-green-50 text-green-600 px-3 py-1 rounded-full hover:bg-green-100 font-bold border border-green-200 transition-colors">Details</button>
+             <button onclick="loadProfile('${
+               row.id
+             }')" class="text-xs bg-green-50 text-green-600 px-3 py-1 rounded-full hover:bg-green-100 font-bold border border-green-200 transition-colors">Details</button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -367,7 +368,7 @@
     setVal("edit-ssn", d["SSN"]);
     setVal("edit-routingNum", d["Routing Number"]);
     setVal("edit-accountNum", d["Bank Account"]);
-    setVal("edit-status", d["Status"]); 
+    setVal("edit-status", d["Status"]);
     setVal("edit-address", d["Address"]);
     setVal("edit-apt", d["Apt"]);
     setVal("edit-city", d["City"]);
@@ -673,7 +674,9 @@
         set("p-ssn", data["SSN"]);
         set(
           "p-banking",
-          `Routing: ${data["Routing Number"] || "--"} | Account: ${data["Bank Account"] || "--"}`
+          `Routing: ${data["Routing Number"] || "--"} | Account: ${
+            data["Bank Account"] || "--"
+          }`
         );
         set(
           "p-license",
@@ -926,9 +929,13 @@
             </div>
           </td>
           <td class="p-4 text-xs text-gray-500">${row.lastReviewed || "--"}</td>
-          <td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${row.status}</span></td>
+          <td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${
+        row.status
+      }</span></td>
           <td class="p-4 text-right">
-             <button onclick="loadClientProfile('${row.id}')" class="text-xs bg-green-50 text-green-600 px-3 py-1 rounded-full hover:bg-green-100 font-bold border border-green-200 transition-colors">Details</button>
+             <button onclick="loadClientProfile('${
+               row.id
+             }')" class="text-xs bg-green-50 text-green-600 px-3 py-1 rounded-full hover:bg-green-100 font-bold border border-green-200 transition-colors">Details</button>
           </td>
         </tr>
       `;
@@ -984,34 +991,49 @@
       if (el) el.textContent = val || "--";
     };
 
-    set("cp-initials", (data.firstName?.[0] || "") + (data.lastName?.[0] || ""));
-    set("cp-name", `${data.firstName} ${data.middleName || ""} ${data.lastName}`);
+    set(
+      "cp-initials",
+      (data.firstName?.[0] || "") + (data.lastName?.[0] || "")
+    );
+    set(
+      "cp-name",
+      `${data.firstName} ${data.middleName || ""} ${data.lastName}`
+    );
     set("cp-id", data.id);
     set("cp-status", data.status);
     set("cp-email", data.email);
     set("cp-phone", data.phone);
-    set("cp-address", `${data.address || ""}, ${data.city || ""} ${data.zip || ""}`);
-    
+    set(
+      "cp-address",
+      `${data.address || ""}, ${data.city || ""} ${data.zip || ""}`
+    );
+
     // Format DOB
     let dob = data.dob;
     if (dob) {
-        const d = new Date(dob);
-        if (!isNaN(d.getTime())) {
-            dob = d.toLocaleDateString();
-        }
+      const d = new Date(dob);
+      if (!isNaN(d.getTime())) {
+        dob = d.toLocaleDateString();
+      }
     }
     set("cp-dob", dob);
-    
+
     set("cp-gender", data.gender);
     set("cp-type", data.type);
-    set("cp-living", data.livingAlone === "Yes" ? "Living Alone" : "Not Living Alone");
+    set(
+      "cp-living",
+      data.livingAlone === "Yes" ? "Living Alone" : "Not Living Alone"
+    );
     set("cp-languages", data.languages);
 
     set("cp-emName", data.emName);
     set("cp-emRel", data.emRel);
     set("cp-emPhone", data.emPhone);
     set("cp-emEmail", data.emEmail);
-    set("cp-emAddress", `${data.emAddress || ""}, ${data.emCity || ""} ${data.emZip || ""}`);
+    set(
+      "cp-emAddress",
+      `${data.emAddress || ""}, ${data.emCity || ""} ${data.emZip || ""}`
+    );
 
     document.getElementById("clProfileLoading").classList.add("hidden");
     document.getElementById("clProfileContent").classList.remove("hidden");
@@ -1032,17 +1054,17 @@
     setVal("ce-middleName", d.middleName);
     setVal("ce-lastName", d.lastName);
     setVal("ce-status", d.status);
-    
+
     // Format DOB for input[type="date"]
     let dob = "";
     if (d.dob) {
-        const dateObj = new Date(d.dob);
-        if (!isNaN(dateObj.getTime())) {
-            dob = dateObj.toISOString().split('T')[0];
-        }
+      const dateObj = new Date(d.dob);
+      if (!isNaN(dateObj.getTime())) {
+        dob = dateObj.toISOString().split("T")[0];
+      }
     }
     setVal("ce-dob", dob);
-    
+
     setVal("ce-gender", d.gender);
     setVal("ce-email", d.email);
     setVal("ce-phone", d.phone);
@@ -1099,33 +1121,36 @@
 
   function renderCaregiverStages() {
     const stages = {
-        new: [],
-        interview: [],
-        background: [],
-        active: []
+      new: [],
+      interview: [],
+      background: [],
+      active: [],
     };
 
-    cgData.forEach(cg => {
-        // Stage 4: Active / Inactive / No call / Vacation
-        // Condition: Status is one of the final states.
-        if (["Active", "Inactive", "No call", "Vacation"].includes(cg.status)) {
-            stages.active.push(cg);
-        }
-        // Stage 3: Passed Background Check
-        // Condition: Interview Passed, but not yet Active
-        else if (cg.interviewStatus === "Passed") {
-            stages.background.push(cg);
-        }
-        // Stage 2: Interview Completed
-        // Condition: App Completed
-        else if (cg.appStatus === "Application Completed") {
-            stages.interview.push(cg);
-        }
-        // Stage 1: New Application
-        // Condition: Pending OR Applicant
-        else if (cg.appStatus === "Pending Application" || cg.status === "Applicant") {
-            stages.new.push(cg);
-        }
+    cgData.forEach((cg) => {
+      // Stage 4: Active / Inactive / No call / Vacation
+      // Condition: Status is one of the final states.
+      if (["Active", "Inactive", "No call", "Vacation"].includes(cg.status)) {
+        stages.active.push(cg);
+      }
+      // Stage 3: Passed Background Check
+      // Condition: Interview Passed, but not yet Active
+      else if (cg.interviewStatus === "Passed") {
+        stages.background.push(cg);
+      }
+      // Stage 2: Interview Completed
+      // Condition: App Completed
+      else if (cg.appStatus === "Application Completed") {
+        stages.interview.push(cg);
+      }
+      // Stage 1: New Application
+      // Condition: Pending OR Applicant
+      else if (
+        cg.appStatus === "Pending Application" ||
+        cg.status === "Applicant"
+      ) {
+        stages.new.push(cg);
+      }
     });
 
     renderStageList("new", stages.new);
@@ -1134,76 +1159,97 @@
     renderStageList("active", stages.active);
 
     document.getElementById("count-stage-new").textContent = stages.new.length;
-    document.getElementById("count-stage-interview").textContent = stages.interview.length;
-    document.getElementById("count-stage-background").textContent = stages.background.length;
-    document.getElementById("count-stage-active").textContent = stages.active.length;
+    document.getElementById("count-stage-interview").textContent =
+      stages.interview.length;
+    document.getElementById("count-stage-background").textContent =
+      stages.background.length;
+    document.getElementById("count-stage-active").textContent =
+      stages.active.length;
   }
 
   function renderStageList(stage, list) {
     const tbody = document.getElementById(`list-stage-${stage}`);
     tbody.innerHTML = "";
-    
+
     if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-gray-400">No caregivers in this stage.</td></tr>';
-        return;
+      tbody.innerHTML =
+        '<tr><td colspan="3" class="p-4 text-center text-gray-400">No caregivers in this stage.</td></tr>';
+      return;
     }
 
-    list.forEach(cg => {
-        let actionHtml = "";
-        if (stage === "new") {
-            actionHtml = `
+    list.forEach((cg) => {
+      let actionHtml = "";
+      if (stage === "new") {
+        actionHtml = `
               <div class="flex justify-end items-center gap-2">
                 <span class="text-xs text-gray-400 italic mr-2">Waiting for submission...</span>
                 <button onclick="resendEmail('${cg.id}')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-100 font-bold border border-blue-200 transition-colors flex items-center gap-1">
                   <i class="ph ph-paper-plane-right"></i> Resend Email
                 </button>
               </div>`;
-        } else if (stage === "interview") {
-            // If already passed/failed, show status, else show buttons
-            if (cg.interviewStatus === "Passed") {
-                 actionHtml = `<span class="text-xs text-green-600 font-bold mr-2">Passed</span> <button onclick="updateStageStatus('${cg.id}', 'Background', 'Pending')" class="text-xs bg-purple-100 text-purple-600 px-3 py-1 rounded-full hover:bg-purple-200 font-bold">Start Background Check</button>`;
-            } else if (cg.interviewStatus === "Failed") {
-                 actionHtml = `<span class="text-xs text-red-600 font-bold">Interview Failed</span>`;
-            } else {
-                actionHtml = `
-                    <div class="flex justify-end gap-2">
+      } else if (stage === "interview") {
+        const viewAppBtn = `<a href="?page=apply&id=${cg.id}&mode=print" target="_blank" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 mr-2 flex items-center gap-1 inline-flex no-underline"><i class="ph ph-file-text"></i> View App</a>`;
+        const pdfBtn = `<button onclick="downloadPdf('${cg.id}', this)" class="text-xs bg-red-50 text-red-600 px-3 py-1 rounded-full hover:bg-red-100 font-bold border border-red-200 mr-2 flex items-center gap-1"><i class="ph ph-file-pdf"></i> PDF</button>`;
+
+        // If already passed/failed, show status, else show buttons
+        if (cg.interviewStatus === "Passed") {
+          actionHtml = `${viewAppBtn}${pdfBtn} <span class="text-xs text-green-600 font-bold mr-2">Passed</span> <button onclick="updateStageStatus('${cg.id}', 'Background', 'Pending')" class="text-xs bg-purple-100 text-purple-600 px-3 py-1 rounded-full hover:bg-purple-200 font-bold">Start Background Check</button>`;
+        } else if (cg.interviewStatus === "Failed") {
+          actionHtml = `${viewAppBtn}${pdfBtn} <span class="text-xs text-red-600 font-bold">Interview Failed</span>`;
+        } else {
+          actionHtml = `
+                    <div class="flex justify-end gap-2 items-center">
+                        ${viewAppBtn}
+                        ${pdfBtn}
                         <button onclick="updateStageStatus('${cg.id}', 'Interview', 'Passed')" class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200 font-bold">Pass</button>
                         <button onclick="updateStageStatus('${cg.id}', 'Interview', 'Failed')" class="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full hover:bg-red-200 font-bold">Fail</button>
                     </div>`;
-            }
-        } else if (stage === "background") {
-             if (cg.backgroundCheck === "Passed") {
-                 actionHtml = `<span class="text-xs text-green-600 font-bold mr-2">Passed</span> <button onclick="updateStageStatus('${cg.id}', 'Active', 'Active')" class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200 font-bold">Activate Caregiver</button>`;
-             } else if (cg.backgroundCheck === "Failed") {
-                 actionHtml = `<span class="text-xs text-red-600 font-bold">Background Check Failed</span>`;
-             } else {
-                actionHtml = `
+        }
+      } else if (stage === "background") {
+        if (cg.backgroundCheck === "Passed") {
+          actionHtml = `<span class="text-xs text-green-600 font-bold mr-2">Passed</span> <button onclick="updateStageStatus('${cg.id}', 'Active', 'Active')" class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200 font-bold">Activate Caregiver</button>`;
+        } else if (cg.backgroundCheck === "Failed") {
+          actionHtml = `<span class="text-xs text-red-600 font-bold">Background Check Failed</span>`;
+        } else {
+          actionHtml = `
                     <div class="flex justify-end gap-2 items-center">
+                        <button onclick="updateStageStatus('${cg.id}', 'Interview', 'Pending')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 mr-2 flex items-center gap-1" title="Return to Interview Stage">
+                            <i class="ph ph-arrow-u-up-left"></i> Return
+                        </button>
                         <button onclick="sendOnboardingEmail('${cg.id}')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-100 font-bold border border-blue-200 transition-colors flex items-center gap-1 mr-2">
                           <i class="ph ph-envelope-simple"></i> Send Consent
                         </button>
                         <button onclick="updateStageStatus('${cg.id}', 'Background', 'Passed')" class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200 font-bold">Pass</button>
                         <button onclick="updateStageStatus('${cg.id}', 'Background', 'Failed')" class="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full hover:bg-red-200 font-bold">Fail</button>
                     </div>`;
-             }
-        } else if (stage === "active") {
-             let statusColor = "bg-gray-100 text-gray-700";
-             if (cg.status === "Active") statusColor = "bg-green-100 text-green-700";
-             else if (cg.status === "Inactive") statusColor = "bg-red-100 text-red-700";
-             else if (cg.status === "No call") statusColor = "bg-yellow-100 text-yellow-700";
-             else if (cg.status === "Vacation") statusColor = "bg-blue-100 text-blue-700";
-             
-             actionHtml = `<span class="text-xs ${statusColor} px-2 py-1 rounded font-bold">${cg.status}</span>`;
         }
+      } else if (stage === "active") {
+        let statusColor = "bg-gray-100 text-gray-700";
+        if (cg.status === "Active") statusColor = "bg-green-100 text-green-700";
+        else if (cg.status === "Inactive")
+          statusColor = "bg-red-100 text-red-700";
+        else if (cg.status === "No call")
+          statusColor = "bg-yellow-100 text-yellow-700";
+        else if (cg.status === "Vacation")
+          statusColor = "bg-blue-100 text-blue-700";
 
-        tbody.innerHTML += `
+        actionHtml = `<span class="text-xs ${statusColor} px-2 py-1 rounded font-bold">${cg.status}</span>`;
+      }
+
+      tbody.innerHTML += `
             <tr class="hover:bg-gray-50">
                 <td class="p-3 font-medium text-gray-700">
                     <div>${cg.name}</div>
                     <div class="text-xs text-gray-400">${cg.id}</div>
                 </td>
                 <td class="p-3 text-gray-500 text-xs">
-                    ${stage === 'interview' ? cg.interviewStatus : (stage === 'background' ? cg.backgroundCheck : cg.status)}
+                    ${
+                      stage === "interview"
+                        ? cg.interviewStatus
+                        : stage === "background"
+                        ? cg.backgroundCheck
+                        : cg.status
+                    }
                 </td>
                 <td class="p-3 text-right">${actionHtml}</td>
             </tr>
@@ -1219,16 +1265,39 @@
   }
 
   function updateStageStatus(id, stage, value) {
-      // Optimistic update or wait? Let's wait for simplicity.
-      google.script.run
-        .withSuccessHandler(() => {
-            // If we passed interview, we might want to auto-trigger next step or just reload
-            // If we passed background, we might want to auto-trigger active
-            
-            // For better UX, let's just reload the list
-            loadCaregiverStages();
-        })
-        .updateCaregiverStage(id, stage, value);
+    // Optimistic update or wait? Let's wait for simplicity.
+    google.script.run
+      .withSuccessHandler(() => {
+        // If we passed interview, we might want to auto-trigger next step or just reload
+        // If we passed background, we might want to auto-trigger active
+
+        // For better UX, let's just reload the list
+        loadCaregiverStages();
+      })
+      .updateCaregiverStage(id, stage, value);
+  }
+
+  function downloadPdf(id, btn) {
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> ...';
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        if (res.success) {
+          window.open(res.url, "_blank");
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .withFailureHandler((err) => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        Swal.fire("Error", err.message, "error");
+      })
+      .generateCaregiverPdf(id);
   }
 
   function resendEmail(id) {
@@ -1273,30 +1342,37 @@
   function loadCommunicationView() {
     // Load Caregivers
     const cgList = document.getElementById("comm-cg-list");
-    cgList.innerHTML = '<div class="text-xs text-gray-400 text-center py-4">Loading...</div>';
-    google.script.run.withSuccessHandler((data) => {
-      renderCommList(data, "comm-cg-list", "cg");
-    }).getCaregiverList();
+    cgList.innerHTML =
+      '<div class="text-xs text-gray-400 text-center py-4">Loading...</div>';
+    google.script.run
+      .withSuccessHandler((data) => {
+        renderCommList(data, "comm-cg-list", "cg");
+      })
+      .getCaregiverList();
 
     // Load Clients
     const clList = document.getElementById("comm-cl-list");
-    clList.innerHTML = '<div class="text-xs text-gray-400 text-center py-4">Loading...</div>';
-    google.script.run.withSuccessHandler((data) => {
-      renderCommList(data, "comm-cl-list", "cl");
-    }).getClientList();
+    clList.innerHTML =
+      '<div class="text-xs text-gray-400 text-center py-4">Loading...</div>';
+    google.script.run
+      .withSuccessHandler((data) => {
+        renderCommList(data, "comm-cl-list", "cl");
+      })
+      .getClientList();
   }
 
   function renderCommList(data, containerId, prefix) {
     const container = document.getElementById(containerId);
     if (!data || data.length === 0) {
-      container.innerHTML = '<div class="text-xs text-gray-400 text-center py-4">No records found.</div>';
+      container.innerHTML =
+        '<div class="text-xs text-gray-400 text-center py-4">No records found.</div>';
       return;
     }
 
-    let html = '';
-    data.forEach(item => {
+    let html = "";
+    data.forEach((item) => {
       // Only show items with email
-      if (item.email && item.email.includes('@')) {
+      if (item.email && item.email.includes("@")) {
         html += `
           <label class="flex items-center gap-2 p-2 hover:bg-white rounded cursor-pointer group">
             <input type="checkbox" name="${prefix}_ids" value="${item.id}" class="w-4 h-4 text-[#65c027] rounded border-gray-300 focus:ring-[#65c027]">
@@ -1308,13 +1384,15 @@
         `;
       }
     });
-    container.innerHTML = html || '<div class="text-xs text-gray-400 text-center py-4">No valid emails found.</div>';
+    container.innerHTML =
+      html ||
+      '<div class="text-xs text-gray-400 text-center py-4">No valid emails found.</div>';
   }
 
   function filterCommList(input, listId) {
     const filter = input.value.toLowerCase();
     const list = document.getElementById(listId);
-    const labels = list.getElementsByTagName('label');
+    const labels = list.getElementsByTagName("label");
 
     for (let i = 0; i < labels.length; i++) {
       const text = labels[i].textContent.toLowerCase();
@@ -1330,25 +1408,31 @@
     const list = document.getElementById(listId);
     const checkboxes = list.querySelectorAll('input[type="checkbox"]');
     // Check if all visible are checked
-    const visible = Array.from(checkboxes).filter(cb => cb.closest('label').style.display !== 'none');
-    const allChecked = visible.every(cb => cb.checked);
-    
-    visible.forEach(cb => cb.checked = !allChecked);
+    const visible = Array.from(checkboxes).filter(
+      (cb) => cb.closest("label").style.display !== "none"
+    );
+    const allChecked = visible.every((cb) => cb.checked);
+
+    visible.forEach((cb) => (cb.checked = !allChecked));
   }
 
   function sendCommunication(e) {
     e.preventDefault();
     const btn = document.getElementById("btnSendComm");
     const originalText = btn.innerHTML;
-    
+
     const form = document.getElementById("commForm");
     const formData = new FormData(form);
     const subject = formData.get("subject");
     const message = formData.get("message");
 
     // Gather IDs
-    const cgIds = Array.from(document.querySelectorAll('input[name="cg_ids"]:checked')).map(cb => cb.value);
-    const clIds = Array.from(document.querySelectorAll('input[name="cl_ids"]:checked')).map(cb => cb.value);
+    const cgIds = Array.from(
+      document.querySelectorAll('input[name="cg_ids"]:checked')
+    ).map((cb) => cb.value);
+    const clIds = Array.from(
+      document.querySelectorAll('input[name="cl_ids"]:checked')
+    ).map((cb) => cb.value);
 
     if (cgIds.length === 0 && clIds.length === 0) {
       Swal.fire("Error", "Please select at least one recipient", "warning");
@@ -1366,7 +1450,9 @@
           Swal.fire("Success", `Sent to ${res.count} recipients!`, "success");
           form.reset();
           // Uncheck all
-          document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+          document
+            .querySelectorAll('input[type="checkbox"]')
+            .forEach((cb) => (cb.checked = false));
         } else {
           Swal.fire("Error", res.message, "error");
         }
@@ -1380,24 +1466,28 @@
     // Load Clients
     const clientSelect = document.getElementById("shiftClient");
     clientSelect.innerHTML = '<option value="">Loading...</option>';
-    google.script.run.withSuccessHandler((data) => {
-      let html = '<option value="">Select Client...</option>';
-      data.forEach(item => {
-        html += `<option value="${item.id}">${item.name}</option>`;
-      });
-      clientSelect.innerHTML = html;
-    }).getClientList();
+    google.script.run
+      .withSuccessHandler((data) => {
+        let html = '<option value="">Select Client...</option>';
+        data.forEach((item) => {
+          html += `<option value="${item.id}">${item.name}</option>`;
+        });
+        clientSelect.innerHTML = html;
+      })
+      .getClientList();
 
     // Load Caregivers
     const cgSelect = document.getElementById("shiftCaregiver");
     cgSelect.innerHTML = '<option value="">Loading...</option>';
-    google.script.run.withSuccessHandler((data) => {
-      let html = '<option value="">Select Caregiver...</option>';
-      data.forEach(item => {
-        html += `<option value="${item.id}">${item.name}</option>`;
-      });
-      cgSelect.innerHTML = html;
-    }).getCaregiverList();
+    google.script.run
+      .withSuccessHandler((data) => {
+        let html = '<option value="">Select Caregiver...</option>';
+        data.forEach((item) => {
+          html += `<option value="${item.id}">${item.name}</option>`;
+        });
+        cgSelect.innerHTML = html;
+      })
+      .getCaregiverList();
   }
 
   function calculateShiftHours() {
@@ -1408,7 +1498,7 @@
     if (clockIn && clockOut) {
       const start = new Date(`1970-01-01T${clockIn}:00`);
       const end = new Date(`1970-01-01T${clockOut}:00`);
-      
+
       let diff = (end - start) / 1000 / 60 / 60; // hours
       if (diff < 0) diff += 24; // Handle overnight
 
@@ -1420,8 +1510,10 @@
   function calculateShiftCosts() {
     const billingType = document.getElementById("billingType").value;
     const hours = parseFloat(document.getElementById("shiftHours").value) || 0;
-    const clientRate = parseFloat(document.getElementById("clientRate").value) || 0;
-    const caregiverRate = parseFloat(document.getElementById("caregiverRate").value) || 0;
+    const clientRate =
+      parseFloat(document.getElementById("clientRate").value) || 0;
+    const caregiverRate =
+      parseFloat(document.getElementById("caregiverRate").value) || 0;
 
     // Calculate Agency & Softcare Share
     // Logic: (Client Rate - Caregiver Rate) split 80% Agency, 20% Softcare
@@ -1451,17 +1543,21 @@
       totalSoftcare = softcare;
     }
 
-    document.getElementById("totalClientPrice").value = "$" + totalClient.toFixed(2);
-    document.getElementById("totalCaregiverPrice").value = "$" + totalCaregiver.toFixed(2);
-    document.getElementById("totalAgencyPrice").value = "$" + totalAgency.toFixed(2);
-    document.getElementById("totalSoftcarePrice").value = "$" + totalSoftcare.toFixed(2);
+    document.getElementById("totalClientPrice").value =
+      "$" + totalClient.toFixed(2);
+    document.getElementById("totalCaregiverPrice").value =
+      "$" + totalCaregiver.toFixed(2);
+    document.getElementById("totalAgencyPrice").value =
+      "$" + totalAgency.toFixed(2);
+    document.getElementById("totalSoftcarePrice").value =
+      "$" + totalSoftcare.toFixed(2);
   }
 
   function submitShift(e) {
     e.preventDefault();
     const btn = document.getElementById("btnSaveShift");
     const originalText = btn.innerHTML;
-    
+
     const form = document.getElementById("shiftForm");
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
@@ -1469,10 +1565,18 @@
     // Add calculated values
     data.agencyShare = document.getElementById("agencyShare").value;
     data.softcareShare = document.getElementById("softcareShare").value;
-    data.totalClientPrice = document.getElementById("totalClientPrice").value.replace('$','');
-    data.totalCaregiverPrice = document.getElementById("totalCaregiverPrice").value.replace('$','');
-    data.totalAgencyPrice = document.getElementById("totalAgencyPrice").value.replace('$','');
-    data.totalSoftcarePrice = document.getElementById("totalSoftcarePrice").value.replace('$','');
+    data.totalClientPrice = document
+      .getElementById("totalClientPrice")
+      .value.replace("$", "");
+    data.totalCaregiverPrice = document
+      .getElementById("totalCaregiverPrice")
+      .value.replace("$", "");
+    data.totalAgencyPrice = document
+      .getElementById("totalAgencyPrice")
+      .value.replace("$", "");
+    data.totalSoftcarePrice = document
+      .getElementById("totalSoftcarePrice")
+      .value.replace("$", "");
 
     btn.disabled = true;
     btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Saving...';
