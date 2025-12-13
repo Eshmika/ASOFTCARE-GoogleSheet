@@ -93,6 +93,14 @@
               <i class="ph ph-calendar-plus text-xl"></i>
               Add Shift
             </button>
+            <button
+              onclick="navigate('caregiver-calendar')"
+              class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
+            >
+              <i class="ph ph-calendar text-xl"></i>
+              Caregiver Calendar
+              <span class="ml-2 text-xs italic text-gray-400">This is not complete under developing yet</span>
+            </button>
           </div>
 
           <!-- Communication Section -->
@@ -141,6 +149,7 @@
           <?!= include('page-caregivers'); ?>
           <?!= include('page-clients'); ?>
           <?!= include('page-shifts'); ?>
+          <?!= include('page-caregiver-calendar'); ?>
           <?!= include('page-communication'); ?>
         </div>
       </main>

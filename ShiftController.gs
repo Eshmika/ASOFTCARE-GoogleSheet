@@ -35,6 +35,51 @@ function getOrCreateShiftSheet() {
   return sheet;
 }
 
+function getShifts(startDateStr, endDateStr) {
+  const sheet = getOrCreateShiftSheet();
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  
+  // Indices
+  const dateIdx = headers.indexOf("Start Date");
+  const clientIdx = headers.indexOf("Client ID");
+  const cgIdx = headers.indexOf("Caregiver ID");
+  const startIdx = headers.indexOf("Clock In");
+  const endIdx = headers.indexOf("Clock Out");
+  
+  if (dateIdx === -1) return [];
+
+  const start = new Date(startDateStr);
+  const end = new Date(endDateStr);
+  
+  // Filter
+  const shifts = [];
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const rowDateStr = row[dateIdx]; // Assuming string YYYY-MM-DD or Date object
+    let rowDate;
+    if (rowDateStr instanceof Date) {
+      rowDate = rowDateStr;
+    } else {
+      const parts = String(rowDateStr).split('-');
+      rowDate = new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+    
+    if (rowDate >= start && rowDate <= end) {
+      shifts.push({
+        id: row[0],
+        clientId: row[clientIdx],
+        caregiverId: row[cgIdx],
+        date: Utilities.formatDate(rowDate, Session.getScriptTimeZone(), "yyyy-MM-dd"),
+        clockIn: row[startIdx],
+        clockOut: row[endIdx],
+        // Add names if possible, but for now IDs are fine, frontend can map them
+      });
+    }
+  }
+  return shifts;
+}
+
 function saveShift(data) {
   const sheet = getOrCreateShiftSheet();
   const timestamp = new Date();
