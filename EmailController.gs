@@ -83,24 +83,46 @@ function sendOnboardingEmail(caregiverId) {
           <p>To finalize your application with Allevia Senior Care, please fill, review and sign the following forms.</p>
           
           <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="margin-top: 0; color: #65c027;">Step 1: Independent Contractor Agreement</h3>
-            <p style="font-size: 14px; margin-bottom: 10px;">Review and sign to confirm your role as an independent caregiver.</p>
+            <h3 style="margin-top: 0; color: #65c027;">Step 1: Independent Contractor Agreement</h3> 
+            <p style="font-size: 14px; margin-bottom: 10px;">Review and sign to confirm your role as an independent caregiver.</p>           
             <a href="${linkContract}" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Sign Agreement</a>
             
             <h3 style="margin-top: 20px; color: #65c027;">Step 2: IRS W‑9 Form</h3>
-            <p style="font-size: 14px; margin-bottom: 10px;">Submit this form so we can correctly report your earnings as an independent contractor. The IRS requires this so you receive a 1099‑NEC for tax filing.</p>
+            <p style="font-size: 14px; margin-bottom: 10px;">Submit this form so we can correctly report your earnings as an independent contractor. The IRS requires this so you receive a 1099‑NEC for tax filing.</p>            
             <a href="${linkW9}" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Submit W-9</a>
 
-            <h3 style="margin-top: 20px; color: #65c027;">Step 3: Ohio Background Check (Dave Yost)</h3>
-            <p style="font-size: 14px; margin-bottom: 10px;">The Ohio Attorney General’s office manages caregiver background checks.</p>
-            <ul style="font-size: 14px; padding-left: 20px; margin-bottom: 10px;">
-              <li>Sign the consent form (this authorized us to view your background).</li>
-            </ul>
+            <h3 style="margin-top: 20px; color: #65c027;">Step 3: Ohio Background Check (Dave Yost)</h3> 
+            <p style="font-size: 14px; margin-bottom: 10px;">The Ohio Attorney General’s office manages caregiver background checks. Sign the consent form “this authorized us to view your background”</p>
             <p style="font-size: 13px; background-color: #fff; padding: 10px; border: 1px dashed #ccc; border-radius: 4px;">
-              <strong>Note:</strong> The link provided is where you self pay for your background or If you already have a copy that is less than one year old, you may upload it instead. This step is required by state law to ensure the safety of our clients.
+              <strong>Note:</strong> The link provided is where you will do your background check if you don’t have one that is less than a year (this is self-pay). You can also use other services if want. We will need you to upload your copy. This step is required by state law to ensure the safety of our clients.
             </p>
-            <a href="${linkBackground}" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Start Background Check</a>
+            <a href="${linkBackground}" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Sign and Return</a>
           </div>
+
+            <!-- Background check resources -->
+            <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #65c027;">Background Check Resources</h3>
+            <p style="font-size: 13px; background-color: #fff; padding: 10px; border: 1px dashed #ccc; border-radius: 4px;">
+              You can also initiate your background check via our Careers page. Scroll down and click “Background Check” to choose between the available options.
+            </p>
+            <a href="https://alleviaseniorcare.com/careers/" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Go to Careers Page</a>
+            </div>
+
+            <!-- Upload documents link -->
+            <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #65c027;">Upload Completed Documents</h3>
+            <p>After completing the steps above, upload your signed Agreement, W‑9, and background check results using the link below:</p>
+            <div style="text-align: center; margin: 20px 0;">
+              <!-- TODO: Replace REPLACE_WITH_UPLOAD_LINK with your actual upload URL -->
+              <a href="REPLACE_WITH_UPLOAD_LINK" style="background-color: #65c027; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+              👉 Upload Documents
+              </a>
+            </div>
+            <p style="font-size: 13px; color: #888;">
+              If the button doesn't work, copy this link:<br>
+              <a href="REPLACE_WITH_UPLOAD_LINK" style="color: #65c027;">REPLACE_WITH_UPLOAD_LINK</a>
+            </p>
+            </div>
 
           <p>Once all items are submitted, your application status will be updated to Complete.</p>
           <p>We appreciate your prompt attention to these steps and look forward to welcoming you to our team.</p>
