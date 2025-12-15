@@ -152,7 +152,13 @@ function submitContract(form) {
 
     // 4. Upload to Drive
     const folderId = "1q6_Gyjvj5FZxMMnXUQ3MhiKT2gF9KD8L";
-    const folder = DriveApp.getFolderById(folderId);
+    let folder;
+    try {
+      folder = DriveApp.getFolderById(folderId);
+    } catch (err) {
+      return { success: false, message: "Invalid Drive Folder ID or Permissions missing." };
+    }
+    
     const file = folder.createFile(pdfBlob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
@@ -167,4 +173,23 @@ function submitContract(form) {
   } catch (e) {
     return { success: false, message: e.toString() };
   }
+}
+
+/**
+ * ⚠️ CRITICAL FIX FOR PERMISSIONS ⚠️ 
+ */
+function fixDrivePermissions() {
+  const folderId = "1q6_Gyjvj5FZxMMnXUQ3MhiKT2gF9KD8L";
+  console.log("Attempting to access folder...");
+  
+  // 1. Force access to the specific folder
+  const folder = DriveApp.getFolderById(folderId);
+  
+  // 2. Force write permission by creating a temp file
+  const tempFile = folder.createFile("temp_permission_check.txt", "This is a test file to verify permissions. It will be deleted immediately.");
+  
+  // 3. Clean up
+  tempFile.setTrashed(true);
+  
+  console.log("SUCCESS: Permissions are fully active for Drive and Folder access.");
 }
