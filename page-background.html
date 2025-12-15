@@ -19,82 +19,137 @@
     <div
       class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden"
     >
-      <div class="bg-green-600 px-8 py-6">
-        <h1 class="text-2xl font-bold text-white">Background Check Consent</h1>
-        <p class="text-green-100 mt-1">Ohio Attorney General’s Office</p>
+      <div class="px-8 py-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-2xl font-bold">DAVE YOST</h1>
+            <p>OHIO ATTORNEY GENERAL</p>
+          </div>
+          <p>
+            Civilian Identification<br />Office 877-224-0043<br />Fax
+            866-750-0214
+          </p>
+        </div>
+        <h1 class="text-2xl font-bold text-center mt-5">
+          REQUEST FOR COPY OF BACKGROUND CHECK PROCEDURES
+        </h1>
       </div>
 
       <div class="p-8">
         <div class="mb-6">
-          <p class="text-gray-600">
-            I,
-            <span class="font-bold text-gray-900"
-              ><?= caregiverData['First Name'] ?>
-              <?= caregiverData['Middle Int'] ?>
-              <?= caregiverData['Last Name'] ?></span
-            >, hereby authorize Allevia Senior Care to conduct a background
-            check as required by Ohio state law for caregiver employment.
+          <p class="text-justify">
+            A request for a copy of a background check may only be submitted if
+            the original background check was processed for an Ohio Revised Code
+            reason that allows for updates and if the new background check is
+            needed for an Ohio Revised Code reason that allows for updates. If
+            you are unsure if you are able to request a copy, please contact the
+            Civilian Identification Dept. toll free at 877-224-0043.
+            <br /><br />The name on the request of copy form must exactly match
+            the name that was submitted with the prior fingerprints.
+            <br /><br />You may only request a copy of the Ohio BCI background
+            check. The FBI result is not permitted to be sent to any address
+            other than what was requested at the time of the original background
+            check. To obtain a new FBI result, a new FBI background check would
+            have to be submitted. <br /><br />If the request for copy is made
+            within 30 days of the original background check there is no fee for
+            processing and the request can be faxed to 866-750-0214.
+            <br /><br />30 days after the original background check the fee is
+            $8 and is payable by money order, certified check, business check or
+            personal check to Treasurer, State of Ohio.
+            <b>No cash will be accepted.</b> The request must be received within
+            11 months of the original fingerprint submission in order to have
+            time to process before the background check expires. <br /><br />The
+            request and payment can be mailed to: BCI, PO Box 365, London Oh
+            43140.<br /><br />
+          </p>
+          <p>
+            Civilian Unit<br />Identification Department<br />Bureau of Criminal
+            Identification & Investigation
           </p>
         </div>
 
         <form id="bgForm" class="space-y-6">
-          <div class="bg-gray-50 p-4 rounded border">
-            <h3 class="font-bold text-gray-800 mb-2">Disclosure</h3>
-            <p class="text-sm text-gray-600">
-              A consumer report or investigative consumer report including
-              information concerning your character, general reputation,
-              personal characteristics, mode of living, and criminal history may
-              be obtained in connection with your application for employment.
+          <div>
+            <label class="input-label"
+              >Full Name <span class="text-red-500">*</span></label
+            ><input
+              type="text"
+              name="fullName"
+              class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border mb-4"
+              placeholder="Given Name"
+              value="<?= caregiverData['First Name'] ?> <?= caregiverData['Middle Int'] ?> <?= caregiverData['Last Name'] ?>"
+              readonly
+              required
+            />
+
+            <label class="input-label"
+              >REASON FINGERPRINTED ON LAST BACKGROUND CHECK:</label
+            ><input
+              type="text"
+              name="reasonFingerprinted"
+              class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border mb-4"
+            />
+
+            <label class="input-label"
+              >REASON FINGERPRINTED FOR THIS BACKGROUND CHECK:</label
+            ><input
+              type="text"
+              name="reasonThisCheck"
+              class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border mb-4"
+            />
+            <p class="mb-4">
+              * The Ohio Revised Code must be listed in both spaces above
             </p>
-          </div>
 
-          <div class="grid grid-cols-1 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >Date of Birth</label
-              >
-              <input
-                type="date"
-                name="dob"
-                required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >Driver's License Number</label
-              >
-              <input
-                type="text"
-                name="dl"
-                required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
-              />
-            </div>
-          </div>
-
-          <div class="flex items-start pt-4">
-            <div class="flex items-center h-5">
-              <input
-                id="consent"
-                name="consent"
-                type="checkbox"
-                required
-                class="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300 rounded"
-              />
-            </div>
-            <div class="ml-3 text-sm">
-              <label for="consent" class="font-medium text-gray-700">
-                I authorize Allevia Senior Care to view my background check
-                results.
+            <div class="space-y-2 mt-2 pt-4">
+              <label class="flex gap-3 items-start cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="agree1"
+                  required
+                  class="mt-0.5 accent-[#65c027] w-4 h-4 shrink-0"
+                />
+                Return this letter with your payment of $8 (if required),
+                payable to Treasurer, State of Ohio.
+              </label>
+              <label class="flex gap-3 items-start cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="agree2"
+                  required
+                  class="mt-0.5 accent-[#65c027] w-4 h-4 shrink-0"
+                />
+                I hereby certify that I have given the above mentioned person or
+                agency permission to obtain a copy of any conviction record
+                pertaining to me in the files of the Ohio Bureau of Criminal
+                Investigation.
               </label>
             </div>
-          </div>
 
-          <div class="pt-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Signature</label
+            <div class="space-y-2 mb-4 pt-4">
+              <label class="flex gap-3 items-start cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="agreeEsign"
+                  required
+                  class="mt-0.5 accent-[#65c027] w-4 h-4 shrink-0"
+                />
+                <span class="italic">
+                  By electronically typing or signing my name below, I
+                  acknowledge and agree that this electronic representation of
+                  my name constitutes my legal signature. This electronic
+                  signature has the same validity, force, and effect as a
+                  handwritten signature under applicable state and federal law,
+                  including the ESIGN Act and the Uniform Electronic
+                  Transactions Act.
+                </span>
+              </label>
+            </div>
+
+            <label class="input-label"
+              >Digital Signature (Type Full Name)<span class="text-red-500"
+                >*</span
+              ></label
             >
             <input
               type="text"
@@ -104,22 +159,57 @@
               class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border"
             />
 
+            <label class="input-label mt-4 block"
+              >Date <span class="text-red-500">*</span></label
+            >
+            <input
+              type="date"
+              name="signDate"
+              required
+              class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border"
+            />
+          </div>
+
+          <div class="pt-4">
             <button
               type="submit"
-              class="mt-4 w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
-              Submit Consent
+              Sign Agreement
             </button>
           </div>
         </form>
       </div>
     </div>
     <script>
+      // Set default date to today
+      const dateInput = document.querySelector('input[name="signDate"]');
+      if (dateInput) {
+        dateInput.valueAsDate = new Date();
+      }
+
       document
         .getElementById("bgForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          alert("Consent Submitted! (This is a demo)");
+
+          const fullName = document
+            .querySelector('input[name="fullName"]')
+            .value.trim()
+            .replace(/\s+/g, " ")
+            .toLowerCase();
+          const signature = document
+            .querySelector('input[name="signature"]')
+            .value.trim()
+            .replace(/\s+/g, " ")
+            .toLowerCase();
+
+          if (fullName !== signature) {
+            alert("Digital Signature must match the Full Name exactly.");
+            return;
+          }
+
+          alert("Independent Contractor Agreement Signed!");
         });
     </script>
   </body>
