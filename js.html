@@ -1210,7 +1210,7 @@
         if (cg.interviewStatus === "Passed") {
           actionHtml = `${viewDetailsBtn} <span class="text-xs text-green-600 font-bold mr-2">Passed</span> <button onclick="updateStageStatus('${cg.id}', 'Background', 'Pending')" class="text-xs bg-purple-100 text-purple-600 px-3 py-1 rounded-full hover:bg-purple-200 font-bold">Start Background Check</button>`;
         } else if (cg.interviewStatus === "Failed") {
-          actionHtml = `${viewDetailsBtn} <span class="text-xs text-red-600 font-bold">Interview Failed</span>`;
+          actionHtml = `${viewDetailsBtn} <span class="text-xs text-red-600 font-bold mr-2">Interview Failed</span> <button onclick="updateStageStatus('${cg.id}', 'Interview', 'Pending')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1"><i class="ph ph-arrow-u-up-left"></i> Undo</button>`;
         } else {
           actionHtml = `
                     <div class="flex justify-end gap-2 items-center">
@@ -1224,7 +1224,7 @@
         if (cg.backgroundCheck === "Passed") {
           actionHtml = `<span class="text-xs text-green-600 font-bold mr-2">Passed</span> <button onclick="updateStageStatus('${cg.id}', 'Active', 'Active')" class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200 font-bold">Activate Caregiver</button>`;
         } else if (cg.backgroundCheck === "Failed") {
-          actionHtml = `<span class="text-xs text-red-600 font-bold">Background Check Failed</span>`;
+          actionHtml = `<span class="text-xs text-red-600 font-bold mr-2">Background Check Failed</span> <button onclick="updateStageStatus('${cg.id}', 'Background', 'Pending')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1"><i class="ph ph-arrow-u-up-left"></i> Undo</button>`;
         } else {
           actionHtml = `
                     <div class="flex justify-end gap-2 items-center">
