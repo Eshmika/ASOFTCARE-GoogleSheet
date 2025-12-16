@@ -124,6 +124,7 @@
         </div>
 
         <form id="bgForm" class="space-y-6">
+          <input type="hidden" name="caregiverId" value="<?= caregiverId ?>" />
           <div>
             <label class="input-label font-semibold block mb-1"
               >REASON FINGERPRINTED ON LAST BACKGROUND CHECK:</label
@@ -170,7 +171,7 @@
             <? } else { ?>
             <input
               type="text"
-              name="fullName"
+              name="fullNameInitial"
               class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border mb-4"
               placeholder="Given Name"
               value="<?= caregiverData['First Name'] ?> <?= caregiverData['Middle Int'] ?> <?= caregiverData['Last Name'] ?>"
@@ -495,7 +496,7 @@
           e.preventDefault();
 
           const fullName = document
-            .querySelector('input[name="fullName"]')
+            .querySelector('input[name="fullNameInitial"]')
             .value.trim()
             .replace(/\s+/g, " ")
             .toLowerCase();
