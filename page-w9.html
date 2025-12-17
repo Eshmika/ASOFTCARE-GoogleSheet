@@ -19,167 +19,444 @@
     <div
       class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden"
     >
-      <div class="px-8 py-6">
-        <div class="mb-4 flex justify-center">
-          <div
-            class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-[#65c027]"
-          >
-            <img
-              src="https://alleviaseniorcare.com/wp-content/uploads/2025/08/cropped-cropped-Allevia-senior-care-jpg-B.jpg"
-              alt="Allevia Senior Care"
-            />
+      <div class="px-8 border-b border-black">
+        <div class="grid grid-cols-12 gap-4 items-stretch">
+          <div class="col-span-3 text-sm pr-4 border-r border-black">
+            <p>
+              Form <span class="text-2xl font-bold">W-9</span> (Rev. March 2024)
+            </p>
+            <p>Department of the Treasury<br />Internal Revenue Service</p>
+          </div>
+          <div class="col-span-6 text-center px-4 border-r border-black">
+            <h1 class="text-2xl font-bold leading-tight">
+              Request for Taxpayer
+              <span class="block">Identification Number and Certification</span>
+            </h1>
+            <p class="font-bold text-sm mt-2">
+              Go to www.irs.gov/FormW9 for instructions and the latest
+              information.
+            </p>
+          </div>
+          <div class="col-span-3 pl-4">
+            <p class="font-bold">
+              Give form to the requester. Do not send to the IRS.
+            </p>
           </div>
         </div>
-        <h1 class="text-2xl font-bold text-center">
-          Request for Taxpayer <br />Identification Number and Certification
-        </h1>
       </div>
 
       <div class="p-8">
-        <div class="mb-6 bg-yellow-50 border-l-4 border-yellow-500 p-4">
-          <p class="text-yellow-700">
-            Please complete this form for:
-            <span class="font-bold"
-              ><?= caregiverData['First Name'] ?>
-              <?= caregiverData['Last Name'] ?></span
-            >
-          </p>
-        </div>
+        <p>
+          <b>Before you begin.</b> For guidance related to the purpose of Form
+          W-9, see Purpose of Form, below.
+        </p>
 
         <form id="w9Form" class="space-y-6">
-          <div class="grid grid-cols-1 gap-6">
+          <div class="grid grid-cols-1 gap-6 text-justify">
             <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >Name (as shown on your income tax return)</label
+              <label class="input-label block font-semibold mt-2">
+                1. Name of entity/individual. An entry is required. (For a sole
+                proprietor or disregarded entity, enter the owner’s name on line
+                1, and enter the business/disregarded entity’s name on line
+                2.)<span class="text-red-500 no-pdf">*</span></label
               >
               <input
                 type="text"
                 name="name"
-                value="<?= caregiverData['First Name'] ?> <?= caregiverData['Last Name'] ?>"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="input-label block font-semibold mt-2">
+                2. Business name/disregarded entity name, if different from
+                above.</label
+              >
+              <input
+                type="text"
+                name="businessName"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >Address</label
+              <label class="input-label block font-semibold mt-2">
+                3a. Check the appropriate box for federal tax classification of
+                the entity/individual whose name is entered on line 1. Check
+                only one of the following seven boxes.<span
+                  class="text-red-500 no-pdf"
+                  >*</span
+                ></label
+              >
+              <div class="mt-2">
+                <label class="flex items-start space-x-2">
+                  <input
+                    type="radio"
+                    name="taxClassification"
+                    value="Individual/sole_proprietor"
+                    required
+                    class="mt-1 h-4 w-4 text-green-600 border-gray-300"
+                  />
+                  <span class="text-sm">Individual/sole proprietor</span>
+                </label>
+
+                <label class="flex items-start space-x-2">
+                  <input
+                    type="radio"
+                    name="taxClassification"
+                    value="c_corporation"
+                    class="mt-1 h-4 w-4 text-green-600 border-gray-300"
+                  />
+                  <span class="text-sm">C corporation</span>
+                </label>
+
+                <label class="flex items-start space-x-2">
+                  <input
+                    type="radio"
+                    name="taxClassification"
+                    value="s_corporation"
+                    class="mt-1 h-4 w-4 text-green-600 border-gray-300"
+                  />
+                  <span class="text-sm">S Corporation</span>
+                </label>
+
+                <label class="flex items-start space-x-2">
+                  <input
+                    type="radio"
+                    name="taxClassification"
+                    value="partnership"
+                    class="mt-1 h-4 w-4 text-green-600 border-gray-300"
+                  />
+                  <span class="text-sm">Partnership</span>
+                </label>
+
+                <label class="flex items-start space-x-2">
+                  <input
+                    type="radio"
+                    name="taxClassification"
+                    value="trust_estate"
+                    class="mt-1 h-4 w-4 text-green-600 border-gray-300"
+                  />
+                  <span class="text-sm">Trust/estate</span>
+                </label>
+
+                <label class="flex items-start space-x-2">
+                  <input
+                    id="tax-llc"
+                    type="radio"
+                    name="taxClassification"
+                    value="llc"
+                    class="mt-1 h-4 w-4 text-green-600 border-gray-300"
+                  />
+                  <span class="text-sm"
+                    >LLC. Enter the tax classification (C = C corporation, S = S
+                    corporation, P = Partnership) <br /><b>Note:</b> Check the
+                    “LLC” box above and, in the entry space, enter the
+                    appropriate code (C, S, or P) for the tax classification of
+                    the LLC, unless it is a disregarded entity. A disregarded
+                    entity should instead check the appropriate box for the tax
+                    classification of its owner.</span
+                  >
+                  <input
+                    id="tax-llc-class"
+                    type="text"
+                    name="taxLlcClass"
+                    placeholder="C, S, or P"
+                    class="ml-2 flex-1 border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-1 text-sm"
+                    disabled
+                  />
+                </label>
+
+                <label class="flex items-start space-x-2 sm:col-span-2">
+                  <input
+                    id="tax-other"
+                    type="radio"
+                    name="taxClassification"
+                    value="other"
+                    class="mt-1 h-4 w-4 text-green-600 border-gray-300"
+                  />
+                  <span class="text-sm">Other (see instructions)</span>
+                  <input
+                    id="tax-other-text"
+                    type="text"
+                    name="taxOtherText"
+                    placeholder="Specify"
+                    class="ml-2 flex-1 border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-1 text-sm"
+                    disabled
+                  />
+                </label>
+              </div>
+
+              <script>
+                (function () {
+                  const radios = document.querySelectorAll(
+                    'input[name="taxClassification"]'
+                  );
+                  const otherRadio = document.getElementById("tax-other");
+                  const otherText = document.getElementById("tax-other-text");
+                  const llcRadio = document.getElementById("tax-llc");
+                  const llcClass = document.getElementById("tax-llc-class");
+
+                  function update() {
+                    const isOther = !!(otherRadio && otherRadio.checked);
+                    const isLLC = !!(llcRadio && llcRadio.checked);
+
+                    if (otherText) {
+                      otherText.disabled = !isOther;
+                      otherText.required = isOther;
+                    }
+
+                    if (llcClass) {
+                      llcClass.disabled = !isLLC;
+                      llcClass.required = isLLC;
+                    }
+                  }
+
+                  radios.forEach((r) => r.addEventListener("change", update));
+                  update();
+                })();
+              </script>
+            </div>
+
+            <div>
+              <label class="input-label block font-semibold mt-2">
+                3b. If on line 3a you checked “Partnership” or “Trust/estate,”
+                or checked “LLC” and entered “P” as its tax classification, and
+                you are providing this form to a partnership, trust, or estate
+                in which you have an ownership interest, check this box if you
+                have any foreign partners, owners, or beneficiaries. See
+                instructions.
+              </label>
+              <div class="flex items-start mt-2">
+                <input
+                  id="hasForeignOwners"
+                  name="hasForeignOwners"
+                  type="checkbox"
+                  class="mt-1 h-4 w-4 text-green-600 border-gray-300 rounded"
+                />
+                <label for="hasForeignOwners" class="ml-3 text-sm">
+                  Check this box if applicable.
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="input-label block font-semibold mt-2">
+                4. Exemptions (codes apply only to certain entities, not
+                individuals; see instructions on page 3):</label
+              >
+              <div class="mt-2">
+                <div>
+                  <label class="block text-sm font-medium">
+                    Exempt payee code (if any)
+                  </label>
+                  <input
+                    type="text"
+                    name="exemptPayeeCode"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium">
+                    Exemption from Foreign Account Tax Compliance Act (FATCA)
+                    reporting code (if any)
+                  </label>
+                  <input
+                    type="text"
+                    name="fatcaCode"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
+                  />
+                </div>
+              </div>
+              <p class="text-sm">
+                <i
+                  >(Applies to accounts maintained outside the United
+                  States.)</i
+                >
+              </p>
+            </div>
+
+            <div>
+              <label class="input-label block font-semibold mt-2">
+                Requester’s name and address (optional)</label
+              >
+              <input
+                type="text"
+                name="requesterInfo"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
+              />
+            </div>
+
+            <div>
+              <label class="input-label block font-semibold mt-2">
+                5. Address (number, street, and apt. or suite no.). See
+                instructions.<span class="text-red-500 no-pdf">*</span></label
               >
               <input
                 type="text"
                 name="address"
-                placeholder="Street Address"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="input-label block font-semibold mt-2">
+                6. City, state, and ZIP code<span class="text-red-500 no-pdf"
+                  >*</span
+                ></label
+              >
+              <input
+                type="text"
+                name="cityStateZip"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="input-label block font-semibold mt-2">
+                7. List account number(s) here (optional)</label
+              >
+              <input
+                type="text"
+                name="accountNumbers"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
               />
             </div>
 
-            <div class="grid grid-cols-3 gap-4">
-              <div class="col-span-1">
-                <label class="block text-sm font-medium text-gray-700"
-                  >City</label
-                >
-                <input
-                  type="text"
-                  name="city"
-                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
-                />
-              </div>
-              <div class="col-span-1">
-                <label class="block text-sm font-medium text-gray-700"
-                  >State</label
-                >
-                <input
-                  type="text"
-                  name="state"
-                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
-                />
-              </div>
-              <div class="col-span-1">
-                <label class="block text-sm font-medium text-gray-700"
-                  >Zip Code</label
-                >
-                <input
-                  type="text"
-                  name="zip"
-                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
-                />
-              </div>
-            </div>
+            <p><b>Part I</b> Taxpayer Identification Number (TIN)</p>
+            <p>
+              Enter your TIN in the appropriate box. The TIN provided must match
+              the name given on line 1 to avoid backup withholding. For
+              individuals, this is generally your social security number (SSN).
+              However, for a resident alien, sole proprietor, or disregarded
+              entity, see the instructions for Part I, later. For other
+              entities, it is your employer identification number (EIN). If you
+              do not have a number, see How to get a TIN, later. <br />Note: If
+              the account is in more than one name, see the instructions for
+              line 1. See also What Name and Number To Give the Requester for
+              guidelines on whose number to enter.
+            </p>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >Social Security Number (SSN)</label
+              <label class="input-label block font-semibold mt-2">
+                Social security number</label
               >
               <input
                 type="text"
                 name="ssn"
+                inputmode="numeric"
                 placeholder="XXX-XX-XXXX"
+                maxlength="11"
+                pattern="^\d{3}-\d{2}-\d{4}$"
+                title="Enter SSN as XXX-XX-XXXX"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
+                oninput="this.value = this.value.replace(/[^0-9]/g,'').slice(0,9).replace(/(\d{3})(\d{2})(\d{0,4})/, (_,a,b,c) => c ? `${a}-${b}-${c}` : b ? `${a}-${b}` : a);"
               />
             </div>
-          </div>
 
-          <div class="border-t pt-6 mt-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">
-              Certification
-            </h3>
-            <div class="space-y-4">
-              <div class="flex items-start">
+            <!-- <p>or</p>
+
+            <div>
+              <label class="input-label block font-semibold mt-2">
+                Employer identification number</label
+              >
+              <input
+                type="text"
+                name="ein"
+                inputmode="numeric"
+                placeholder="XX-XXXXXXX"
+                maxlength="10"
+                pattern="^\d{2}-\d{7}$"
+                title="Enter EIN as XX-XXXXXXX"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
+                oninput="this.value = this.value.replace(/[^0-9]/g,'').slice(0,9).replace(/(\d{2})(\d{0,7})/, (_,a,b) => b ? `${a}-${b}` : a);"
+              />
+            </div> -->
+
+            <p><b>Part II</b> Certification</p>
+            <p>
+              Under penalties of perjury, I certify that: <br />1. The number
+              shown on this form is my correct taxpayer identification number
+              (or I am waiting for a number to be issued to me); and <br />2. I
+              am not subject to backup withholding because (a) I am exempt from
+              backup withholding, or (b) I have not been notified by the
+              Internal Revenue Service (IRS) that I am subject to backup
+              withholding as a result of a failure to report all interest or
+              dividends, or (c) the IRS has notified me that I am no longer
+              subject to backup withholding; and <br />3. I am a U.S. citizen or
+              other U.S. person (defined below); and <br />4. The FATCA code(s)
+              entered on this form (if any) indicating that I am exempt from
+              FATCA reporting is correct. <br /><b
+                >Certification instructions.</b
+              >You must cross out item 2 above if you have been notified by the
+              IRS that you are currently subject to backup withholding because
+              you have failed to report all interest and dividends on your tax
+              return. For real estate transactions, item 2 does not apply. For
+              mortgage interest paid, acquisition or abandonment of secured
+              property, cancellation of debt, contributions to an individual
+              retirement arrangement (IRA), and, generally, payments other than
+              interest and dividends, you are not required to sign the
+              certification, but you must provide your correct TIN. See the
+              instructions for Part II, later.
+            </p>
+
+            <label class="flex gap-3 items-start cursor-pointer">
+              <input
+                type="checkbox"
+                name="agreeEsign"
+                required
+                class="mt-0.5 accent-[#65c027] w-4 h-4 shrink-0"
+              />
+              <span class="italic">
+                By electronically typing or signing my name below, I acknowledge
+                and agree that this electronic representation of my name
+                constitutes my legal signature. This electronic signature has
+                the same validity, force, and effect as a handwritten signature
+                under applicable state and federal law, including the ESIGN Act
+                and the Uniform Electronic Transactions Act.
+              </span>
+            </label>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="input-label font-semibold block mb-1">
+                  Digital Signature (Type Full Name)<span
+                    class="text-red-500 no-pdf"
+                    >*</span
+                  >
+                </label>
                 <input
-                  id="cert1"
-                  name="cert1"
-                  type="checkbox"
+                  type="text"
+                  name="signature"
                   required
-                  class="mt-1 h-4 w-4 text-green-600 border-gray-300 rounded"
+                  placeholder="Type your full name"
+                  class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border"
                 />
-                <label for="cert1" class="ml-3 text-sm text-gray-600"
-                  >1. The number shown on this form is my correct taxpayer
-                  identification number.</label
-                >
               </div>
-              <div class="flex items-start">
+              <div>
+                <label class="input-label font-semibold block mb-1">
+                  Date <span class="text-red-500 no-pdf">*</span>
+                </label>
                 <input
-                  id="cert2"
-                  name="cert2"
-                  type="checkbox"
+                  type="date"
+                  name="signDate"
                   required
-                  class="mt-1 h-4 w-4 text-green-600 border-gray-300 rounded"
+                  class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border"
                 />
-                <label for="cert2" class="ml-3 text-sm text-gray-600"
-                  >2. I am not subject to backup withholding.</label
-                >
-              </div>
-              <div class="flex items-start">
-                <input
-                  id="cert3"
-                  name="cert3"
-                  type="checkbox"
-                  required
-                  class="mt-1 h-4 w-4 text-green-600 border-gray-300 rounded"
-                />
-                <label for="cert3" class="ml-3 text-sm text-gray-600"
-                  >3. I am a U.S. citizen or other U.S. person.</label
-                >
               </div>
             </div>
-          </div>
 
-          <div class="pt-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Signature</label
-            >
-            <input
-              type="text"
-              name="signature"
-              required
-              placeholder="Type your full name"
-              class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border"
-            />
-            <button
-              type="submit"
-              class="mt-4 w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-              Submit W-9
-            </button>
+            <div class="pt-4">
+              <button
+                type="submit"
+                class="mt-4 w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                Submit W-9
+              </button>
+            </div>
           </div>
         </form>
       </div>
