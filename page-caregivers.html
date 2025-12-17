@@ -149,7 +149,13 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2"
               >Phone</label
-            ><input type="tel" name="phone" required maxlength="14" class="input-field" />
+            ><input
+              type="tel"
+              name="phone"
+              required
+              maxlength="14"
+              class="input-field"
+            />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2"
@@ -170,7 +176,7 @@
               <option value="CPR">CPR</option>
               <option value="Other">Other</option>
             </select>
-          </div>         
+          </div>
           <div>
             <input type="hidden" name="status" value="Applicant" />
           </div>
@@ -340,7 +346,9 @@
           <div class="space-y-4">
             <div>
               <p class="text-xs text-gray-400 uppercase">Last Client Seen</p>
-              <p class="text-sm font-bold text-gray-800" id="p-last-client">--</p>
+              <p class="text-sm font-bold text-gray-800" id="p-last-client">
+                --
+              </p>
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Certifications</p>
@@ -369,6 +377,17 @@
             <div>
               <p class="text-xs text-gray-400 uppercase">Last Employer</p>
               <p class="text-sm font-medium" id="p-emp">--</p>
+            </div>
+
+            <!-- Documents Section -->
+            <div
+              id="p-documents-container"
+              class="hidden border-t border-gray-100 pt-4 mt-2"
+            >
+              <p class="text-xs text-gray-400 uppercase mb-2 font-bold">
+                Signed Documents
+              </p>
+              <div id="p-documents" class="flex flex-col gap-2"></div>
             </div>
           </div>
         </div>
@@ -402,17 +421,23 @@
               <p class="text-sm font-bold mt-1" id="p-emergency-name">--</p>
               <p class="text-xs text-gray-600" id="p-emergency-contact">--</p>
             </div>
-            
+
             <!-- Signature Section -->
             <div class="bg-blue-50 p-3 rounded mt-4 border border-blue-100">
-              <p class="text-xs text-blue-400 uppercase font-bold mb-2">Application Signature</p>
+              <p class="text-xs text-blue-400 uppercase font-bold mb-2">
+                Application Signature
+              </p>
               <div>
                 <p class="text-xs text-gray-400 uppercase">Signed By</p>
-                <p class="text-sm font-bold text-blue-900" id="p-signName">--</p>
+                <p class="text-sm font-bold text-blue-900" id="p-signName">
+                  --
+                </p>
               </div>
               <div class="mt-2">
                 <p class="text-xs text-gray-400 uppercase">Date Signed</p>
-                <p class="text-sm font-medium text-blue-800" id="p-signDate">--</p>
+                <p class="text-sm font-medium text-blue-800" id="p-signDate">
+                  --
+                </p>
               </div>
             </div>
           </div>
@@ -492,18 +517,40 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700">SSN #</label
-            ><input type="text" name="ssn" id="edit-ssn" maxlength="11" class="input-field" />
+            ><input
+              type="text"
+              name="ssn"
+              id="edit-ssn"
+              maxlength="11"
+              class="input-field"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700">Routing #</label
-            ><input type="text" name="routingNum" id="edit-routingNum" maxlength="9" class="input-field" />
+            <label class="block text-sm font-medium text-gray-700"
+              >Routing #</label
+            ><input
+              type="text"
+              name="routingNum"
+              id="edit-routingNum"
+              maxlength="9"
+              class="input-field"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700">Account #</label
-            ><input type="text" name="accountNum" id="edit-accountNum" maxlength="12" class="input-field" />
+            <label class="block text-sm font-medium text-gray-700"
+              >Account #</label
+            ><input
+              type="text"
+              name="accountNum"
+              id="edit-accountNum"
+              maxlength="12"
+              class="input-field"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700">Status</label>
+            <label class="block text-sm font-medium text-gray-700"
+              >Status</label
+            >
             <select name="status" id="edit-status" class="input-field">
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
@@ -547,7 +594,13 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700">Zip</label
-            ><input type="text" name="zip" id="edit-zip" maxlength="5" class="input-field" />
+            ><input
+              type="text"
+              name="zip"
+              id="edit-zip"
+              maxlength="5"
+              class="input-field"
+            />
           </div>
 
           <div>
@@ -1287,14 +1340,30 @@
 
     <div class="space-y-4">
       <!-- Stage 1: New Application -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <button onclick="toggleStage('stage-new')" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+      <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+      >
+        <button
+          onclick="toggleStage('stage-new')"
+          class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+        >
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">1</div>
+            <div
+              class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold"
+            >
+              1
+            </div>
             <span class="font-bold text-gray-700">New Application</span>
-            <span id="count-stage-new" class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">0</span>
+            <span
+              id="count-stage-new"
+              class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full"
+              >0</span
+            >
           </div>
-          <i id="icon-stage-new" class="ph ph-caret-down text-gray-400 transition-transform"></i>
+          <i
+            id="icon-stage-new"
+            class="ph ph-caret-down text-gray-400 transition-transform"
+          ></i>
         </button>
         <div id="content-stage-new" class="hidden border-t border-gray-100">
           <div class="p-4">
@@ -1306,23 +1375,45 @@
                   <th class="pb-2 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody id="list-stage-new" class="divide-y divide-gray-50"></tbody>
+              <tbody
+                id="list-stage-new"
+                class="divide-y divide-gray-50"
+              ></tbody>
             </table>
           </div>
         </div>
       </div>
 
       <!-- Stage 2: Interview Completed -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <button onclick="toggleStage('stage-interview')" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+      <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+      >
+        <button
+          onclick="toggleStage('stage-interview')"
+          class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+        >
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold">2</div>
+            <div
+              class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold"
+            >
+              2
+            </div>
             <span class="font-bold text-gray-700">Interview Completed</span>
-            <span id="count-stage-interview" class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">0</span>
+            <span
+              id="count-stage-interview"
+              class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full"
+              >0</span
+            >
           </div>
-          <i id="icon-stage-interview" class="ph ph-caret-down text-gray-400 transition-transform"></i>
+          <i
+            id="icon-stage-interview"
+            class="ph ph-caret-down text-gray-400 transition-transform"
+          ></i>
         </button>
-        <div id="content-stage-interview" class="hidden border-t border-gray-100">
+        <div
+          id="content-stage-interview"
+          class="hidden border-t border-gray-100"
+        >
           <div class="p-4">
             <table class="w-full text-left text-sm">
               <thead class="text-gray-500 border-b border-gray-100">
@@ -1332,23 +1423,47 @@
                   <th class="pb-2 text-right">Interview Passed?</th>
                 </tr>
               </thead>
-              <tbody id="list-stage-interview" class="divide-y divide-gray-50"></tbody>
+              <tbody
+                id="list-stage-interview"
+                class="divide-y divide-gray-50"
+              ></tbody>
             </table>
           </div>
         </div>
       </div>
 
       <!-- Stage 3: Consent Form & Background -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <button onclick="toggleStage('stage-background')" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+      <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+      >
+        <button
+          onclick="toggleStage('stage-background')"
+          class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+        >
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">3</div>
-            <span class="font-bold text-gray-700">Consent Form & Background</span>
-            <span id="count-stage-background" class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">0</span>
+            <div
+              class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold"
+            >
+              3
+            </div>
+            <span class="font-bold text-gray-700"
+              >Consent Form & Background</span
+            >
+            <span
+              id="count-stage-background"
+              class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full"
+              >0</span
+            >
           </div>
-          <i id="icon-stage-background" class="ph ph-caret-down text-gray-400 transition-transform"></i>
+          <i
+            id="icon-stage-background"
+            class="ph ph-caret-down text-gray-400 transition-transform"
+          ></i>
         </button>
-        <div id="content-stage-background" class="hidden border-t border-gray-100">
+        <div
+          id="content-stage-background"
+          class="hidden border-t border-gray-100"
+        >
           <div class="p-4">
             <table class="w-full text-left text-sm">
               <thead class="text-gray-500 border-b border-gray-100">
@@ -1358,21 +1473,42 @@
                   <th class="pb-2 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody id="list-stage-background" class="divide-y divide-gray-50"></tbody>
+              <tbody
+                id="list-stage-background"
+                class="divide-y divide-gray-50"
+              ></tbody>
             </table>
           </div>
         </div>
       </div>
 
       <!-- Stage 4: Converted to Active -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <button onclick="toggleStage('stage-active')" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+      <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+      >
+        <button
+          onclick="toggleStage('stage-active')"
+          class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+        >
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold">4</div>
-            <span class="font-bold text-gray-700">Converted to Active Caregiver</span>
-            <span id="count-stage-active" class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">0</span>
+            <div
+              class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold"
+            >
+              4
+            </div>
+            <span class="font-bold text-gray-700"
+              >Converted to Active Caregiver</span
+            >
+            <span
+              id="count-stage-active"
+              class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full"
+              >0</span
+            >
           </div>
-          <i id="icon-stage-active" class="ph ph-caret-down text-gray-400 transition-transform"></i>
+          <i
+            id="icon-stage-active"
+            class="ph ph-caret-down text-gray-400 transition-transform"
+          ></i>
         </button>
         <div id="content-stage-active" class="hidden border-t border-gray-100">
           <div class="p-4">
@@ -1384,13 +1520,14 @@
                   <th class="pb-2 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody id="list-stage-active" class="divide-y divide-gray-50"></tbody>
+              <tbody
+                id="list-stage-active"
+                class="divide-y divide-gray-50"
+              ></tbody>
             </table>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-
 </div>

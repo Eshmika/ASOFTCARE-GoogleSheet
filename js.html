@@ -804,6 +804,43 @@
             : "--"
         );
 
+        // Render Documents
+        const docContainer = document.getElementById("p-documents-container");
+        const docList = document.getElementById("p-documents");
+        docList.innerHTML = "";
+        let hasDocs = false;
+
+        if (data["Contract Link"]) {
+          hasDocs = true;
+          docList.innerHTML += `<a href="${data["Contract Link"]}" target="_blank" class="flex items-center gap-2 p-2 bg-gray-50 hover:bg-gray-100 rounded border border-gray-200 text-sm text-gray-700 transition-colors">
+            <i class="ph ph-file-text text-blue-500 text-lg"></i>
+            <span class="font-medium">Independent Contractor Agreement</span>
+            <i class="ph ph-arrow-square-out ml-auto text-gray-400"></i>
+          </a>`;
+        }
+        if (data["W9 Link"]) {
+          hasDocs = true;
+          docList.innerHTML += `<a href="${data["W9 Link"]}" target="_blank" class="flex items-center gap-2 p-2 bg-gray-50 hover:bg-gray-100 rounded border border-gray-200 text-sm text-gray-700 transition-colors">
+            <i class="ph ph-file-text text-green-500 text-lg"></i>
+            <span class="font-medium">W-9 Form</span>
+            <i class="ph ph-arrow-square-out ml-auto text-gray-400"></i>
+          </a>`;
+        }
+        if (data["Background Link"]) {
+          hasDocs = true;
+          docList.innerHTML += `<a href="${data["Background Link"]}" target="_blank" class="flex items-center gap-2 p-2 bg-gray-50 hover:bg-gray-100 rounded border border-gray-200 text-sm text-gray-700 transition-colors">
+            <i class="ph ph-file-text text-orange-500 text-lg"></i>
+            <span class="font-medium">Background Check Request</span>
+            <i class="ph ph-arrow-square-out ml-auto text-gray-400"></i>
+          </a>`;
+        }
+
+        if (hasDocs) {
+          docContainer.classList.remove("hidden");
+        } else {
+          docContainer.classList.add("hidden");
+        }
+
         document.getElementById("profileLoading").classList.add("hidden");
         document.getElementById("profileContent").classList.remove("hidden");
       })
