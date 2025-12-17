@@ -13,6 +13,67 @@
       body {
         font-family: "Inter", sans-serif;
       }
+
+      /* Tailwind Polyfill for PDF Generation */
+      .text-center { text-align: center; }
+      .text-justify { text-align: justify; }
+      .font-bold { font-weight: 700; }
+      .font-semibold { font-weight: 600; }
+      .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+      .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+      .underline { text-decoration: underline; }
+      .italic { font-style: italic; }
+      .mb-6 { margin-bottom: 1.5rem; }
+      .mb-4 { margin-bottom: 1rem; }
+      .mt-2 { margin-top: 0.5rem; }
+      .mt-4 { margin-top: 1rem; }
+      .p-8 { padding: 2rem; }
+      .px-8 { padding-left: 2rem; padding-right: 2rem; }
+      .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+      .space-y-2 > * + * { margin-top: 0.5rem; }
+      .space-y-6 > * + * { margin-top: 1.5rem; }
+      .w-full { width: 100%; }
+      .border { border-width: 1px; border-style: solid; }
+      .border-gray-300 { border-color: #d1d5db; }
+      .border-black { border-color: #000; }
+      .border-r { border-right-width: 1px; }
+      .border-b { border-bottom-width: 1px; }
+      .rounded-md { border-radius: 0.375rem; }
+      .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+      .p-2 { padding: 0.5rem; }
+      .block { display: block; }
+      .flex { display: flex; }
+      .grid { display: grid; }
+      .grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+      .col-span-3 { grid-column: span 3 / span 3; }
+      .col-span-6 { grid-column: span 6 / span 6; }
+      .gap-4 { gap: 1rem; }
+      .items-stretch { align-items: stretch; }
+      .text-red-500 { color: #ef4444; }
+
+      /* PDF Specific Overrides */
+      <? if (isPdf) { ?>
+        body { background-color: white !important; padding: 0 !important; }
+        .shadow-lg { box-shadow: none !important; }
+        .rounded-xl { border-radius: 0 !important; }
+        .no-pdf { display: none !important; }
+        /* Ensure inputs look like text in PDF */
+        .pdf-value {
+            border: none;
+            border-bottom: 1px solid #000;
+            padding: 4px 0;
+            width: 100%;
+            display: block;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 24px;
+        }
+        .pdf-check {
+            font-size: 18px;
+            line-height: 1;
+            display: inline-block;
+            width: 20px;
+        }
+      <? } ?>
     </style>
   </head>
   <body class="bg-gray-50 min-h-screen py-10 px-4">
@@ -52,6 +113,9 @@
         </p>
 
         <form id="w9Form" class="space-y-6">
+          <!-- Hidden ID field for linking to existing caregiver record -->
+          <input type="hidden" name="caregiverId" value="" />
+
           <div class="grid grid-cols-1 gap-6 text-justify">
             <div>
               <label class="input-label block font-semibold mt-2">
@@ -60,12 +124,16 @@
                 1, and enter the business/disregarded entity’s name on line
                 2.)<span class="text-red-500 no-pdf">*</span></label
               >
+              <? if (isPdf) { ?>
+              <div class="pdf-value"><?= data.W9_Name ?></div>
+              <? } else { ?>
               <input
                 type="text"
                 name="name"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
                 required
               />
+              <? } ?>
             </div>
 
             <div>
@@ -73,11 +141,15 @@
                 2. Business name/disregarded entity name, if different from
                 above.</label
               >
+              <? if (isPdf) { ?>
+              <div class="pdf-value"><?= data.W9_BusinessName ?></div>
+              <? } else { ?>
               <input
                 type="text"
                 name="businessName"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
               />
+              <? } ?>
             </div>
 
             <div>
@@ -90,6 +162,61 @@
                 ></label
               >
               <div class="mt-2">
+                <? if (isPdf) { ?>
+                <!-- PDF View for Radio Buttons -->
+                <div class="space-y-2">
+                  <div>
+                    <span class="pdf-check"
+                      ><?= data.W9_TaxClassification === 'Individual/sole_proprietor' ? '☑' : '☐' ?></span
+                    >
+                    Individual/sole proprietor
+                  </div>
+                  <div>
+                    <span class="pdf-check"
+                      ><?= data.W9_TaxClassification === 'c_corporation' ? '☑' : '☐' ?></span
+                    >
+                    C corporation
+                  </div>
+                  <div>
+                    <span class="pdf-check"
+                      ><?= data.W9_TaxClassification === 's_corporation' ? '☑' : '☐' ?></span
+                    >
+                    S Corporation
+                  </div>
+                  <div>
+                    <span class="pdf-check"
+                      ><?= data.W9_TaxClassification === 'partnership' ? '☑' : '☐' ?></span
+                    >
+                    Partnership
+                  </div>
+                  <div>
+                    <span class="pdf-check"
+                      ><?= data.W9_TaxClassification === 'trust_estate' ? '☑' : '☐' ?></span
+                    >
+                    Trust/estate
+                  </div>
+                  <div>
+                    <span class="pdf-check"
+                      ><?= data.W9_TaxClassification === 'llc' ? '☑' : '☐' ?></span
+                    >
+                    LLC.
+                    <? if (data.W9_TaxClassification === 'llc') { ?>
+                    (Code:
+                    <?= data.W9_TaxLlcClass ?>)
+                    <? } ?>
+                  </div>
+                  <div>
+                    <span class="pdf-check"
+                      ><?= data.W9_TaxClassification === 'other' ? '☑' : '☐' ?></span
+                    >
+                    Other
+                    <? if (data.W9_TaxClassification === 'other') { ?>
+                    (<?= data.W9_TaxOtherText ?>)
+                    <? } ?>
+                  </div>
+                </div>
+                <? } else { ?>
+                <!-- Web Form View for Radio Buttons -->
                 <label class="flex items-start space-x-2">
                   <input
                     type="radio"
@@ -186,8 +313,10 @@
                     disabled
                   />
                 </label>
+                <? } ?>
               </div>
 
+              <? if (!isPdf) { ?>
               <script>
                 (function () {
                   const radios = document.querySelectorAll(
@@ -217,6 +346,7 @@
                   update();
                 })();
               </script>
+              <? } ?>
             </div>
 
             <div>
@@ -229,6 +359,12 @@
                 instructions.
               </label>
               <div class="flex items-start mt-2">
+                <? if (isPdf) { ?>
+                <span class="pdf-check"
+                  ><?= data.W9_HasForeignOwners === 'Yes' ? '☑' : '☐' ?></span
+                >
+                <span class="ml-3 text-sm">Check this box if applicable.</span>
+                <? } else { ?>
                 <input
                   id="hasForeignOwners"
                   name="hasForeignOwners"
@@ -238,6 +374,7 @@
                 <label for="hasForeignOwners" class="ml-3 text-sm">
                   Check this box if applicable.
                 </label>
+                <? } ?>
               </div>
             </div>
 
@@ -251,22 +388,30 @@
                   <label class="block text-sm font-medium">
                     Exempt payee code (if any)
                   </label>
+                  <? if (isPdf) { ?>
+                  <div class="pdf-value"><?= data.W9_ExemptPayeeCode ?></div>
+                  <? } else { ?>
                   <input
                     type="text"
                     name="exemptPayeeCode"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
                   />
+                  <? } ?>
                 </div>
                 <div>
                   <label class="block text-sm font-medium">
                     Exemption from Foreign Account Tax Compliance Act (FATCA)
                     reporting code (if any)
                   </label>
+                  <? if (isPdf) { ?>
+                  <div class="pdf-value"><?= data.W9_FatcaCode ?></div>
+                  <? } else { ?>
                   <input
                     type="text"
                     name="fatcaCode"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
                   />
+                  <? } ?>
                 </div>
               </div>
               <p class="text-sm">
@@ -281,11 +426,15 @@
               <label class="input-label block font-semibold mt-2">
                 Requester’s name and address (optional)</label
               >
+              <? if (isPdf) { ?>
+              <div class="pdf-value"><?= data.W9_RequesterInfo ?></div>
+              <? } else { ?>
               <input
                 type="text"
                 name="requesterInfo"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
               />
+              <? } ?>
             </div>
 
             <div>
@@ -293,12 +442,16 @@
                 5. Address (number, street, and apt. or suite no.). See
                 instructions.<span class="text-red-500 no-pdf">*</span></label
               >
+              <? if (isPdf) { ?>
+              <div class="pdf-value"><?= data.W9_Address ?></div>
+              <? } else { ?>
               <input
                 type="text"
                 name="address"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
                 required
               />
+              <? } ?>
             </div>
 
             <div>
@@ -307,23 +460,31 @@
                   >*</span
                 ></label
               >
+              <? if (isPdf) { ?>
+              <div class="pdf-value"><?= data.W9_CityStateZip ?></div>
+              <? } else { ?>
               <input
                 type="text"
                 name="cityStateZip"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
                 required
               />
+              <? } ?>
             </div>
 
             <div>
               <label class="input-label block font-semibold mt-2">
                 7. List account number(s) here (optional)</label
               >
+              <? if (isPdf) { ?>
+              <div class="pdf-value"><?= data.W9_AccountNumbers ?></div>
+              <? } else { ?>
               <input
                 type="text"
                 name="accountNumbers"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
               />
+              <? } ?>
             </div>
 
             <p><b>Part I</b> Taxpayer Identification Number (TIN)</p>
@@ -344,6 +505,9 @@
               <label class="input-label block font-semibold mt-2">
                 Social security number</label
               >
+              <? if (isPdf) { ?>
+              <div class="pdf-value"><?= data.W9_SSN ?></div>
+              <? } else { ?>
               <input
                 type="text"
                 name="ssn"
@@ -355,26 +519,8 @@
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
                 oninput="this.value = this.value.replace(/[^0-9]/g,'').slice(0,9).replace(/(\d{3})(\d{2})(\d{0,4})/, (_,a,b,c) => c ? `${a}-${b}-${c}` : b ? `${a}-${b}` : a);"
               />
+              <? } ?>
             </div>
-
-            <!-- <p>or</p>
-
-            <div>
-              <label class="input-label block font-semibold mt-2">
-                Employer identification number</label
-              >
-              <input
-                type="text"
-                name="ein"
-                inputmode="numeric"
-                placeholder="XX-XXXXXXX"
-                maxlength="10"
-                pattern="^\d{2}-\d{7}$"
-                title="Enter EIN as XX-XXXXXXX"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
-                oninput="this.value = this.value.replace(/[^0-9]/g,'').slice(0,9).replace(/(\d{2})(\d{0,7})/, (_,a,b) => b ? `${a}-${b}` : a);"
-              />
-            </div> -->
 
             <p><b>Part II</b> Certification</p>
             <p>
@@ -404,12 +550,16 @@
             </p>
 
             <label class="flex gap-3 items-start cursor-pointer">
+              <? if (isPdf) { ?>
+              <span class="pdf-check">☑</span>
+              <? } else { ?>
               <input
                 type="checkbox"
                 name="agreeEsign"
                 required
                 class="mt-0.5 accent-[#65c027] w-4 h-4 shrink-0"
               />
+              <? } ?>
               <span class="italic">
                 By electronically typing or signing my name below, I acknowledge
                 and agree that this electronic representation of my name
@@ -428,6 +578,17 @@
                     >*</span
                   >
                 </label>
+                <? if (isPdf) { ?>
+                <div
+                  class="pdf-value"
+                  style="
+                    font-family: 'Brush Script MT', cursive;
+                    font-size: 1.2em;
+                  "
+                >
+                  <?= data.Signature ?>
+                </div>
+                <? } else { ?>
                 <input
                   type="text"
                   name="signature"
@@ -435,20 +596,26 @@
                   placeholder="Type your full name"
                   class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border"
                 />
+                <? } ?>
               </div>
               <div>
                 <label class="input-label font-semibold block mb-1">
                   Date <span class="text-red-500 no-pdf">*</span>
                 </label>
+                <? if (isPdf) { ?>
+                <div class="pdf-value"><?= data.SignDate ?></div>
+                <? } else { ?>
                 <input
                   type="date"
                   name="signDate"
                   required
                   class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border"
                 />
+                <? } ?>
               </div>
             </div>
 
+            <? if (!isPdf) { ?>
             <div class="pt-4">
               <button
                 type="submit"
@@ -457,16 +624,74 @@
                 Submit W-9
               </button>
             </div>
+            <? } ?>
           </div>
         </form>
       </div>
     </div>
     <script>
+      // Get caregiverId from URL
+      function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+
+      const caregiverId = getQueryParam("caregiverId");
+      if (caregiverId) {
+        document.querySelector('input[name="caregiverId"]').value = caregiverId;
+      } else {
+        console.warn("No caregiverId found in URL");
+        // Optional: alert("Error: No Caregiver ID found. Please return to the dashboard.");
+      }
+
       document
         .getElementById("w9Form")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          alert("W-9 Submitted! (This is a demo)");
+
+          const form = this;
+          const submitBtn = form.querySelector('button[type="submit"]');
+          const originalBtnText = submitBtn.innerText;
+
+          // Validate Signature
+          const name = form
+            .querySelector('input[name="name"]')
+            .value.trim()
+            .toLowerCase();
+          const signature = form
+            .querySelector('input[name="signature"]')
+            .value.trim()
+            .toLowerCase();
+
+          if (name !== signature) {
+            alert("Signature must match the Name provided in line 1.");
+            return;
+          }
+
+          submitBtn.disabled = true;
+          submitBtn.innerText = "Submitting...";
+
+          google.script.run
+            .withSuccessHandler(function (response) {
+              if (response && response.success) {
+                alert("W-9 Form submitted successfully!");
+                form.reset();
+                // Optional: Redirect or close
+              } else {
+                alert(
+                  "Error submitting form: " +
+                    (response ? response.message : "Unknown error")
+                );
+              }
+              submitBtn.disabled = false;
+              submitBtn.innerText = originalBtnText;
+            })
+            .withFailureHandler(function (error) {
+              alert("Error: " + error.message);
+              submitBtn.disabled = false;
+              submitBtn.innerText = originalBtnText;
+            })
+            .submitW9(form);
         });
     </script>
   </body>

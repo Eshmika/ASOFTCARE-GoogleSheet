@@ -262,6 +262,77 @@ function submitBackground(form) {
   }
 }
 
+function submitW9(form) {
+  try {
+    const id = form.caregiverId;
+    if (!id) return { success: false, message: "Missing Caregiver ID" };
+
+    // 1. Get Caregiver Details
+    const details = getCaregiverDetails(id);
+    if (!details) return { success: false, message: "Caregiver not found" };
+
+    // 2. Prepare Data for PDF
+    // Add all form fields to details object
+    details["W9_Name"] = form.name;
+    details["W9_BusinessName"] = form.businessName;
+    details["W9_TaxClassification"] = form.taxClassification;
+    details["W9_TaxLlcClass"] = form.taxLlcClass;
+    details["W9_TaxOtherText"] = form.taxOtherText;
+    details["W9_HasForeignOwners"] = form.hasForeignOwners ? "Yes" : "No";
+    details["W9_ExemptPayeeCode"] = form.exemptPayeeCode;
+    details["W9_FatcaCode"] = form.fatcaCode;
+    details["W9_RequesterInfo"] = form.requesterInfo;
+    details["W9_Address"] = form.address;
+    details["W9_CityStateZip"] = form.cityStateZip;
+    details["W9_AccountNumbers"] = form.accountNumbers;
+    details["W9_SSN"] = form.ssn;
+    // details["W9_EIN"] = form.ein; // Commented out in HTML
+    details["Signature"] = form.signature;
+    details["SignDate"] = form.signDate;
+
+    // 3. Generate PDF
+    const template = HtmlService.createTemplateFromFile("page-w9");
+    template.caregiverId = id;
+    template.caregiverData = details;
+    template.isPdf = true;
+
+    const pdfBlob = template
+      .evaluate()
+      .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+      .addMetaTag("viewport", "width=device-width, initial-scale=1")
+      .getAs(MimeType.PDF)
+      .setName(
+        `${details["First Name"]} ${details["Last Name"]} - IRS W-9 Form.pdf`
+      );
+
+    // 4. Upload to Drive
+    const folderId = "1q6_Gyjvj5FZxMMnXUQ3MhiKT2gF9KD8L";
+    let folder;
+    try {
+      folder = DriveApp.getFolderById(folderId);
+    } catch (err) {
+      return {
+        success: false,
+        message: "Invalid Drive Folder ID or Permissions missing.",
+      };
+    }
+
+    const file = folder.createFile(pdfBlob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+    // 5. Save Link to Sheet
+    const fileUrl = file.getUrl();
+    const saved = saveDocumentLink(id, "w9", fileUrl);
+
+    if (!saved)
+      return { success: false, message: "Failed to save link to database" };
+
+    return { success: true, url: fileUrl };
+  } catch (e) {
+    return { success: false, message: e.toString() };
+  }
+}
+
 /**
  * ⚠️ CRITICAL FIX FOR PERMISSIONS ⚠️
  */
