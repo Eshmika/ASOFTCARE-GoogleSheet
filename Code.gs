@@ -54,6 +54,32 @@ function doGet(e) {
         "<h1 style='font-family:sans-serif; text-align:center; margin-top:50px;'>Error: Invalid or Expired Application Link.</h1>"
       );
     }
+  } else if (e.parameter.page === "onboarding" && e.parameter.id) {
+    const isValid = validateCaregiverId(e.parameter.id);
+    if (isValid) {
+      var details = getCaregiverDetails(e.parameter.id);
+      var template = HtmlService.createTemplateFromFile(
+        "page-onboarding-steps"
+      );
+      template.caregiverId = e.parameter.id;
+      template.caregiverData = details || {};
+      template.scriptUrl = ScriptApp.getService().getUrl();
+      template.status = {
+        contract: !!details["Contract Link"],
+        w9: !!details["W9 Link"],
+        background: !!details["Background Link"],
+      };
+
+      return template
+        .evaluate()
+        .setTitle("Onboarding Steps - Allevia Senior Care")
+        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+        .addMetaTag("viewport", "width=device-width, initial-scale=1");
+    } else {
+      return HtmlService.createHtmlOutput(
+        "<h1 style='font-family:sans-serif; text-align:center; margin-top:50px;'>Error: Invalid or Expired Onboarding Link.</h1>"
+      );
+    }
   } else if (
     ["contract", "w9", "background"].includes(e.parameter.page) &&
     e.parameter.id

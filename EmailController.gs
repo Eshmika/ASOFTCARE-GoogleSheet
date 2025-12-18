@@ -67,9 +67,7 @@ function sendOnboardingEmail(caregiverId) {
 
     // Dynamic Web App Links
     const webAppUrl = ScriptApp.getService().getUrl();
-    const linkContract = `${webAppUrl}?page=contract&id=${caregiverId}`;
-    const linkW9 = `${webAppUrl}?page=w9&id=${caregiverId}`;
-    const linkBackground = `${webAppUrl}?page=background&id=${caregiverId}`;
+    const onboardingLink = `${webAppUrl}?page=onboarding&id=${caregiverId}`;
 
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -81,41 +79,36 @@ function sendOnboardingEmail(caregiverId) {
         <div style="padding: 30px; background-color: #ffffff;">
           <p style="margin-top: 0;">Dear <strong>${details["First Name"]}</strong>,</p>
           
-          <p>To finalize your application with Allevia Senior Care, please fill, review and sign the following forms.</p>
+          <p>To finalize your application with Allevia Senior Care, please complete the onboarding process.</p>
           
-          <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="margin-top: 0; color: #65c027;">Step 1: Independent Contractor Agreement</h3> 
-            <p style="font-size: 14px; margin-bottom: 10px;">Review and sign to confirm your role as an independent caregiver.</p>           
-            <a href="${linkContract}" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Sign Agreement</a>
-            
-            <h3 style="margin-top: 20px; color: #65c027;">Step 2: IRS W‑9 Form</h3>
-            <p style="font-size: 14px; margin-bottom: 10px;">Submit this form so we can correctly report your earnings as an independent contractor. The IRS requires this so you receive a 1099‑NEC for tax filing.</p>            
-            <a href="${linkW9}" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Submit W-9</a>
-
-            <h3 style="margin-top: 20px; color: #65c027;">Step 3: Ohio Background Check (Dave Yost)</h3> 
-            <p style="font-size: 14px; margin-bottom: 10px;">The Ohio Attorney General’s office manages caregiver background checks. Sign the consent form “this authorized us to view your background”</p>
-            <p style="font-size: 13px; background-color: #fff; padding: 10px; border: 1px dashed #ccc; border-radius: 4px;">
-              <strong>Note:</strong> The link provided is where you will do your background check if you don’t have one that is less than a year (this is self-pay). You can also use other services if want. We will need you to upload your copy. This step is required by state law to ensure the safety of our clients.
-            </p>
-            <a href="${linkBackground}" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Sign and Return</a>
+          <p>We have streamlined the process into 3 simple steps:</p>
+          <ol style="margin-bottom: 20px;">
+            <li>Sign Independent Contractor Agreement</li>
+            <li>Submit IRS W-9 Form</li>
+            <li>Complete Background Check</li>
+          </ol>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${onboardingLink}" style="background-color: #65c027; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 6px rgba(101, 192, 39, 0.2);">
+                👉 Start Onboarding
+            </a>
           </div>
-
-            <!-- Background check resources -->
-            <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="margin-top: 0; color: #65c027;">Background Check Resources</h3>
-            <p style="font-size: 13px; background-color: #fff; padding: 10px; border: 1px dashed #ccc; border-radius: 4px;">
-              You can also initiate your background check via our Careers page. Scroll down and click “Background Check” to choose between the available options.
-            </p>
-            <a href="https://alleviaseniorcare.com/careers/" style="color: #65c027; font-weight: bold; text-decoration: none;">👉 Go to Careers Page</a>
-            </div>
-            
-          <p>Once all items are submitted, your application status will be updated to Complete.</p>
-          <p>We appreciate your prompt attention to these steps and look forward to welcoming you to our team.</p>
+          
+          <p>Please complete these steps as soon as possible to avoid delays in your hiring process.</p>
 
           <br>
           <p style="margin-bottom: 5px;">Best regards,</p>
           <p style="margin: 0; font-weight: bold;">Ines k. M & Allevia Teams</p>
           <p style="margin: 0; color: #666; font-size: 14px;">Managing Director | Allevia Senior Care</p>
+          
+          <p style="font-size: 13px; color: #888; border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px;">
+            If the button doesn't work, copy this link:<br>
+            <a href="${onboardingLink}" style="color: #65c027;">${onboardingLink}</a>
+          </p>
+        </div>
+
+        <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #9ca3af;">
+          &copy; 2025 Allevia Senior Care. All rights reserved.
         </div>
       </div>
     `;
