@@ -329,7 +329,7 @@ function submitW9(form) {
     details["W9_CityStateZip"] = form.cityStateZip;
     details["W9_AccountNumbers"] = form.accountNumbers;
     details["W9_SSN"] = form.ssn;
-    // details["W9_EIN"] = form.ein; // Commented out in HTML
+    details["W9_EIN"] = form.ein;
     details["Signature"] = form.signature;
     details["SignDate"] = form.signDate;
 

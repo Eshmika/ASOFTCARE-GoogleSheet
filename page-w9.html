@@ -511,7 +511,9 @@
 
             <div>
               <label class="input-label block font-semibold mt-2">
-                Social security number</label
+                Social security number<span class="text-red-500 no-pdf"
+                  >*</span
+                ></label
               >
               <? if (isPdf) { ?>
               <div class="pdf-value"><?= caregiverData.W9_SSN ?></div>
@@ -526,6 +528,28 @@
                 title="Enter SSN as XXX-XX-XXXX"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
                 oninput="this.value = this.value.replace(/[^0-9]/g,'').slice(0,9).replace(/(\d{3})(\d{2})(\d{0,4})/, (_,a,b,c) => c ? `${a}-${b}-${c}` : b ? `${a}-${b}` : a);"
+                required
+              />
+              <? } ?>
+            </div>
+
+            <div>
+              <label class="input-label block font-semibold mt-2">
+                Employer identification number</label
+              >
+              <? if (isPdf) { ?>
+              <div class="pdf-value"><?= caregiverData.W9_EIN ?></div>
+              <? } else { ?>
+              <input
+                type="text"
+                name="ein"
+                inputmode="numeric"
+                placeholder="XX-XXXXXXX"
+                maxlength="10"
+                pattern="^\d{2}-\d{7}$"
+                title="Enter EIN as XX-XXXXXXX"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 border p-2"
+                oninput="this.value = this.value.replace(/[^0-9]/g,'').slice(0,9).replace(/(\d{2})(\d{0,7})/, (_,a,b) => b ? `${a}-${b}` : a);"
               />
               <? } ?>
             </div>
