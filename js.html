@@ -1241,7 +1241,7 @@
               </div>`;
       } else if (stage === "interview") {
         const viewDetailsBtn = `<button onclick="openProfile('${cg.id}')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 mr-2 flex items-center gap-1"><i class="ph ph-eye"></i> View Details</button>`;
-        const rejectBtn = `<button onclick="sendRejectionEmail('${cg.id}')" class="text-xs bg-orange-50 text-orange-600 px-3 py-1 rounded-full hover:bg-orange-100 font-bold border border-orange-200 mr-2 flex items-center gap-1" title="Send Rejection Email"><i class="ph ph-x-circle"></i> Reject</button>`;
+        const rejectBtn = `<button onclick="sendRejectionEmail('${cg.id}')" class="text-xs bg-orange-50 text-orange-600 px-3 py-1 rounded-full hover:bg-orange-100 font-bold border border-orange-200 mr-2 flex items-center gap-1" title="Send Rejection Email"><i class="ph ph-envelope-simple"></i> Reject</button>`;
 
         // If already passed/failed, show status, else show buttons
         if (cg.interviewStatus === "Passed") {
