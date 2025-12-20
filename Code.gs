@@ -222,14 +222,14 @@ function submitContract(form) {
       );
 
     // 4. Upload to Drive
-    const folderId = "1q6_Gyjvj5FZxMMnXUQ3MhiKT2gF9KD8L";
+    const parentFolderId = "1q6_Gyjvj5FZxMMnXUQ3MhiKT2gF9KD8L";
     let folder;
     try {
-      folder = DriveApp.getFolderById(folderId);
+      folder = getCaregiverFolder(parentFolderId, details);
     } catch (err) {
       return {
         success: false,
-        message: "Invalid Drive Folder ID or Permissions missing.",
+        message: "Error accessing/creating Drive folder: " + err,
       };
     }
 
@@ -303,14 +303,14 @@ function submitBackground(form) {
       );
 
     // 4. Upload to Drive
-    const folderId = "1q6_Gyjvj5FZxMMnXUQ3MhiKT2gF9KD8L";
+    const parentFolderId = "1q6_Gyjvj5FZxMMnXUQ3MhiKT2gF9KD8L";
     let folder;
     try {
-      folder = DriveApp.getFolderById(folderId);
+      folder = getCaregiverFolder(parentFolderId, details);
     } catch (err) {
       return {
         success: false,
-        message: "Invalid Drive Folder ID or Permissions missing.",
+        message: "Error accessing/creating Drive folder: " + err,
       };
     }
 
@@ -375,14 +375,14 @@ function submitW9(form) {
       );
 
     // 4. Upload to Drive
-    const folderId = "1q6_Gyjvj5FZxMMnXUQ3MhiKT2gF9KD8L";
+    const parentFolderId = "1q6_Gyjvj5FZxMMnXUQ3MhiKT2gF9KD8L";
     let folder;
     try {
-      folder = DriveApp.getFolderById(folderId);
+      folder = getCaregiverFolder(parentFolderId, details);
     } catch (err) {
       return {
         success: false,
-        message: "Invalid Drive Folder ID or Permissions missing.",
+        message: "Error accessing/creating Drive folder: " + err,
       };
     }
 
@@ -399,6 +399,18 @@ function submitW9(form) {
     return { success: true, url: fileUrl };
   } catch (e) {
     return { success: false, message: e.toString() };
+  }
+}
+
+function getCaregiverFolder(parentFolderId, details) {
+  const parentFolder = DriveApp.getFolderById(parentFolderId);
+  const folderName = `${details["First Name"]} ${details["Last Name"]}`.trim();
+
+  const folders = parentFolder.getFoldersByName(folderName);
+  if (folders.hasNext()) {
+    return folders.next();
+  } else {
+    return parentFolder.createFolder(folderName);
   }
 }
 
