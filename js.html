@@ -111,6 +111,12 @@
 
     // Caregiver Edit Profile
     setup("edit-address", "edit-city", "edit-state", "edit-zip");
+    setup(
+      "edit-billingAddress",
+      "edit-billingCity",
+      "edit-billingState",
+      "edit-billingZip"
+    );
 
     // Client Add Form
     setup("add-cl-address", "add-cl-city", null, "add-cl-zip");
@@ -367,6 +373,8 @@
     }
 
     setVal("edit-gender", d["Gender"]);
+    setVal("edit-maritalStatus", d["Marital Status"]);
+    setVal("edit-spouseName", d["Spouse Name"]);
     setVal("edit-ssn", d["SSN"]);
     setVal("edit-routingNum", d["Routing Number"]);
     setVal("edit-accountNum", d["Bank Account"]);
@@ -376,6 +384,10 @@
     setVal("edit-city", d["City"]);
     setVal("edit-state", d["State"]);
     setVal("edit-zip", d["Zip"]);
+    setVal("edit-billingAddress", d["Billing Address"]);
+    setVal("edit-billingCity", d["Billing City"]);
+    setVal("edit-billingState", d["Billing State"]);
+    setVal("edit-billingZip", d["Billing Zip"]);
     setVal("edit-phone", d["Phone"]);
     setVal("edit-email", d["Email"]);
 
@@ -430,6 +442,25 @@
 
   function cancelEdit() {
     switchCgView("profile");
+  }
+
+  function toggleEditBillingAddress() {
+    const isChecked = document.getElementById("edit-sameAsAddress").checked;
+    if (isChecked) {
+      document.getElementById("edit-billingAddress").value =
+        document.getElementById("edit-address").value;
+      document.getElementById("edit-billingCity").value =
+        document.getElementById("edit-city").value;
+      document.getElementById("edit-billingState").value =
+        document.getElementById("edit-state").value;
+      document.getElementById("edit-billingZip").value =
+        document.getElementById("edit-zip").value;
+    } else {
+      document.getElementById("edit-billingAddress").value = "";
+      document.getElementById("edit-billingCity").value = "";
+      document.getElementById("edit-billingState").value = "";
+      document.getElementById("edit-billingZip").value = "";
+    }
   }
 
   function submitEditProfile(e) {
@@ -676,7 +707,19 @@
             data["City"] || ""
           } ${data["Zip"] || ""}`
         );
+        set(
+          "p-billing-address",
+          `${data["Billing Address"] || ""} ${data["Billing City"] || ""} ${
+            data["Billing State"] || ""
+          } ${data["Billing Zip"] || ""}`
+        );
         set("p-dob", `${data["DOB"] || "--"} (${data["Gender"] || "--"})`);
+        set(
+          "p-marital",
+          `${data["Marital Status"] || "--"} ${
+            data["Spouse Name"] ? "(" + data["Spouse Name"] + ")" : ""
+          }`
+        );
         set("p-ssn", data["SSN"]);
         set(
           "p-banking",
