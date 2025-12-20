@@ -1385,8 +1385,14 @@
         else if (cg.status === "Vacation")
           statusColor = "bg-blue-100 text-blue-700";
 
+        let paymentBtn = "";
+        if (!cg.hasPaymentInfo) {
+          paymentBtn = `<button onclick="resendPaymentEmail('${cg.id}')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-100 font-bold border border-blue-200 flex items-center gap-1 mr-2"><i class="ph ph-envelope-simple"></i> Resend Payment Email</button>`;
+        }
+
         actionHtml = `
           <div class="flex items-center justify-end gap-2">
+            ${paymentBtn}
             <span class="text-xs ${statusColor} px-2 py-1 rounded font-bold">${cg.status}</span>
             <button onclick="updateStageStatus('${cg.id}', 'Active', 'Applicant')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1" title="Return to Background Stage">
               <i class="ph ph-arrow-u-up-left"></i> Undo
@@ -1426,13 +1432,42 @@
     // Optimistic update or wait? Let's wait for simplicity.
     google.script.run
       .withSuccessHandler(() => {
-        // If we passed interview, we might want to auto-trigger next step or just reload
-        // If we passed background, we might want to auto-trigger active
-
-        // For better UX, let's just reload the list
-        loadCaregiverStages();
+        if (stage === "Active" && value === "Active") {
+          // Send Payment Email
+          google.script.run
+            .withSuccessHandler(() => {
+              Swal.fire(
+                "Success",
+                "Caregiver Activated & Payment Email Sent",
+                "success"
+              );
+              loadCaregiverStages();
+            })
+            .sendPaymentSetupEmail(id);
+        } else {
+          loadCaregiverStages();
+        }
       })
       .updateCaregiverStage(id, stage, value);
+  }
+
+  function resendPaymentEmail(id) {
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Sending...';
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        if (res.success) {
+          Swal.fire("Success", "Payment setup email sent!", "success");
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .sendPaymentSetupEmail(id);
   }
 
   function downloadPdf(id, btn) {

@@ -122,6 +122,20 @@ function getOrCreateSheet() {
       sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Emerg. Email");
       sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Emerg. Address");
     }
+
+    // Add Payment Details Columns
+    const payHeaders = sheet
+      .getRange(1, 1, 1, sheet.getLastColumn())
+      .getValues()[0];
+    if (!payHeaders.includes("Payment Method")) {
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Payment Method");
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Bank Name");
+      sheet
+        .getRange(1, sheet.getLastColumn() + 1)
+        .setValue("Account Holder Name");
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Account Type");
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Holder Type");
+    }
   }
   return sheet;
 }
@@ -376,6 +390,7 @@ function getCaregiverList() {
   const contractIdx = headers.indexOf("Contract Link");
   const w9Idx = headers.indexOf("W9 Link");
   const backgroundIdx = headers.indexOf("Background Link");
+  const paymentIdx = headers.indexOf("Payment Method");
 
   // Pre-fetch Last Client Seen Map
   const lastClientMap = getAllLastClientsSeen();
@@ -404,6 +419,7 @@ function getCaregiverList() {
       contractLink: contractIdx > -1 ? row[contractIdx] : "",
       w9Link: w9Idx > -1 ? row[w9Idx] : "",
       backgroundLink: backgroundIdx > -1 ? row[backgroundIdx] : "",
+      hasPaymentInfo: paymentIdx > -1 && row[paymentIdx] ? true : false,
     }))
     .reverse();
 }
@@ -528,4 +544,47 @@ function getDashboardStats() {
     if (row[3] === "Application Completed") stats.completed++;
   });
   return stats;
+}
+
+function submitPaymentDetails(form) {
+  try {
+    const sheet = getOrCreateSheet();
+    const targetId = String(form.caregiverId).trim().toUpperCase();
+    const data = sheet.getDataRange().getDisplayValues();
+    const headers = data[0];
+
+    const rowIndex = data.findIndex(
+      (r) => String(r[0]).trim().toUpperCase() === targetId
+    );
+
+    if (rowIndex === -1)
+      return { success: false, message: "Caregiver not found" };
+    const r = rowIndex + 1;
+
+    // Helper to set value by header name
+    const setVal = (header, val) => {
+      const idx = headers.indexOf(header);
+      if (idx > -1) sheet.getRange(r, idx + 1).setValue(val || "");
+    };
+
+    setVal("Payment Method", form.paymentMethod);
+
+    // Only save bank details if method is Direct Deposit or Bank Deposit
+    if (["Direct Deposit", "Bank Deposit"].includes(form.paymentMethod)) {
+      setVal("Bank Name", form.bankName);
+      setVal("Account Holder Name", form.holderName);
+      setVal("Account Type", form.accountType);
+      setVal("Holder Type", form.holderType);
+      setVal("Bank Account", form.accountNum);
+      setVal("Routing Number", form.routingNum);
+    } else {
+      // Clear bank details if switching to other methods?
+      // Or keep them? Let's keep them but maybe clear the method specific ones if needed.
+      // For now, just save what is sent.
+    }
+
+    return { success: true };
+  } catch (e) {
+    return { success: false, message: e.toString() };
+  }
 }

@@ -80,6 +80,21 @@ function doGet(e) {
         "<h1 style='font-family:sans-serif; text-align:center; margin-top:50px;'>Error: Invalid or Expired Onboarding Link.</h1>"
       );
     }
+  } else if (e.parameter.page === "payment-setup" && e.parameter.id) {
+    const isValid = validateCaregiverId(e.parameter.id);
+    if (isValid) {
+      var template = HtmlService.createTemplateFromFile("page-payment-setup");
+      template.caregiverId = e.parameter.id;
+      return template
+        .evaluate()
+        .setTitle("Payment Setup - Allevia Senior Care")
+        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+        .addMetaTag("viewport", "width=device-width, initial-scale=1");
+    } else {
+      return HtmlService.createHtmlOutput(
+        "<h1 style='font-family:sans-serif; text-align:center; margin-top:50px;'>Error: Invalid or Expired Link.</h1>"
+      );
+    }
   } else if (
     ["contract", "w9", "background"].includes(e.parameter.page) &&
     e.parameter.id

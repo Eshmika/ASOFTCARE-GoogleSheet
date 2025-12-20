@@ -308,6 +308,66 @@ function sendRejectionEmail(caregiverId) {
   }
 }
 
+function sendPaymentSetupEmail(caregiverId) {
+  try {
+    const details = getCaregiverDetails(caregiverId);
+    if (!details) return { success: false, message: "Caregiver not found" };
+
+    const subject = `Action Required: Payment Setup - Allevia Senior Care`;
+    const webAppUrl = ScriptApp.getService().getUrl();
+    const paymentLink = `${webAppUrl}?page=payment-setup&id=${caregiverId}`;
+
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+        <div style="background-color: #65c027; padding: 24px; text-align: center;">
+          <h2 style="color: white; margin: 0; font-size: 24px;">Allevia Senior Care</h2>
+          <p style="color: #f0fdf4; margin: 5px 0 0; font-style: italic;">Payment Setup</p>
+        </div>
+        
+        <div style="padding: 30px; background-color: #ffffff;">
+          <p style="margin-top: 0;">Dear <strong>${details["First Name"]}</strong>,</p>
+          
+          <p>Congratulations! You have been activated as a caregiver with Allevia Senior Care.</p>
+          
+          <p>To ensure you receive your payments on time, please provide your preferred payment method and details securely using the link below:</p>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${paymentLink}" style="background-color: #65c027; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 6px rgba(101, 192, 39, 0.2);">
+                👉 Setup Payment
+            </a>
+          </div>
+          
+          <p><strong>Note:</strong> If you choose Direct Deposit, please have your Bank Name, Account Number, and Routing Number ready.</p>
+
+          <br>
+          <p style="margin-bottom: 5px;">Best regards,</p>
+          <p style="margin: 0; font-weight: bold;">Ines k. M & Allevia Teams</p>
+          <p style="margin: 0; color: #666; font-size: 14px;">Managing Director | Allevia Senior Care</p>
+          
+          <p style="font-size: 13px; color: #888; border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px;">
+            If the button doesn't work, copy this link:<br>
+            <a href="${paymentLink}" style="color: #65c027;">${paymentLink}</a>
+          </p>
+        </div>
+
+        <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #9ca3af;">
+          &copy; 2025 Allevia Senior Care. All rights reserved.
+        </div>
+      </div>
+    `;
+
+    MailApp.sendEmail({
+      to: details["Email"],
+      subject: subject,
+      htmlBody: htmlBody,
+    });
+
+    return { success: true, message: "Payment setup email sent!" };
+  } catch (e) {
+    return { success: false, message: e.toString() };
+  }
+}
+
 // function testEmailPermission() {
 //   MailApp.getRemainingDailyQuota(); // This forces the email permission check
 //   console.log("Permissions granted!");
