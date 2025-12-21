@@ -33,6 +33,7 @@
 
     // Edit Forms (IDs)
     attach("#edit-ssn", "ssn");
+    attach("#edit-ein", "ein");
     attach("#edit-phone", "phone");
     attach("#edit-zip", "zip");
     attach('input[name="routingNum"]', "routing");
@@ -55,6 +56,12 @@
         val = val.replace(/^(\d{3})(\d{2})(\d+)/, "$1-$2-$3");
       } else if (val.length > 3) {
         val = val.replace(/^(\d{3})(\d+)/, "$1-$2");
+      }
+      e.target.value = val;
+    } else if (type === "ein") {
+      if (val.length > 9) val = val.substring(0, 9);
+      if (val.length > 2) {
+        val = val.replace(/^(\d{2})(\d+)/, "$1-$2");
       }
       e.target.value = val;
     } else if (type === "phone") {
@@ -376,6 +383,7 @@
     setVal("edit-maritalStatus", d["Marital Status"]);
     setVal("edit-spouseName", d["Spouse Name"]);
     setVal("edit-ssn", d["SSN"]);
+    setVal("edit-ein", d["EIN"]);
     setVal("edit-routingNum", d["Routing Number"]);
     setVal("edit-accountNum", d["Bank Account"]);
     setVal("edit-status", d["Status"]);
@@ -733,6 +741,8 @@
 
         set("p-email", data["Email"]);
         set("p-phone", data["Phone"]);
+        set("p-ssn", data["SSN"]);
+        set("p-ein", data["EIN"]);
         set(
           "p-address",
           `${data["Address"] || ""} ${data["Apt"] || ""}, ${

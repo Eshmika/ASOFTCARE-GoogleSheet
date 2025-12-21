@@ -256,7 +256,18 @@
                 class="input-field"
                 placeholder="XXX-XX-XXXX"
                 maxlength="11"
-                required
+              />
+            </div>
+            <div>
+              <label class="input-label"
+                >EIN # <span class="text-gray-500">(Optional)</span></label
+              ><input
+                type="text"
+                name="ein"
+                id="app-ein"
+                class="input-field"
+                placeholder="XX-XXXXXXX"
+                maxlength="10"
               />
             </div>
 
@@ -1395,6 +1406,7 @@
         };
 
         attach('input[name="ssn"]', "ssn");
+        attach('input[name="ein"]', "ein");
         attach('input[name="phone"]', "phone");
         attach('input[name="emPhone"]', "phone");
         attach('input[name="emp1[phone]"]', "phone");
@@ -1414,6 +1426,12 @@
             val = val.replace(/^(\d{3})(\d{2})(\d+)/, "$1-$2-$3");
           } else if (val.length > 3) {
             val = val.replace(/^(\d{3})(\d+)/, "$1-$2");
+          }
+          e.target.value = val;
+        } else if (type === "ein") {
+          if (val.length > 9) val = val.substring(0, 9);
+          if (val.length > 2) {
+            val = val.replace(/^(\d{2})(\d+)/, "$1-$2");
           }
           e.target.value = val;
         } else if (type === "phone") {
@@ -1540,6 +1558,14 @@
         // Simple Validation
         if (!form.signName.value) {
           Swal.fire("Error", "Please sign the application.", "warning");
+          return;
+        }
+
+        // Validate SSN or EIN
+        const ssn = form.ssn.value.trim();
+        const ein = form.ein.value.trim();
+        if (!ssn && !ein) {
+          Swal.fire("Error", "Please provide either SSN or EIN.", "warning");
           return;
         }
 
