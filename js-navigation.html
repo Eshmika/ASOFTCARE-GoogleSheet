@@ -20,7 +20,11 @@
     setupInputMasks();
 
     if (viewName === "caregivers") {
-      loadCaregiverList();
+      if (window.loadCaregiverList) {
+        window.loadCaregiverList();
+      } else {
+        console.error("loadCaregiverList not found");
+      }
       switchCgView("list");
     } else if (viewName === "caregiver-stages") {
       document.getElementById("view-caregivers").classList.add("active");

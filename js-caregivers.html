@@ -1,6 +1,6 @@
 <script>
   // -- 1. Load List --
-  function loadCaregiverList() {
+  window.loadCaregiverList = function () {
     document.getElementById("cgTableBody").innerHTML =
       '<tr><td colspan="6" class="p-4 text-center text-gray-400">Loading list...</td></tr>';
     google.script.run
@@ -10,7 +10,7 @@
         renderCgTable();
       })
       .getCaregiverList();
-  }
+  };
 
   // -- 2. Render Table --
   function renderCgTable() {
@@ -806,7 +806,7 @@
           Swal.fire("Success", "Caregiver Added", "success");
           form.reset();
           switchCgView("list");
-          loadCaregiverList();
+          if (window.loadCaregiverList) window.loadCaregiverList();
         } else {
           Swal.fire("Error", res.message, "error");
         }
