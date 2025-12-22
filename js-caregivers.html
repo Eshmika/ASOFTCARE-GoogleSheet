@@ -614,7 +614,9 @@
         if (digitalDetailsDiv) {
           if (["Zelle", "Apple Pay"].includes(payMethod)) {
             digitalDetailsDiv.classList.remove("hidden");
-            set("p-digital-account", data["Digital Account Details"]);
+            set("p-digital-name", data["Digital Name"]);
+            set("p-digital-phone", data["Digital Phone"]);
+            set("p-digital-email", data["Digital Email"]);
           } else {
             digitalDetailsDiv.classList.add("hidden");
           }

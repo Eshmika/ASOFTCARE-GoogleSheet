@@ -158,6 +158,11 @@ function getOrCreateSheet() {
         .getRange(1, sheet.getLastColumn() + 1)
         .setValue("Digital Account Details");
     }
+    if (!digitalHeaders.includes("Digital Name")) {
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Digital Name");
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Digital Phone");
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Digital Email");
+    }
 
     // Add Vaccination Columns
     const vaxHeaders = sheet
@@ -688,10 +693,9 @@ function submitPaymentDetails(form) {
         setVal("Check Address Proof", addrFile.getUrl());
       }
     } else if (["Zelle", "Apple Pay"].includes(form.paymentMethod)) {
-      const digitalDetails = `Name: ${form.digitalFullName || ""} | Phone: ${
-        form.digitalPhone || ""
-      } | Email: ${form.digitalEmail || ""}`;
-      setVal("Digital Account Details", digitalDetails);
+      setVal("Digital Name", form.digitalFullName);
+      setVal("Digital Phone", form.digitalPhone);
+      setVal("Digital Email", form.digitalEmail);
     } else {
       // Clear bank details if switching to other methods?
       // Or keep them? Let's keep them but maybe clear the method specific ones if needed.
