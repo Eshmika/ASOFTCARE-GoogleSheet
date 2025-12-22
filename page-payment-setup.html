@@ -217,19 +217,43 @@
             class="hidden space-y-4 border-t border-gray-100 pt-6"
           >
             <div class="bg-blue-50 p-4 rounded-lg text-blue-800 text-sm">
-              Please confirm your full name phone number or email associated
-              with your Zelle or Apple Pay
+              Please provide your full name, phone number, and email associated
+              with your Zelle or Apple Pay account.
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700"
-                >Account Details <span class="text-red-500">*</span></label
+                >Full Name <span class="text-red-500">*</span></label
               >
               <input
                 type="text"
-                name="digitalAccountDetails"
-                id="digitalAccountDetails"
+                name="digitalFullName"
+                id="digitalFullName"
                 class="input-field"
-                placeholder="Enter Full Name, Phone, or Email"
+                placeholder="Enter Full Name"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Phone Number <span class="text-red-500">*</span></label
+              >
+              <input
+                type="tel"
+                name="digitalPhone"
+                id="digitalPhone"
+                class="input-field"
+                placeholder="Enter Phone Number"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Email <span class="text-red-500">*</span></label
+              >
+              <input
+                type="email"
+                name="digitalEmail"
+                id="digitalEmail"
+                class="input-field"
+                placeholder="Enter Email"
               />
             </div>
           </div>
@@ -302,12 +326,19 @@
         const bankSection = document.getElementById("bankDetails");
         const digitalSection = document.getElementById("digitalDetails");
         const checkSection = document.getElementById("checkDetails");
-        const digitalInput = document.getElementById("digitalAccountDetails");
+
+        const digitalName = document.getElementById("digitalFullName");
+        const digitalPhone = document.getElementById("digitalPhone");
+        const digitalEmail = document.getElementById("digitalEmail");
 
         // Reset required attributes
         const bankInputs = bankSection.querySelectorAll("input, select");
         bankInputs.forEach((input) => (input.required = false));
-        if (digitalInput) digitalInput.required = false;
+
+        if (digitalName) digitalName.required = false;
+        if (digitalPhone) digitalPhone.required = false;
+        if (digitalEmail) digitalEmail.required = false;
+
         const checkInputs = checkSection.querySelectorAll("input");
         checkInputs.forEach((input) => (input.required = false));
 
@@ -320,7 +351,9 @@
           bankSection.classList.add("hidden");
           digitalSection.classList.remove("hidden");
           checkSection.classList.add("hidden");
-          if (digitalInput) digitalInput.required = true;
+          if (digitalName) digitalName.required = true;
+          if (digitalPhone) digitalPhone.required = true;
+          if (digitalEmail) digitalEmail.required = true;
         } else if (method === "Check") {
           bankSection.classList.add("hidden");
           digitalSection.classList.add("hidden");

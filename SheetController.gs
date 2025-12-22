@@ -688,7 +688,10 @@ function submitPaymentDetails(form) {
         setVal("Check Address Proof", addrFile.getUrl());
       }
     } else if (["Zelle", "Apple Pay"].includes(form.paymentMethod)) {
-      setVal("Digital Account Details", form.digitalAccountDetails);
+      const digitalDetails = `Name: ${form.digitalFullName || ""} | Phone: ${
+        form.digitalPhone || ""
+      } | Email: ${form.digitalEmail || ""}`;
+      setVal("Digital Account Details", digitalDetails);
     } else {
       // Clear bank details if switching to other methods?
       // Or keep them? Let's keep them but maybe clear the method specific ones if needed.
