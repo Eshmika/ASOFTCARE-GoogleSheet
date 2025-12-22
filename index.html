@@ -34,7 +34,7 @@
 
         <nav class="flex-1 px-4 py-6 space-y-2">
           <button
-            onclick="navigate('dashboard')"
+            onclick="appNavigate('dashboard')"
             class="nav-item active w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-bold text-black uppercase"
           >
             <i class="ph ph-squares-four text-xl"></i>
@@ -49,7 +49,7 @@
               Clients
             </div>
             <button
-              onclick="navigate('clients')"
+              onclick="appNavigate('clients')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-users text-xl"></i>
@@ -65,14 +65,14 @@
               Caregiver
             </div>
             <button
-              onclick="navigate('caregivers')"
+              onclick="appNavigate('caregivers')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-users-three text-xl"></i>
               All caregivers
             </button>
             <button
-              onclick="navigate('caregiver-stages')"
+              onclick="appNavigate('caregiver-stages')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-steps text-xl"></i>
@@ -87,19 +87,21 @@
               Shifts
             </div>
             <button
-              onclick="navigate('shifts')"
+              onclick="appNavigate('shifts')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-calendar-plus text-xl"></i>
               Add Shift
             </button>
             <button
-              onclick="navigate('caregiver-calendar')"
+              onclick="appNavigate('caregiver-calendar')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-calendar text-xl"></i>
               Caregiver Calendar
-              <span class="ml-2 text-xs italic text-gray-400">This is not complete under developing yet</span>
+              <span class="ml-2 text-xs italic text-gray-400"
+                >This is not complete under developing yet</span
+              >
             </button>
           </div>
 
@@ -111,7 +113,7 @@
               Communication
             </div>
             <button
-              onclick="navigate('communication')"
+              onclick="appNavigate('communication')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-envelope-simple text-xl"></i>

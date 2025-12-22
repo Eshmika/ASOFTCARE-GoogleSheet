@@ -1,7 +1,6 @@
 <script>
   // -- Navigation --
-  const originalNavigate = window.navigate || function () {};
-  window.navigate = function (viewName) {
+  function appNavigate(viewName) {
     document
       .querySelectorAll(".nav-item")
       .forEach((el) => el.classList.remove("active"));
@@ -10,7 +9,7 @@
       .forEach((el) => el.classList.remove("active"));
 
     const btn = document.querySelector(
-      `button[onclick="navigate('${viewName}')"]`
+      `button[onclick="appNavigate('${viewName}')"]`
     );
     if (btn) btn.classList.add("active");
 
@@ -39,7 +38,7 @@
     } else if (viewName === "caregiver-calendar") {
       loadCaregiverCalendar();
     }
-  };
+  }
 
   function switchCgView(subView) {
     document.getElementById("cg-subview-list").classList.add("hidden");
