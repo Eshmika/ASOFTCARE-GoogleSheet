@@ -1,0 +1,816 @@
+<script>
+  // -- 1. Load List --
+  function loadCaregiverList() {
+    document.getElementById("cgTableBody").innerHTML =
+      '<tr><td colspan="6" class="p-4 text-center text-gray-400">Loading list...</td></tr>';
+    google.script.run
+      .withSuccessHandler((data) => {
+        console.log("Loaded List:", data); // Debug
+        cgData = data;
+        renderCgTable();
+      })
+      .getCaregiverList();
+  }
+
+  // -- 2. Render Table --
+  function renderCgTable() {
+    const search = document.getElementById("cgSearch").value.toLowerCase();
+    const statusFilter = document.getElementById("cgFilterStatus").value;
+
+    cgFiltered = cgData.filter((item) => {
+      // Only show caregivers who have been converted to Active/Inactive/etc.
+      // Exclude "Applicant", "Pending", or empty statuses unless they are in the final stages.
+      const validStatuses = ["Active", "Inactive", "No call", "Vacation"];
+      if (!validStatuses.includes(item.status)) return false;
+
+      const matchSearch =
+        item.name.toLowerCase().includes(search) ||
+        item.email.toLowerCase().includes(search) ||
+        String(item.id).toLowerCase().includes(search);
+      const matchStatus =
+        statusFilter === "All" || item.status === statusFilter;
+      return matchSearch && matchStatus;
+    });
+
+    const totalPages = Math.ceil(cgFiltered.length / cgRowsPerPage);
+    if (cgCurrentPage > totalPages) cgCurrentPage = 1;
+
+    const start = (cgCurrentPage - 1) * cgRowsPerPage;
+    const end = start + cgRowsPerPage;
+    const pageData = cgFiltered.slice(start, end);
+
+    const tbody = document.getElementById("cgTableBody");
+    tbody.innerHTML = "";
+
+    if (pageData.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="7" class="p-8 text-center text-gray-400">No caregivers found.</td></tr>';
+    } else {
+      pageData.forEach((row) => {
+        const tr = document.createElement("tr");
+        tr.className =
+          "hover:bg-gray-50 transition-colors cursor-pointer group";
+
+        // IMPORTANT: Pass ID exactly as string
+        tr.onclick = function () {
+          loadProfile(row.id);
+        };
+
+        let statusColor = "bg-gray-100 text-gray-600";
+        if (row.status === "Active")
+          statusColor = "bg-green-100 text-green-700";
+        if (row.status === "Inactive") statusColor = "bg-red-100 text-red-700";
+        if (row.status === "Vacation")
+          statusColor = "bg-orange-100 text-orange-700";
+
+        tr.innerHTML = `
+          <td class="p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-500">
+                ${row.name.charAt(0)}
+              </div>
+              <div>
+                <p class="font-bold text-gray-800">${row.name}</p>
+                <p class="text-xs text-gray-400">${row.id}</p>
+              </div>
+            </div>
+          </td>
+          <td class="p-4 text-gray-600">${row.title}</td>
+          <td class="p-4">
+             <div class="text-xs text-gray-500">${row.email}</div>
+             <div class="text-xs text-gray-400">${row.phone}</div>
+          </td>
+          <td class="p-4">
+            <div>
+              <p class="font-bold text-gray-800">${row.city}</p>
+              <p class="text-xs text-gray-400">${row.zip}</p>
+            </div>
+          </td>
+          <td class="p-4 text-xs text-gray-500">${row.lastReviewed || "--"}</td>
+          <td class="p-4 text-xs text-gray-500 font-medium">${
+            row.lastClientSeen || "--"
+          }</td>
+          <td class="p-4">
+            <span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${
+          row.status
+        }</span>
+          </td>
+          <td class="p-4 text-right">
+             <button onclick="loadProfile('${
+               row.id
+             }')" class="text-xs bg-green-50 text-green-600 px-3 py-1 rounded-full hover:bg-green-100 font-bold border border-green-200 transition-colors">Details</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById("cgPageInfo").textContent = `Showing ${
+      pageData.length > 0 ? start + 1 : 0
+    }-${Math.min(end, cgFiltered.length)} of ${cgFiltered.length}`;
+    document.getElementById("btnPrev").disabled = cgCurrentPage === 1;
+    document.getElementById("btnNext").disabled =
+      cgCurrentPage >= totalPages || totalPages === 0;
+  }
+
+  function changeCgPage(dir) {
+    cgCurrentPage += dir;
+    renderCgTable();
+  }
+
+  // --- EDIT PROFILE LOGIC (NEW) ---
+
+  function openEditMode() {
+    if (!currentProfileData) return;
+    switchCgView("edit");
+    const d = currentProfileData;
+
+    // 1. Fill Text Inputs
+    const setVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val || "";
+    };
+
+    setVal("edit-id", d["Caregiver ID"]);
+    setVal("edit-firstName", d["First Name"]);
+    setVal("edit-lastName", d["Last Name"]);
+    setVal("edit-middleName", d["Middle Int"]);
+    setVal("edit-title", d["Title"]);
+
+    if (d["DOB"]) {
+      const date = new Date(d["DOB"]);
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      setVal("edit-dob", `${yyyy}-${mm}-${dd}`);
+    }
+
+    setVal("edit-gender", d["Gender"]);
+    setVal("edit-maritalStatus", d["Marital Status"]);
+    setVal("edit-spouseName", d["Spouse Name"]);
+    setVal("edit-ssn", d["SSN"]);
+    setVal("edit-ein", d["EIN"]);
+    setVal("edit-routingNum", d["Routing Number"]);
+    setVal("edit-accountNum", d["Bank Account"]);
+    setVal("edit-status", d["Status"]);
+    setVal("edit-address", d["Address"]);
+    setVal("edit-apt", d["Apt"]);
+    setVal("edit-city", d["City"]);
+    setVal("edit-state", d["State"]);
+    setVal("edit-zip", d["Zip"]);
+    setVal("edit-billingAddress", d["Billing Address"]);
+    setVal("edit-billingCity", d["Billing City"]);
+    setVal("edit-billingState", d["Billing State"]);
+    setVal("edit-billingZip", d["Billing Zip"]);
+    setVal("edit-phone", d["Phone"]);
+    setVal("edit-email", d["Email"]);
+
+    setVal("edit-hasLicense", d["Driver License?"]);
+    setVal("edit-licenseState", d["License State"]);
+    setVal("edit-licenseNum", d["License #"]);
+    setVal("edit-hasCar", d["Has Car?"]);
+    setVal("edit-carModel", d["Car Make/Model"]);
+    setVal("edit-hasInsurance", d["Has Insurance?"]);
+    setVal("edit-emergencyAvail", d["Emergency Avail?"]);
+    setVal("edit-liveInAvail", d["Live-in Avail?"]);
+    setVal("edit-usEligible", d["US Eligible?"]);
+    setVal("edit-usCitizen", d["US Citizen?"]);
+
+    setVal("edit-emName", d["Emergency Contact"]);
+    setVal("edit-emPhone", d["Emerg. Phone"]);
+    setVal("edit-emRel", d["Emerg. Relation"]);
+    setVal("edit-emEmail", d["Emerg. Email"]);
+    setVal("edit-emAddress", d["Emerg. Address"]);
+
+    // New Sections Mapped
+    setVal("edit-hsName", d["High School"]);
+    setVal("edit-hsDegree", d["HS Degree"]);
+    setVal("edit-colName", d["College"]);
+    setVal("edit-colDegree", d["College Degree"]);
+    setVal("edit-otherEdu", d["Other Edu"]);
+    setVal("edit-otherDegree", d["Other Degree"]);
+
+    setVal("edit-emp1", d["Employer 1"]);
+    setVal("edit-emp2", d["Employer 2"]);
+    setVal("edit-emp3", d["Employer 3"]);
+
+    setVal("edit-ref1", d["Reference 1"]);
+    setVal("edit-ref2", d["Reference 2"]);
+
+    setVal("edit-criminalHistory", d["Criminal Conviction?"]);
+    setVal("edit-criminalExplain", d["Conviction Details"]);
+
+    // Vaccinations
+    let covidVal = d["Covid Vaccine"] || "No";
+    let covidDose = "";
+    if (covidVal.includes("Yes")) {
+      if (covidVal.includes("One Dose")) covidDose = "One Dose";
+      if (covidVal.includes("Two Dose")) covidDose = "Two Dose";
+      covidVal = "Yes";
+    }
+    setVal("edit-covidVaccine", covidVal);
+    setVal("edit-covidDoses", covidDose);
+    setVal("edit-fluVaccine", d["Flu Vaccine"] || "No");
+    toggleEditCovidDose();
+
+    // 2. Checkboxes
+    const checkBoxes = (name, str) => {
+      const arr = str ? str.split(",").map((s) => s.trim()) : [];
+      document.querySelectorAll(`input[name="${name}"]`).forEach((cb) => {
+        cb.checked = arr.includes(cb.value);
+      });
+    };
+
+    checkBoxes("hoursAvail", d["Hours Avail"]);
+    checkBoxes("scheduleDays", d["Schedule Desired"]);
+    checkBoxes("timesAvail", d["Times Avail"]);
+    checkBoxes("certs", d["Certifications"]);
+    checkBoxes("skills", d["Skills Checklist"]);
+    checkBoxes("languages", d["Languages"]);
+  }
+
+  function cancelEdit() {
+    switchCgView("profile");
+  }
+
+  function toggleEditCovidDose() {
+    const val = document.getElementById("edit-covidVaccine").value;
+    const div = document.getElementById("edit-covidDoseDiv");
+    if (val === "Yes") {
+      div.classList.remove("hidden");
+    } else {
+      div.classList.add("hidden");
+      document.getElementById("edit-covidDoses").value = "";
+    }
+  }
+
+  function toggleEditBillingAddress() {
+    const isChecked = document.getElementById("edit-sameAsAddress").checked;
+    if (isChecked) {
+      document.getElementById("edit-billingAddress").value =
+        document.getElementById("edit-address").value;
+      document.getElementById("edit-billingCity").value =
+        document.getElementById("edit-city").value;
+      document.getElementById("edit-billingState").value =
+        document.getElementById("edit-state").value;
+      document.getElementById("edit-billingZip").value =
+        document.getElementById("edit-zip").value;
+    } else {
+      document.getElementById("edit-billingAddress").value = "";
+      document.getElementById("edit-billingCity").value = "";
+      document.getElementById("edit-billingState").value = "";
+      document.getElementById("edit-billingZip").value = "";
+    }
+  }
+
+  function toggleEmAddress() {
+    const isChecked = document.getElementById("emSameAsAddress").checked;
+    if (isChecked) {
+      const addr = document.getElementById("app-address").value;
+      const city = document.getElementById("app-city").value;
+      const state = document.getElementById("app-state").value;
+      const zip = document.getElementById("app-zip").value;
+
+      const fullAddress = [addr, city, state, zip].filter(Boolean).join(", ");
+      document.getElementById("app-emAddress").value = fullAddress;
+    } else {
+      document.getElementById("app-emAddress").value = "";
+    }
+  }
+
+  function toggleEditEmAddress() {
+    const isChecked = document.getElementById("edit-emSameAsAddress").checked;
+    if (isChecked) {
+      const addr = document.getElementById("edit-address").value;
+      const city = document.getElementById("edit-city").value;
+      const state = document.getElementById("edit-state").value;
+      const zip = document.getElementById("edit-zip").value;
+
+      const fullAddress = [addr, city, state, zip].filter(Boolean).join(", ");
+      document.getElementById("edit-emAddress").value = fullAddress;
+    } else {
+      document.getElementById("edit-emAddress").value = "";
+    }
+  }
+
+  function submitEditProfile(e) {
+    e.preventDefault();
+    const btn = document.getElementById("saveProfileBtn");
+    btn.textContent = "Saving...";
+    btn.disabled = true;
+
+    const form = document.getElementById("editProfileForm");
+    const obj = {};
+    const formData = new FormData(form);
+
+    // Checkboxes
+    const getChecks = (name) =>
+      Array.from(
+        document.querySelectorAll(`input[name="${name}"]:checked`)
+      ).map((c) => c.value);
+
+    for (let [key, value] of formData.entries()) {
+      obj[key] = value;
+    }
+
+    obj.skills = getChecks("skills");
+    obj.certs = getChecks("certs");
+    obj.languages = getChecks("languages");
+    obj.hoursAvail = getChecks("hoursAvail");
+    obj.scheduleDays = getChecks("scheduleDays");
+    obj.timesAvail = getChecks("timesAvail");
+
+    // SPECIAL MAPPING for SheetController compat
+    // The controller expects objects for these, so we mock them to match the string value
+    obj.emp1 = { company: obj.emp1_full || "", title: "" };
+    obj.emp2 = { company: obj.emp2_full || "", title: "" };
+    obj.emp3 = { company: obj.emp3_full || "", title: "" };
+
+    obj.ref1 = { name: obj.ref1_full || "", phone: "" };
+    obj.ref2 = { name: obj.ref2_full || "", phone: "" };
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.textContent = "Save Changes";
+        btn.disabled = false;
+        if (res.success) {
+          Swal.fire("Success", "Profile Updated", "success");
+          loadProfile(currentProfileId);
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .submitFullApplication(obj);
+  }
+
+  // --- STAGE LOGIC ---
+  function updateStageUI(stageNum, status, textId, btnId, iconId, label) {
+    const icon = document.getElementById(iconId);
+    const btn = document.getElementById(btnId);
+    const text = document.getElementById(textId);
+
+    if (!icon) return;
+
+    if (
+      status === "Yes" ||
+      status === "Application Completed" ||
+      status === "Done"
+    ) {
+      // SUCCESS
+      icon.className =
+        "w-12 h-12 rounded-full bg-[#65c027] text-white flex items-center justify-center text-xl font-bold border-4 border-white transition-colors shadow-lg";
+      icon.innerHTML = '<i class="ph ph-check"></i>';
+      if (btn) {
+        btn.textContent = "Passed";
+        btn.disabled = true;
+        btn.className =
+          "mt-1 text-xs px-2 py-1 rounded bg-green-50 text-green-600 font-bold";
+      }
+      if (text) {
+        text.textContent = "Completed";
+        text.className = "text-xs text-green-600 font-bold";
+      }
+    } else if (status === "No") {
+      // FAILED / NO
+      icon.className =
+        "w-12 h-12 rounded-full bg-red-100 text-red-500 flex items-center justify-center text-xl font-bold border-4 border-white transition-colors";
+      icon.innerHTML = '<i class="ph ph-x"></i>';
+      if (btn) {
+        btn.textContent = "Failed";
+        btn.disabled = false;
+        btn.className =
+          "mt-1 text-xs px-2 py-1 rounded bg-red-50 text-red-600 font-bold hover:bg-red-100 cursor-pointer";
+      }
+    } else if (status === "Missing") {
+      // MISSING
+      icon.className =
+        "w-12 h-12 rounded-full bg-red-500 text-white flex items-center justify-center text-xl font-bold border-4 border-white transition-colors shadow-lg";
+      icon.innerHTML = '<i class="ph ph-warning"></i>';
+      if (text) {
+        text.textContent = "Missing (> 1 Week)";
+        text.className = "text-xs text-red-500 font-bold";
+      }
+    } else {
+      // PENDING
+      if (btn) {
+        btn.textContent = label;
+        btn.disabled = false;
+        btn.className =
+          "mt-1 text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-600 transition";
+      }
+      icon.className =
+        "w-12 h-12 rounded-full bg-gray-200 text-gray-400 flex items-center justify-center text-xl font-bold border-4 border-white transition-colors";
+      icon.innerHTML =
+        stageNum === 2
+          ? '<i class="ph ph-chats-circle"></i>'
+          : stageNum === 3
+          ? '<i class="ph ph-shield-check"></i>'
+          : stageNum === 4
+          ? '<i class="ph ph-briefcase"></i>'
+          : stageNum;
+    }
+  }
+
+  function advanceStage(stageNum) {
+    if (!currentProfileId) return;
+
+    let title = "";
+    let field = "";
+
+    if (stageNum === 2) {
+      title = "Interview Passed?";
+      field = "Interview";
+    }
+    if (stageNum === 3) {
+      title = "Background Check Passed?";
+      field = "Background";
+    }
+    if (stageNum === 4) {
+      title = "Activate Caregiver?";
+      field = "Active";
+    }
+
+    // POPUP FOR YES / NO
+    Swal.fire({
+      title: title,
+      icon: "question",
+      showDenyButton: true,
+      confirmButtonText: "Yes",
+      denyButtonText: "No",
+      confirmButtonColor: "#65c027",
+      denyButtonColor: "#d33",
+    }).then((result) => {
+      if (result.isDismissed) return; // Clicked outside
+
+      let val = result.isConfirmed ? "Yes" : "No";
+
+      // Special logic for Activation
+      if (stageNum === 4) {
+        val = result.isConfirmed ? "Active" : "Inactive";
+      }
+
+      google.script.run
+        .withSuccessHandler((res) => {
+          if (res.success) {
+            loadProfile(currentProfileId);
+            if (stageNum === 4 && val === "Active") {
+              Swal.fire("Success", "Caregiver is now Active!", "success");
+            }
+          } else {
+            Swal.fire("Error", res.message, "error");
+          }
+        })
+        .updateCaregiverStage(currentProfileId, field, val);
+    });
+  }
+
+  // -- 3. Load Profile --
+  function openProfile(id) {
+    loadProfile(id);
+  }
+
+  function loadProfile(id) {
+    currentProfileId = id;
+
+    switchCgView("profile");
+    document.getElementById("profileLoading").classList.remove("hidden");
+    document.getElementById("profileContent").classList.add("hidden");
+
+    google.script.run
+      .withSuccessHandler((data) => {
+        if (!data) {
+          Swal.fire("Error", "Caregiver details not found.", "error");
+          switchCgView("list");
+          return;
+        }
+
+        currentProfileData = data; // SAVE DATA FOR EDIT MODE
+
+        // CRITICAL FIX: Safety Check Set Function
+        const set = (id, val) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = val || "--";
+        };
+
+        set(
+          "p-name",
+          data["First Name"] +
+            " " +
+            data["Middle Int"] +
+            " " +
+            data["Last Name"]
+        );
+        set("p-initials", (data["First Name"] || "U").charAt(0));
+        set("p-title", data["Title"]);
+        set("p-id", data["Caregiver ID"]);
+        set("p-last-client", data["Last Client Seen"]);
+
+        const pipelinePanel = document.getElementById("pipeline-panel");
+        if (data["Status"] === "Active") {
+          if (pipelinePanel) pipelinePanel.classList.add("hidden");
+          // SHOW EDIT BUTTON IF ACTIVE
+          document
+            .getElementById("btn-edit-profile")
+            .classList.remove("hidden");
+        } else {
+          if (pipelinePanel) pipelinePanel.classList.remove("hidden");
+        }
+
+        const badge = document.getElementById("p-status-badge");
+        if (badge) {
+          badge.textContent = data["Status"];
+          badge.className = `px-3 py-1 rounded-full text-xs font-bold ${
+            data["Status"] === "Active"
+              ? "bg-green-100 text-green-700"
+              : "bg-gray-100 text-gray-600"
+          }`;
+        }
+
+        const emailBtn = document.getElementById("p-email-btn");
+        if (emailBtn) emailBtn.href = "mailto:" + data["Email"];
+
+        set("p-email", data["Email"]);
+        set("p-phone", data["Phone"]);
+        set("p-ssn", data["SSN"]);
+        set("p-ein", data["EIN"]);
+        set(
+          "p-address",
+          `${data["Address"] || ""} ${data["Apt"] || ""}, ${
+            data["City"] || ""
+          } ${data["Zip"] || ""}`
+        );
+        set(
+          "p-billing-address",
+          `${data["Billing Address"] || ""} ${data["Billing City"] || ""} ${
+            data["Billing State"] || ""
+          } ${data["Billing Zip"] || ""}`
+        );
+        set("p-dob", `${data["DOB"] || "--"} (${data["Gender"] || "--"})`);
+        set(
+          "p-marital",
+          `${data["Marital Status"] || "--"} ${
+            data["Spouse Name"] ? "(" + data["Spouse Name"] + ")" : ""
+          }`
+        );
+        set("p-ssn", data["SSN"]);
+
+        // Payment Info
+        const payMethod = data["Payment Method"] || "Not Set";
+        set("p-pay-method", payMethod);
+
+        const bankDetailsDiv = document.getElementById("p-bank-details");
+        const checkDetailsDiv = document.getElementById("p-check-details");
+
+        if (bankDetailsDiv) {
+          if (["Direct Deposit", "Bank Deposit"].includes(payMethod)) {
+            bankDetailsDiv.classList.remove("hidden");
+            set("p-bank-name", data["Bank Name"]);
+            set("p-holder-name", data["Account Holder Name"]);
+            set(
+              "p-holder-type",
+              data["Holder Type"] ? `(${data["Holder Type"]})` : ""
+            );
+            // Mask Account Number for security
+            const accNum = String(data["Bank Account"] || "");
+            set(
+              "p-account-num",
+              accNum.length > 4 ? `****${accNum.slice(-4)}` : accNum
+            );
+            set(
+              "p-routing-num",
+              data["Routing Number"] ? `Routing: ${data["Routing Number"]}` : ""
+            );
+            set("p-account-type", data["Account Type"]);
+          } else {
+            bankDetailsDiv.classList.add("hidden");
+          }
+        }
+
+        if (checkDetailsDiv) {
+          if (payMethod === "Check") {
+            checkDetailsDiv.classList.remove("hidden");
+            const idLink = document.getElementById("p-check-id");
+            const addrLink = document.getElementById("p-check-addr");
+
+            if (data["Check ID Proof"]) {
+              idLink.href = data["Check ID Proof"];
+              idLink.classList.remove("hidden");
+            } else {
+              idLink.classList.add("hidden");
+            }
+
+            if (data["Check Address Proof"]) {
+              addrLink.href = data["Check Address Proof"];
+              addrLink.classList.remove("hidden");
+            } else {
+              addrLink.classList.add("hidden");
+            }
+          } else {
+            checkDetailsDiv.classList.add("hidden");
+          }
+        }
+
+        const digitalDetailsDiv = document.getElementById("p-digital-details");
+        if (digitalDetailsDiv) {
+          if (["Zelle", "Apple Pay"].includes(payMethod)) {
+            digitalDetailsDiv.classList.remove("hidden");
+            set("p-digital-account", data["Digital Account Details"]);
+          } else {
+            digitalDetailsDiv.classList.add("hidden");
+          }
+        }
+
+        set(
+          "p-license",
+          `Driver License: ${data["Driver License?"]} | License State: ${data["License State"]} | License #: ${data["License #"]}`
+        );
+        set(
+          "p-car",
+          `Has Car: ${data["Has Car?"]} | Model: ${data["Car Make/Model"]} | Insurance: ${data["Has Insurance?"]}`
+        );
+        set(
+          "p-us-eligible",
+          `US Eligible: ${data["US Eligible?"]} | US Citizen: ${data["US Citizen?"]}`
+        );
+        set(
+          "p-reference-contact",
+          `Reference 1: ${data["Reference 1"]} | Reference 2: ${data["Reference 2"]}`
+        );
+        set(
+          "p-criminal-conviction",
+          `Criminal Conviction: ${data["Criminal Conviction?"]} | Conviction Details: ${data["Conviction Details"]}`
+        );
+
+        // Stages
+        let appStatus = data["App Status"];
+        if (appStatus !== "Application Completed") {
+          const created = new Date(data["Created At"]);
+          const now = new Date();
+          const diffDays = (now - created) / (1000 * 60 * 60 * 24);
+          if (diffDays > 7) appStatus = "Missing";
+        }
+        updateStageUI(1, appStatus, "stage-text-1", null, "stage-icon-1", "");
+        updateStageUI(
+          2,
+          data["Interview Status"],
+          null,
+          "stage-btn-2",
+          "stage-icon-2",
+          "Update"
+        );
+        updateStageUI(
+          3,
+          data["Background Check"],
+          null,
+          "stage-btn-3",
+          "stage-icon-3",
+          "Update"
+        );
+
+        // Last stage button logic
+        const activeState =
+          data["Status"] === "Active"
+            ? "Done"
+            : data["Status"] === "Inactive"
+            ? "No"
+            : "Pending";
+        updateStageUI(
+          4,
+          activeState,
+          null,
+          "stage-btn-4",
+          "stage-icon-4",
+          "Activate"
+        );
+
+        const makeTags = (containerId, str) => {
+          const div = document.getElementById(containerId);
+          if (!div) return;
+          div.innerHTML = "";
+          if (!str) return;
+          str
+            .toString()
+            .split(",")
+            .forEach((s) => {
+              const span = document.createElement("span");
+              span.className =
+                "bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded border border-gray-200";
+              span.textContent = s.trim();
+              div.appendChild(span);
+            });
+        };
+        makeTags("p-certs", data["Certifications"]);
+        makeTags("p-days", data["Schedule Desired"]);
+        set("p-skills", data["Skills Checklist"]);
+        set("p-langs", data["Languages"]);
+        set("p-covid", data["Covid Vaccine"]);
+        set("p-flu", data["Flu Vaccine"]);
+        set(
+          "p-highSchool",
+          `High School: ${data["High School"]} | HS Degree: ${data["HS Degree"]}`
+        );
+        set(
+          "p-college",
+          `College: ${data["College"]} | Degree: ${data["College Degree"]}`
+        );
+        set(
+          "p-otherEducation",
+          `Other Education: ${data["Other Edu"]} | Degree: ${data["Other Degree"]}`
+        );
+        set(
+          "p-emp",
+          `Employer 1: ${data["Employer 1"]} | Employer 2: ${data["Employer 2"]} | Employer 3: ${data["Employer 3"]}`
+        );
+        set("p-hours", data["Hours Avail"]);
+        set("p-times", data["Times Avail"]);
+        set(
+          "p-extra-avail",
+          `Emerg: ${data["Emergency Avail?"]} | Live-In: ${data["Live-in Avail?"]}`
+        );
+        set("p-emergency-name", data["Emergency Contact"]);
+        set(
+          "p-emergency-contact",
+          `${data["Emerg. Relation"]} - ${data["Emerg. Phone"]}`
+        );
+        set("p-emergency-email", data["Emerg. Email"]);
+        set("p-emergency-address", data["Emerg. Address"]);
+
+        // Signature Details
+        set("p-signName", data["Signature Name"]);
+        set(
+          "p-signDate",
+          data["Signature Date"]
+            ? new Date(data["Signature Date"]).toLocaleDateString()
+            : "--"
+        );
+
+        // Render Documents
+        const docContainer = document.getElementById("p-documents-container");
+        const docList = document.getElementById("p-documents");
+        docList.innerHTML = "";
+        let hasDocs = false;
+
+        if (data["Contract Link"]) {
+          hasDocs = true;
+          docList.innerHTML += `<a href="${data["Contract Link"]}" target="_blank" class="flex items-center gap-2 p-2 bg-gray-50 hover:bg-gray-100 rounded border border-gray-200 text-sm text-gray-700 transition-colors">
+            <i class="ph ph-file-text text-blue-500 text-lg"></i>
+            <span class="font-medium">Independent Contractor Agreement</span>
+            <i class="ph ph-arrow-square-out ml-auto text-gray-400"></i>
+          </a>`;
+        }
+        if (data["W9 Link"]) {
+          hasDocs = true;
+          docList.innerHTML += `<a href="${data["W9 Link"]}" target="_blank" class="flex items-center gap-2 p-2 bg-gray-50 hover:bg-gray-100 rounded border border-gray-200 text-sm text-gray-700 transition-colors">
+            <i class="ph ph-file-text text-green-500 text-lg"></i>
+            <span class="font-medium">W-9 Form</span>
+            <i class="ph ph-arrow-square-out ml-auto text-gray-400"></i>
+          </a>`;
+        }
+        if (data["Background Link"]) {
+          hasDocs = true;
+          docList.innerHTML += `<a href="${data["Background Link"]}" target="_blank" class="flex items-center gap-2 p-2 bg-gray-50 hover:bg-gray-100 rounded border border-gray-200 text-sm text-gray-700 transition-colors">
+            <i class="ph ph-file-text text-orange-500 text-lg"></i>
+            <span class="font-medium">Background Check Request</span>
+            <i class="ph ph-arrow-square-out ml-auto text-gray-400"></i>
+          </a>`;
+        }
+
+        if (hasDocs) {
+          docContainer.classList.remove("hidden");
+        } else {
+          docContainer.classList.add("hidden");
+        }
+
+        document.getElementById("profileLoading").classList.add("hidden");
+        document.getElementById("profileContent").classList.remove("hidden");
+      })
+      .getCaregiverDetails(id);
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.textContent = "Processing...";
+
+    const form = document.getElementById("caregiverForm");
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => (data[key] = value));
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.disabled = false;
+        btn.textContent = "Create & Send";
+        if (res.success) {
+          Swal.fire("Success", "Caregiver Added", "success");
+          form.reset();
+          switchCgView("list");
+          loadCaregiverList();
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .handleCaregiverSubmission(data);
+  }
+</script>

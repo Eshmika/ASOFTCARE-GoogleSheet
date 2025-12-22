@@ -1,0 +1,122 @@
+<script>
+  function loadCommunicationView() {
+    // Load Caregivers
+    const cgList = document.getElementById("comm-cg-list");
+    cgList.innerHTML =
+      '<div class="text-xs text-gray-400 text-center py-4">Loading...</div>';
+    google.script.run
+      .withSuccessHandler((data) => {
+        renderCommList(data, "comm-cg-list", "cg");
+      })
+      .getCaregiverList();
+
+    // Load Clients
+    const clList = document.getElementById("comm-cl-list");
+    clList.innerHTML =
+      '<div class="text-xs text-gray-400 text-center py-4">Loading...</div>';
+    google.script.run
+      .withSuccessHandler((data) => {
+        renderCommList(data, "comm-cl-list", "cl");
+      })
+      .getClientList();
+  }
+
+  function renderCommList(data, containerId, prefix) {
+    const container = document.getElementById(containerId);
+    if (!data || data.length === 0) {
+      container.innerHTML =
+        '<div class="text-xs text-gray-400 text-center py-4">No records found.</div>';
+      return;
+    }
+
+    let html = "";
+    data.forEach((item) => {
+      // Only show items with email
+      if (item.email && item.email.includes("@")) {
+        html += `
+          <label class="flex items-center gap-2 p-2 hover:bg-white rounded cursor-pointer group">
+            <input type="checkbox" name="${prefix}_ids" value="${item.id}" class="w-4 h-4 text-[#65c027] rounded border-gray-300 focus:ring-[#65c027]">
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-700 truncate group-hover:text-[#65c027]">${item.name}</p>
+              <p class="text-xs text-gray-400 truncate">${item.email}</p>
+            </div>
+          </label>
+        `;
+      }
+    });
+    container.innerHTML =
+      html ||
+      '<div class="text-xs text-gray-400 text-center py-4">No valid emails found.</div>';
+  }
+
+  function filterCommList(input, listId) {
+    const filter = input.value.toLowerCase();
+    const list = document.getElementById(listId);
+    const labels = list.getElementsByTagName("label");
+
+    for (let i = 0; i < labels.length; i++) {
+      const text = labels[i].textContent.toLowerCase();
+      if (text.includes(filter)) {
+        labels[i].style.display = "";
+      } else {
+        labels[i].style.display = "none";
+      }
+    }
+  }
+
+  function toggleAll(listId) {
+    const list = document.getElementById(listId);
+    const checkboxes = list.querySelectorAll('input[type="checkbox"]');
+    // Check if all visible are checked
+    const visible = Array.from(checkboxes).filter(
+      (cb) => cb.closest("label").style.display !== "none"
+    );
+    const allChecked = visible.every((cb) => cb.checked);
+
+    visible.forEach((cb) => (cb.checked = !allChecked));
+  }
+
+  function sendCommunication(e) {
+    e.preventDefault();
+    const btn = document.getElementById("btnSendComm");
+    const originalText = btn.innerHTML;
+
+    const form = document.getElementById("commForm");
+    const formData = new FormData(form);
+    const subject = formData.get("subject");
+    const message = formData.get("message");
+
+    // Gather IDs
+    const cgIds = Array.from(
+      document.querySelectorAll('input[name="cg_ids"]:checked')
+    ).map((cb) => cb.value);
+    const clIds = Array.from(
+      document.querySelectorAll('input[name="cl_ids"]:checked')
+    ).map((cb) => cb.value);
+
+    if (cgIds.length === 0 && clIds.length === 0) {
+      Swal.fire("Error", "Please select at least one recipient", "warning");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Sending...';
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        if (res.success) {
+          Swal.fire("Success", `Sent to ${res.count} recipients!`, "success");
+          form.reset();
+          // Uncheck all
+          document
+            .querySelectorAll('input[type="checkbox"]')
+            .forEach((cb) => (cb.checked = false));
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .sendCustomEmail(cgIds, clIds, subject, message);
+  }
+</script>

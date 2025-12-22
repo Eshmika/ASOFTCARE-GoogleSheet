@@ -1,0 +1,55 @@
+<script>
+  // -- Navigation --
+  const originalNavigate = window.navigate || function () {};
+  window.navigate = function (viewName) {
+    document
+      .querySelectorAll(".nav-item")
+      .forEach((el) => el.classList.remove("active"));
+    document
+      .querySelectorAll(".view-section")
+      .forEach((el) => el.classList.remove("active"));
+
+    const btn = document.querySelector(
+      `button[onclick="navigate('${viewName}')"]`
+    );
+    if (btn) btn.classList.add("active");
+
+    const target = document.getElementById("view-" + viewName);
+    if (target) target.classList.add("active");
+
+    // Re-attach masks when switching views (just in case dynamic content)
+    setupInputMasks();
+
+    if (viewName === "caregivers") {
+      loadCaregiverList();
+      switchCgView("list");
+    } else if (viewName === "caregiver-stages") {
+      document.getElementById("view-caregivers").classList.add("active");
+      loadCaregiverStages();
+      switchCgView("stages");
+    } else if (viewName === "clients") {
+      loadClientList();
+      switchClView("list");
+    } else if (viewName === "dashboard") {
+      loadDashboardStats();
+    } else if (viewName === "communication") {
+      loadCommunicationView();
+    } else if (viewName === "shifts") {
+      loadShiftView();
+    } else if (viewName === "caregiver-calendar") {
+      loadCaregiverCalendar();
+    }
+  };
+
+  function switchCgView(subView) {
+    document.getElementById("cg-subview-list").classList.add("hidden");
+    document.getElementById("cg-subview-add").classList.add("hidden");
+    document.getElementById("cg-subview-profile").classList.add("hidden");
+    document.getElementById("cg-subview-edit").classList.add("hidden");
+    const stages = document.getElementById("cg-subview-stages");
+    if (stages) stages.classList.add("hidden");
+
+    const target = document.getElementById("cg-subview-" + subView);
+    if (target) target.classList.remove("hidden");
+  }
+</script>

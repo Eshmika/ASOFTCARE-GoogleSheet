@@ -1,0 +1,333 @@
+<script>
+  // -- Caregiver Stages Logic --
+  function loadCaregiverStages() {
+    google.script.run
+      .withSuccessHandler((data) => {
+        cgData = data;
+        renderCaregiverStages();
+      })
+      .getCaregiverList();
+  }
+
+  function renderCaregiverStages() {
+    const stages = {
+      new: [],
+      interview: [],
+      background: [],
+      active: [],
+    };
+
+    cgData.forEach((cg) => {
+      // Stage 4: Active / Inactive / No call / Vacation
+      // Condition: Status is one of the final states.
+      if (["Active", "Inactive", "No call", "Vacation"].includes(cg.status)) {
+        stages.active.push(cg);
+      }
+      // Stage 3: Passed Background Check
+      // Condition: Interview Passed, but not yet Active
+      else if (cg.interviewStatus === "Passed") {
+        stages.background.push(cg);
+      }
+      // Stage 2: Interview Completed
+      // Condition: App Completed
+      else if (cg.appStatus === "Application Completed") {
+        stages.interview.push(cg);
+      }
+      // Stage 1: New Application
+      // Condition: Pending OR Applicant
+      else if (
+        cg.appStatus === "Pending Application" ||
+        cg.status === "Applicant"
+      ) {
+        stages.new.push(cg);
+      }
+    });
+
+    renderStageList("new", stages.new);
+    renderStageList("interview", stages.interview);
+    renderStageList("background", stages.background);
+    renderStageList("active", stages.active);
+
+    document.getElementById("count-stage-new").textContent = stages.new.length;
+    document.getElementById("count-stage-interview").textContent =
+      stages.interview.length;
+    document.getElementById("count-stage-background").textContent =
+      stages.background.length;
+    document.getElementById("count-stage-active").textContent =
+      stages.active.length;
+  }
+
+  function renderStageList(stage, list) {
+    const tbody = document.getElementById(`list-stage-${stage}`);
+    tbody.innerHTML = "";
+
+    if (list.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="3" class="p-4 text-center text-gray-400">No caregivers in this stage.</td></tr>';
+      return;
+    }
+
+    list.forEach((cg) => {
+      let actionHtml = "";
+      if (stage === "new") {
+        actionHtml = `
+              <div class="flex justify-end items-center gap-2">
+                <span class="text-xs text-gray-400 italic mr-2">Waiting for submission...</span>
+                <button onclick="resendEmail('${cg.id}')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-100 font-bold border border-blue-200 transition-colors flex items-center gap-1">
+                  <i class="ph ph-paper-plane-right"></i> Resend Email
+                </button>
+              </div>`;
+      } else if (stage === "interview") {
+        const viewDetailsBtn = `<button onclick="openProfile('${cg.id}')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 mr-2 flex items-center gap-1"><i class="ph ph-eye"></i> View Details</button>`;
+        const rejectBtn = `<button onclick="sendRejectionEmail('${cg.id}')" class="text-xs bg-orange-50 text-orange-600 px-3 py-1 rounded-full hover:bg-orange-100 font-bold border border-orange-200 mr-2 flex items-center gap-1" title="Send Rejection Email"><i class="ph ph-envelope-simple"></i> Send Reject</button>`;
+
+        // If already passed/failed, show status, else show buttons
+        if (cg.interviewStatus === "Passed") {
+          actionHtml = `${viewDetailsBtn} <span class="text-xs text-green-600 font-bold mr-2">Passed</span> <button onclick="updateStageStatus('${cg.id}', 'Background', 'Pending')" class="text-xs bg-purple-100 text-purple-600 px-3 py-1 rounded-full hover:bg-purple-200 font-bold">Start Background Check</button>`;
+        } else if (cg.interviewStatus === "Failed") {
+          actionHtml = `${viewDetailsBtn} <span class="text-xs text-red-600 font-bold mr-2">Interview Failed</span> <button onclick="updateStageStatus('${cg.id}', 'Interview', 'Pending')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1"><i class="ph ph-arrow-u-up-left"></i> Undo</button>`;
+        } else {
+          actionHtml = `
+                    <div class="flex justify-end gap-2 items-center">
+                        ${viewDetailsBtn}
+                        ${rejectBtn}
+                        <button onclick="updateStageStatus('${cg.id}', 'Interview', 'Passed')" class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200 font-bold">Pass</button>
+                        <button onclick="updateStageStatus('${cg.id}', 'Interview', 'Failed')" class="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full hover:bg-red-200 font-bold">Fail</button>
+                    </div>`;
+        }
+      } else if (stage === "background") {
+        let docsHtml = "";
+        if (cg.contractLink)
+          docsHtml += `<a href="${cg.contractLink}" target="_blank" class="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded border border-gray-200 hover:bg-gray-100 mr-1 flex items-center gap-1" title="View Contract"><i class="ph ph-file-text"></i> Contract</a>`;
+        if (cg.w9Link)
+          docsHtml += `<a href="${cg.w9Link}" target="_blank" class="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded border border-gray-200 hover:bg-gray-100 mr-1 flex items-center gap-1" title="View W9"><i class="ph ph-file-text"></i> W9</a>`;
+        if (cg.backgroundLink)
+          docsHtml += `<a href="${cg.backgroundLink}" target="_blank" class="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded border border-gray-200 hover:bg-gray-100 mr-1 flex items-center gap-1" title="View Background"><i class="ph ph-file-text"></i> Background</a>`;
+
+        // Hide "Send Consent" if Background Link exists (Consent Form submitted)
+        // or if all docs are submitted. Let's use backgroundLink as the main indicator for "Consent".
+        const showSendConsent = !cg.backgroundLink;
+
+        if (cg.backgroundCheck === "Passed") {
+          actionHtml = `<div class="flex items-center justify-end gap-2">${docsHtml} <span class="text-xs text-green-600 font-bold mr-2">Passed</span> <button onclick="updateStageStatus('${cg.id}', 'Background', 'Pending')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1 mr-2"><i class="ph ph-arrow-u-up-left"></i> Undo</button> <button onclick="updateStageStatus('${cg.id}', 'Active', 'Active')" class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200 font-bold">Activate Caregiver</button></div>`;
+        } else if (cg.backgroundCheck === "Failed") {
+          actionHtml = `<div class="flex items-center justify-end gap-2">${docsHtml} <span class="text-xs text-red-600 font-bold mr-2">Background Check Failed</span> <button onclick="updateStageStatus('${cg.id}', 'Background', 'Pending')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1"><i class="ph ph-arrow-u-up-left"></i> Undo</button></div>`;
+        } else {
+          actionHtml = `
+                    <div class="flex justify-end gap-2 items-center">
+                        ${docsHtml}
+                        <button onclick="updateStageStatus('${
+                          cg.id
+                        }', 'Interview', 'Pending')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 mr-2 flex items-center gap-1" title="Return to Interview Stage">
+                            <i class="ph ph-arrow-u-up-left"></i> Undo
+                        </button>
+                        ${
+                          showSendConsent
+                            ? `<button onclick="sendOnboardingEmail('${cg.id}')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-100 font-bold border border-blue-200 transition-colors flex items-center gap-1 mr-2">
+                          <i class="ph ph-envelope-simple"></i> Send Consent
+                        </button>`
+                            : ""
+                        }
+                        <button onclick="updateStageStatus('${
+                          cg.id
+                        }', 'Background', 'Passed')" class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200 font-bold">Pass</button>
+                        <button onclick="updateStageStatus('${
+                          cg.id
+                        }', 'Background', 'Failed')" class="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full hover:bg-red-200 font-bold">Fail</button>
+                    </div>`;
+        }
+      } else if (stage === "active") {
+        let statusColor = "bg-gray-100 text-gray-700";
+        if (cg.status === "Active") statusColor = "bg-green-100 text-green-700";
+        else if (cg.status === "Inactive")
+          statusColor = "bg-red-100 text-red-700";
+        else if (cg.status === "No call")
+          statusColor = "bg-yellow-100 text-yellow-700";
+        else if (cg.status === "Vacation")
+          statusColor = "bg-blue-100 text-blue-700";
+
+        let paymentBtn = "";
+        if (!cg.hasPaymentInfo) {
+          paymentBtn = `<button onclick="resendPaymentEmail('${cg.id}')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-100 font-bold border border-blue-200 flex items-center gap-1 mr-2"><i class="ph ph-envelope-simple"></i> Resend Payment Email</button>`;
+        }
+
+        actionHtml = `
+          <div class="flex items-center justify-end gap-2">
+            ${paymentBtn}
+            <span class="text-xs ${statusColor} px-2 py-1 rounded font-bold">${cg.status}</span>
+            <button onclick="updateStageStatus('${cg.id}', 'Active', 'Applicant')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1" title="Return to Background Stage">
+              <i class="ph ph-arrow-u-up-left"></i> Undo
+            </button>
+          </div>`;
+      }
+
+      tbody.innerHTML += `
+            <tr class="hover:bg-gray-50">
+                <td class="p-3 font-medium text-gray-700">
+                    <div>${cg.name}</div>
+                    <div class="text-xs text-gray-400">${cg.id}</div>
+                </td>
+                <td class="p-3 text-gray-500 text-xs">
+                    ${
+                      stage === "interview"
+                        ? cg.interviewStatus
+                        : stage === "background"
+                        ? cg.backgroundCheck
+                        : cg.status
+                    }
+                </td>
+                <td class="p-3 text-right">${actionHtml}</td>
+            </tr>
+        `;
+    });
+  }
+
+  function toggleStage(stageId) {
+    const content = document.getElementById(`content-${stageId}`);
+    const icon = document.getElementById(`icon-${stageId}`);
+    content.classList.toggle("hidden");
+    icon.classList.toggle("rotate-180");
+  }
+
+  function updateStageStatus(id, stage, value) {
+    // Optimistic update or wait? Let's wait for simplicity.
+    google.script.run
+      .withSuccessHandler(() => {
+        if (stage === "Active" && value === "Active") {
+          // Send Payment Email
+          google.script.run
+            .withSuccessHandler(() => {
+              Swal.fire(
+                "Success",
+                "Caregiver Activated & Payment Email Sent",
+                "success"
+              );
+              loadCaregiverStages();
+            })
+            .sendPaymentSetupEmail(id);
+        } else {
+          loadCaregiverStages();
+        }
+      })
+      .updateCaregiverStage(id, stage, value);
+  }
+
+  function resendPaymentEmail(id) {
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Sending...';
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        if (res.success) {
+          Swal.fire("Success", "Payment setup email sent!", "success");
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .sendPaymentSetupEmail(id);
+  }
+
+  function downloadPdf(id, btn) {
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> ...';
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        if (res.success) {
+          // Create a link and trigger download
+          const link = document.createElement("a");
+          link.href = "data:application/pdf;base64," + res.base64;
+          link.download = res.filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .withFailureHandler((err) => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        Swal.fire("Error", err.message, "error");
+      })
+      .generateCaregiverPdf(id);
+  }
+
+  function resendEmail(id) {
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Sending...';
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        if (res.success) {
+          Swal.fire("Success", "Application email resent!", "success");
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .resendCaregiverEmail(id);
+  }
+
+  function sendOnboardingEmail(id) {
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Sending...';
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        if (res.success) {
+          Swal.fire("Success", "Onboarding email sent!", "success");
+        } else {
+          Swal.fire("Error", res.message, "error");
+        }
+      })
+      .sendOnboardingEmail(id);
+  }
+
+  function sendRejectionEmail(id) {
+    Swal.fire({
+      title: "Send Rejection Email?",
+      text: "This will send a rejection email to the caregiver.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, send it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Sending...",
+          text: "Please wait while we send the email.",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (res.success) {
+              Swal.fire("Sent!", "Rejection email has been sent.", "success");
+            } else {
+              Swal.fire("Error", res.message, "error");
+            }
+          })
+          .sendRejectionEmail(id);
+      }
+    });
+  }
+</script>

@@ -1,0 +1,16 @@
+<script>
+  function loadDashboardStats() {
+    google.script.run
+      .withSuccessHandler((stats) => {
+        document.getElementById("stat-total").textContent = stats.total;
+        document.getElementById("stat-active").textContent = stats.active;
+        document.getElementById("stat-inactive").textContent = stats.inactive;
+        document.getElementById("stat-stna").textContent = stats.stna;
+      })
+      .getDashboardStats();
+  }
+
+  window.onload = function () {
+    loadDashboardStats();
+  };
+</script>
