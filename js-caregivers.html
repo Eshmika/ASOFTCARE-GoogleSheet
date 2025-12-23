@@ -526,6 +526,12 @@
             ? new Date(data["Started Date"]).toLocaleDateString()
             : "--"
         );
+        set(
+          "p-last-reviewed",
+          data["Last Reviewed"]
+            ? new Date(data["Last Reviewed"]).toLocaleDateString()
+            : "--"
+        );
 
         const pipelinePanel = document.getElementById("pipeline-panel");
         if (data["Status"] === "Active") {
