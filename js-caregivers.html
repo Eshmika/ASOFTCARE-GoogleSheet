@@ -199,6 +199,9 @@
     setVal("edit-criminalHistory", d["Criminal Conviction?"]);
     setVal("edit-criminalExplain", d["Conviction Details"]);
 
+    // Preserve Signature
+    setVal("edit-signName", d["Signature Name"]);
+
     // Vaccinations
     let covidVal = d["Covid Vaccine"] || "No";
     let covidDose = "";
