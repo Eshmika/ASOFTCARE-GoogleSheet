@@ -463,8 +463,8 @@ function getCaregiverList() {
       email: row[4],
       title: row[5],
       status: row[6],
-      city: row[15] || "--",
-      zip: row[17] || "",
+      city: row[16] || "--",
+      zip: row[18] || "",
       appStatus: row[8], // App Status
       interviewStatus: interviewIdx > -1 ? row[interviewIdx] : "",
       backgroundCheck: backgroundCheckIdx > -1 ? row[backgroundCheckIdx] : "",
