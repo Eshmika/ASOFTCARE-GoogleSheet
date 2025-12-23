@@ -749,10 +749,14 @@
           "p-otherEducation",
           `Other Education: ${data["Other Edu"]} | Degree: ${data["Other Degree"]}`
         );
-        set(
-          "p-emp",
-          `Employer 1: ${data["Employer 1"]} | Employer 2: ${data["Employer 2"]} | Employer 3: ${data["Employer 3"]}`
-        );
+        const empEl = document.getElementById("p-emp");
+        if (empEl) {
+          empEl.innerHTML = `Employer 1: ${
+            data["Employer 1"] || "--"
+          }<br>Employer 2: ${data["Employer 2"] || "--"}<br>Employer 3: ${
+            data["Employer 3"] || "--"
+          }`;
+        }
         set("p-hours", data["Hours Avail"]);
         set("p-times", data["Times Avail"]);
         set(
