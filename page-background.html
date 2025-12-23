@@ -132,9 +132,7 @@
             >
             <? if (isPdf) { ?>
             <div class="w-full border-b border-gray-400 py-2 mb-4">
-              <?= caregiverData['First Name'] ?>
-              <?= caregiverData['Middle Int'] ?>
-              <?= caregiverData['Last Name'] ?>
+              <?= [caregiverData['First Name'], caregiverData['Middle Int'], caregiverData['Last Name']].filter(Boolean).join(' ') ?>
             </div>
             <? } else { ?>
             <input
@@ -142,7 +140,7 @@
               name="fullNameInitial"
               class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border mb-4"
               placeholder="Given Name"
-              value="<?= caregiverData['First Name'] ?> <?= caregiverData['Middle Int'] ?> <?= caregiverData['Last Name'] ?>"
+              value="<?= [caregiverData['First Name'], caregiverData['Middle Int'], caregiverData['Last Name']].filter(Boolean).join(' ') ?>"
               readonly
               required
             />
