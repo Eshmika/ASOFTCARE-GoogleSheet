@@ -400,6 +400,10 @@
               </p>
               <p class="text-sm font-medium" id="p-marital">--</p>
             </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Criminal Conviction</p>
+              <p class="text-sm font-medium" id="p-criminal-conviction">--</p>
+            </div>
           </div>
         </div>
 
@@ -627,6 +631,10 @@
               <p class="text-xs text-gray-400 uppercase">Other Education</p>
               <p class="text-sm font-medium" id="p-otherEducation">--</p>
             </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Certifications</p>
+              <div id="p-certs" class="flex flex-wrap gap-1 mt-1"></div>
+            </div>
           </div>
         </div>
 
@@ -645,48 +653,39 @@
           </div>
         </div>
 
-        <div>
-          <p class="text-xs text-gray-400 uppercase">
-            Reference Contact Details
-          </p>
-          <p class="text-sm font-medium" id="p-reference-contact">--</p>
-        </div>
-        <div>
-          <p class="text-xs text-gray-400 uppercase">Criminal Conviction</p>
-          <p class="text-sm font-medium" id="p-criminal-conviction">--</p>
-        </div>
-
-        <!-- 5. CARE MATCHING AND SKILLS -->
+        <!-- 12. REFERENCES -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h3
             class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2"
           >
-            <i class="ph ph-star text-[#65c027]"></i> CARE MATCHING AND SKILLS
+            <i class="ph ph-user text-[#65c027]"></i> REFERENCES
           </h3>
-          <div class="grid grid-cols-1 gap-6">
+          <div class="grid grid-cols-1 gap-4">
             <div>
-              <p class="text-xs text-gray-400 uppercase">Certifications</p>
-              <div id="p-certs" class="flex flex-wrap gap-1 mt-1"></div>
+              <p class="text-sm font-medium" id="p-reference-contact">--</p>
             </div>
+          </div>
+        </div>
+
+        <!-- 12. AVAILABILITY & SCHEDULE -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3
+            class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2"
+          >
+            <i class="ph ph-user text-[#65c027]"></i> AVAILABILITY & SCHEDULE
+          </h3>
+          <div class="grid grid-cols-1 gap-4">
             <div>
-              <p class="text-xs text-gray-400 uppercase">Skills</p>
-              <p class="text-sm font-medium" id="p-skills">--</p>
-            </div>
-            <div>
-              <p class="text-xs text-gray-400 uppercase">Languages</p>
-              <p class="text-sm font-medium" id="p-langs">--</p>
-            </div>
-            <div>
-              <p class="text-xs text-gray-400 uppercase">Hours</p>
-              <p class="text-sm font-medium" id="p-hours">--</p>
+              <p class="text-xs text-gray-400 uppercase">Times</p>
+              <p class="text-sm font-medium" id="p-times">--</p>
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Days</p>
               <div id="p-days" class="flex flex-wrap gap-1 mt-1"></div>
             </div>
             <div>
-              <p class="text-xs text-gray-400 uppercase">Times</p>
-              <p class="text-sm font-medium" id="p-times">--</p>
+              <p class="text-xs text-gray-400 uppercase">Hours</p>
+              <p class="text-sm font-medium" id="p-hours">--</p>
             </div>
             <div>
               <p class="text-xs text-gray-400 uppercase">Emergency / Live-In</p>
@@ -695,14 +694,43 @@
           </div>
         </div>
 
-        <!-- 6. VACCINATION -->
+        <!-- 13. CARE MATCHING & SKILLS -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h3
             class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2"
           >
-            <i class="ph ph-syringe text-[#65c027]"></i> VACCINATION
+            <i class="ph ph-user text-[#65c027]"></i> CARE MATCHING & SKILLS
           </h3>
-          <div class="grid grid-cols-1 gap-6">
+          <div class="grid grid-cols-1 gap-4">
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Languages</p>
+              <p class="text-sm font-medium" id="p-langs">--</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Skills</p>
+              <p class="text-sm font-medium" id="p-skills">--</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 14. OFFICE LOCATION -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3
+            class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2"
+          >
+            <i class="ph ph-user text-[#65c027]"></i> OFFICE LOCATION
+          </h3>
+          <div class="grid grid-cols-1 gap-4"></div>
+        </div>
+
+        <!-- 15. VACCINATION -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3
+            class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2"
+          >
+            <i class="ph ph-user text-[#65c027]"></i> VACCINATION
+          </h3>
+          <div class="grid grid-cols-1 gap-4">
             <div>
               <span class="text-xs text-gray-500">Covid:</span>
               <span class="text-sm font-medium block" id="p-covid">--</span>
@@ -714,17 +742,20 @@
           </div>
         </div>
 
-        <!-- 7. CLIENT HISTORY -->
+        <!-- 16. CLIENT HISTORY -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h3
             class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2"
           >
-            <i class="ph ph-clock-counter-clockwise text-[#65c027]"></i> CLIENT
-            HISTORY
+            <i class="ph ph-user text-[#65c027]"></i> CLIENT HISTORY
           </h3>
-          <div>
-            <p class="text-xs text-gray-400 uppercase">Last Client Seen</p>
-            <p class="text-sm font-bold text-gray-800" id="p-last-client">--</p>
+          <div class="grid grid-cols-1 gap-4">
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Last Client Seen</p>
+              <p class="text-sm font-bold text-gray-800" id="p-last-client">
+                --
+              </p>
+            </div>
           </div>
         </div>
       </div>

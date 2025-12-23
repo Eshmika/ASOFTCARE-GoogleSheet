@@ -664,10 +664,12 @@
           "p-us-eligible",
           `US Eligible: ${data["US Eligible?"]} | US Citizen: ${data["US Citizen?"]}`
         );
-        set(
-          "p-reference-contact",
-          `Reference 1: ${data["Reference 1"]} | Reference 2: ${data["Reference 2"]}`
-        );
+        const refEl = document.getElementById("p-reference-contact");
+        if (refEl) {
+          refEl.innerHTML = `Reference 1: ${
+            data["Reference 1"] || "--"
+          }<br>Reference 2: ${data["Reference 2"] || "--"}`;
+        }
         set(
           "p-criminal-conviction",
           `Criminal Conviction: ${data["Criminal Conviction?"]} | Conviction Details: ${data["Conviction Details"]}`
