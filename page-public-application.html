@@ -873,34 +873,76 @@
         <div class="section-card">
           <h2 class="section-title">Education</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="input-label"
-                >High School (City/State)
-                <span class="text-red-500">*</span></label
-              ><input type="text" name="hsName" class="input-field" />
+            <!-- High School -->
+            <div class="md:col-span-2">
+              <label
+                class="input-label text-base font-semibold text-gray-500 text-sm"
+                >High School</label
+              >
             </div>
             <div>
-              <label class="input-label"
-                >Degree/Year <span class="text-red-500">*</span></label
-              ><input type="text" name="hsDegree" class="input-field" />
+              <input
+                type="text"
+                name="hsName"
+                class="input-field"
+                placeholder="High School Name (City/State)"
+              />
+            </div>
+            <div>
+              <input
+                type="text"
+                name="hsDegree"
+                class="input-field"
+                placeholder="Degree/Year"
+              />
             </div>
 
-            <div>
-              <label class="input-label">College (City/State)</label
-              ><input type="text" name="colName" class="input-field" />
+            <!-- College -->
+            <div class="md:col-span-2 mt-2">
+              <label
+                class="input-label text-base font-semibold text-gray-500 text-sm"
+                >College</label
+              >
             </div>
             <div>
-              <label class="input-label">Degree/Year</label
-              ><input type="text" name="colDegree" class="input-field" />
+              <input
+                type="text"
+                name="colName"
+                class="input-field"
+                placeholder="College Name (City/State)"
+              />
+            </div>
+            <div>
+              <input
+                type="text"
+                name="colDegree"
+                class="input-field"
+                placeholder="Degree/Year"
+              />
             </div>
 
-            <div>
-              <label class="input-label">Other (City/State)</label
-              ><input type="text" name="otherEdu" class="input-field" />
+            <!-- Other -->
+            <div class="md:col-span-2 mt-2">
+              <label
+                class="input-label text-base font-semibold text-gray-500 text-sm"
+                >Other School</label
+              >
             </div>
             <div>
-              <label class="input-label">Degree/Cert</label
-              ><input type="text" name="otherDegree" class="input-field" />
+              <input
+                type="text"
+                name="otherEdu"
+                class="input-field"
+                placeholder="School Name (City/State)"
+              />
+            </div>
+            <div>
+              <input
+                type="text"
+                name="otherDegree"
+                class="input-field"
+                placeholder="Degree/Cert"
+              />
             </div>
           </div>
         </div>
