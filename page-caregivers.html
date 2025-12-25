@@ -658,9 +658,24 @@
           <h3 class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2">
             <i class="ph ph-users-three text-[#65c027]"></i> REFERENCES
           </h3>
-          <div class="grid grid-cols-1 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Ref 1 -->
             <div>
-              <p class="text-sm font-medium" id="p-reference-contact">--</p>
+              <p class="text-xs text-gray-400 uppercase mb-1">Reference 1</p>
+              <div class="text-sm">
+                <p><span class="font-medium" id="p-ref1-name">--</span></p>
+                <p class="text-gray-600 text-xs" id="p-ref1-relation">--</p>
+                <p class="text-blue-600" id="p-ref1-phone">--</p>
+              </div>
+            </div>
+            <!-- Ref 2 -->
+            <div>
+              <p class="text-xs text-gray-400 uppercase mb-1">Reference 2</p>
+              <div class="text-sm">
+                <p><span class="font-medium" id="p-ref2-name">--</span></p>
+                <p class="text-gray-600 text-xs" id="p-ref2-relation">--</p>
+                <p class="text-blue-600" id="p-ref2-phone">--</p>
+              </div>
             </div>
           </div>
         </div>
@@ -1207,14 +1222,45 @@
           <h3 class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2">
             <i class="ph ph-users-three text-[#65c027]"></i> REFERENCES
           </h3>
-          <div class="space-y-3">
-            <div>
-              <label class="block text-xs text-gray-400 uppercase mb-1">Reference 1</label><input type="text"
-                name="ref1_full" id="edit-ref1" class="input-field text-sm py-1" />
+          <div class="space-y-4">
+            <!-- Ref 1 -->
+            <div class="border-b pb-3 last:border-0 last:pb-0">
+              <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Reference 1</label>
+              <div class="grid grid-cols-2 gap-2 mb-2">
+                <div>
+                  <label class="block text-[10px] text-gray-400 uppercase">Name</label>
+                  <input type="text" name="ref1[name]" id="edit-ref1-name" class="input-field text-sm py-1 w-full" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-gray-400 uppercase">Relation</label>
+                  <input type="text" name="ref1[relation]" id="edit-ref1-relation"
+                    class="input-field text-sm py-1 w-full" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] text-gray-400 uppercase">Phone</label>
+                <input type="text" name="ref1[phone]" id="edit-ref1-phone" class="input-field text-sm py-1 w-full" />
+              </div>
             </div>
-            <div>
-              <label class="block text-xs text-gray-400 uppercase mb-1">Reference 2</label><input type="text"
-                name="ref2_full" id="edit-ref2" class="input-field text-sm py-1" />
+
+            <!-- Ref 2 -->
+            <div class="border-b pb-3 last:border-0 last:pb-0">
+              <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Reference 2</label>
+              <div class="grid grid-cols-2 gap-2 mb-2">
+                <div>
+                  <label class="block text-[10px] text-gray-400 uppercase">Name</label>
+                  <input type="text" name="ref2[name]" id="edit-ref2-name" class="input-field text-sm py-1 w-full" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-gray-400 uppercase">Relation</label>
+                  <input type="text" name="ref2[relation]" id="edit-ref2-relation"
+                    class="input-field text-sm py-1 w-full" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] text-gray-400 uppercase">Phone</label>
+                <input type="text" name="ref2[phone]" id="edit-ref2-phone" class="input-field text-sm py-1 w-full" />
+              </div>
             </div>
           </div>
         </div>

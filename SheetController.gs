@@ -49,11 +49,12 @@ function getOrCreateSheet() {
       "College Degree",
       "Other Edu",
       "Other Degree",
-      "Employer 1",
-      "Employer 2",
-      "Employer 3",
-      "Reference 1",
-      "Reference 2",
+      "Ref1 Name",
+      "Ref1 Phone",
+      "Ref1 Relation",
+      "Ref2 Name",
+      "Ref2 Phone",
+      "Ref2 Relation",
       "Emergency Contact",
       "Emerg. Phone",
       "Emerg. Relation",
@@ -352,58 +353,113 @@ function submitFullApplication(form) {
     const refStr = (r) =>
       r ? `${r.name || ""} ${r.phone ? "- " + r.phone : ""}` : "";
 
-    const dataToUpdate = [
-      [
-        form.middleName || "",
-        form.dob || "",
-        form.gender || "",
-        form.ssn || "",
-        form.ein || "",
-        form.address || "",
-        form.apt || "",
-        form.city || "",
-        form.state || "",
-        form.zip || "",
-        form.usEligible || "No",
-        form.usCitizen || "No",
-        form.hasLicense || "No",
-        form.licenseState || "",
-        form.licenseNum || "",
-        form.hasCar || "No",
-        form.carModel || "",
-        form.hasInsurance || "No",
-        join(form.hoursAvail),
-        join(form.scheduleDays),
-        join(form.timesAvail),
-        form.emergencyAvail || "No",
-        form.liveInAvail || "No",
-        join(form.certs),
-        join(form.skills),
-        join(form.languages),
-        `${form.hsName || ""} ${form.hsCity ? "- " + form.hsCity : ""}`,
-        form.hsDegree,
-        `${form.colName || ""} ${form.colCity ? "- " + form.colCity : ""}`,
-        form.colDegree,
-        form.otherEdu,
-        form.otherDegree,
-        empStr(form.emp1),
-        empStr(form.emp2),
-        empStr(form.emp3),
-        refStr(form.ref1),
-        refStr(form.ref2),
-        form.emName,
-        form.emPhone,
-        form.emRel,
-        form.criminalHistory || "No",
-        form.criminalExplain || "",
-        form.signName,
-        new Date(),
-        "Yes",
-      ],
-    ];
+    // Dynamic Map: Header Name -> Value
+    const updates = {};
+    updates["Middle Int"] = form.middleName || "";
+    updates["DOB"] = form.dob || "";
+    updates["Gender"] = form.gender || "";
+    updates["SSN"] = form.ssn || "";
+    updates["EIN"] = form.ein || "";
+    updates["Address"] = form.address || "";
+    updates["Apt"] = form.apt || "";
+    updates["City"] = form.city || "";
+    updates["State"] = form.state || "";
+    updates["Zip"] = form.zip || "";
+    updates["US Eligible?"] = form.usEligible || "No";
+    updates["US Citizen?"] = form.usCitizen || "No";
+    updates["Driver License?"] = form.hasLicense || "No";
+    updates["License State"] = form.licenseState || "";
+    updates["License #"] = form.licenseNum || "";
+    updates["Has Car?"] = form.hasCar || "No";
+    updates["Car Make/Model"] = form.carModel || "";
+    updates["Has Insurance?"] = form.hasInsurance || "No";
+    updates["Hours Avail"] = join(form.hoursAvail);
+    updates["Schedule Desired"] = join(form.scheduleDays);
+    updates["Times Avail"] = join(form.timesAvail);
+    updates["Emergency Avail?"] = form.emergencyAvail || "No";
+    updates["Live-in Avail?"] = form.liveInAvail || "No";
+    updates["Certifications"] = join(form.certs);
+    updates["Skills Checklist"] = join(form.skills);
+    updates["Languages"] = join(form.languages);
+    updates["High School"] = `${form.hsName || ""} ${
+      form.hsCity ? "- " + form.hsCity : ""
+    }`;
+    updates["HS Degree"] = form.hsDegree;
+    updates["College"] = `${form.colName || ""} ${
+      form.colCity ? "- " + form.colCity : ""
+    }`;
+    updates["College Degree"] = form.colDegree;
+    updates["Other Edu"] = form.otherEdu;
+    updates["Other Degree"] = form.otherDegree;
 
-    sheet.getRange(r, 9).setValue("Application Completed");
-    sheet.getRange(r, 10, 1, dataToUpdate[0].length).setValues(dataToUpdate);
+    // Legacy mapping removed as per request
+    // updates["Employer 1"] = empStr(form.emp1);
+
+    // OLD Reference mapping removed
+    // updates["Reference 1"] = refStr(form.ref1);
+    // updates["Reference 2"] = refStr(form.ref2);
+
+    // NEW Reference mapping
+    updates["Ref1 Name"] = form.ref1 ? form.ref1.name : "";
+    updates["Ref1 Phone"] = form.ref1 ? form.ref1.phone : "";
+    updates["Ref1 Relation"] = form.ref1 ? form.ref1.relation : "";
+
+    updates["Ref2 Name"] = form.ref2 ? form.ref2.name : "";
+    updates["Ref2 Phone"] = form.ref2 ? form.ref2.phone : "";
+    updates["Ref2 Relation"] = form.ref2 ? form.ref2.relation : "";
+
+    updates["Emergency Contact"] = form.emName;
+    updates["Emerg. Phone"] = form.emPhone;
+    updates["Emerg. Relation"] = form.emRel;
+    updates["Criminal Conviction?"] = form.criminalHistory || "No";
+    updates["Conviction Details"] = form.criminalExplain || "";
+    updates["Signature Name"] = form.signName;
+    updates["Signature Date"] = new Date();
+    updates["Agreed to Terms"] = "Yes";
+
+    // Application Status
+    updates["App Status"] = "Application Completed";
+
+    // Build Row Values dynamically
+    // Start from Column 8 ("App Status") or 10 ("Middle Int")?
+    // The previous code started at Col 10 for bulk, and set Col 9 ("App Status") separately.
+    // Let's iterate all headers and update where we have data.
+    // But setValues is faster.
+    // We will update from "App Status" (Col 9) to the end of the sheet or known headers.
+
+    // Columns: ... | App Status | Middle Int | ...
+    // Indices: ... |     8      |     9      | ...
+
+    // Get headers again (ensure fresh)
+    const currentHeaders = sheet
+      .getRange(1, 1, 1, sheet.getLastColumn())
+      .getValues()[0];
+    const startIndex = 8; // "App Status" is index 8 (col 9)
+    const relevantHeaders = currentHeaders.slice(startIndex);
+
+    const rowValues = relevantHeaders.map((h) => {
+      if (updates.hasOwnProperty(h)) return updates[h];
+      // Special case: if header is NOT in updates, do we leave it?
+      // setValues overwrites. We must read the existing value if we want to preserve unknown columns?
+      // But we already have 'data' (display values) loaded.
+      // data[rowIndex] is valid.
+      const headerIdx = currentHeaders.indexOf(h);
+      if (headerIdx > -1) {
+        // Check if we have specific logic for it (e.g. specialized fields saved below)
+        // But for standard fields, if we didn't map it, maybe preserve it?
+        // Actually, previous code overwrote a huge block.
+        // Let's just return "" if it's one of OUR fields we missed, or preserve if unrelated.
+        // Safest: return updates[h] !== undefined ? updates[h] : data[rowIndex][headerIdx];
+        return updates[h] !== undefined
+          ? updates[h]
+          : data[rowIndex][headerIdx];
+      }
+      return "";
+    });
+
+    sheet
+      .getRange(r, startIndex + 1, 1, rowValues.length)
+      .setValues([rowValues]);
 
     // Save Banking Info & Last Reviewed
     const headers = sheet

@@ -1537,10 +1537,14 @@
         obj.ref1 = {
           name: document.querySelector('input[name="ref1[name]"]').value,
           phone: document.querySelector('input[name="ref1[phone]"]').value,
+          relation: document.querySelector('input[name="ref1[relation]"]')
+            .value,
         };
         obj.ref2 = {
           name: document.querySelector('input[name="ref2[name]"]').value,
           phone: document.querySelector('input[name="ref2[phone]"]').value,
+          relation: document.querySelector('input[name="ref2[relation]"]')
+            .value,
         };
 
         google.script.run

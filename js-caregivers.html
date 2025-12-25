@@ -206,8 +206,13 @@
     setVal("edit-emp3-phone", d["Emp3 Phone"]);
     setVal("edit-emp3-duties", d["Emp3 Duties"]);
 
-    setVal("edit-ref1", d["Reference 1"]);
-    setVal("edit-ref2", d["Reference 2"]);
+    setVal("edit-ref1-name", d["Ref1 Name"]);
+    setVal("edit-ref1-phone", d["Ref1 Phone"]);
+    setVal("edit-ref1-relation", d["Ref1 Relation"]);
+
+    setVal("edit-ref2-name", d["Ref2 Name"]);
+    setVal("edit-ref2-phone", d["Ref2 Phone"]);
+    setVal("edit-ref2-relation", d["Ref2 Relation"]);
 
     setVal("edit-criminalHistory", d["Criminal Conviction?"]);
     setVal("edit-criminalExplain", d["Conviction Details"]);
@@ -354,8 +359,16 @@
       duties: obj["emp3[duties]"],
     };
 
-    obj.ref1 = { name: obj.ref1_full || "", phone: "" };
-    obj.ref2 = { name: obj.ref2_full || "", phone: "" };
+    obj.ref1 = {
+      name: obj["ref1[name]"],
+      phone: obj["ref1[phone]"],
+      relation: obj["ref1[relation]"],
+    };
+    obj.ref2 = {
+      name: obj["ref2[name]"],
+      phone: obj["ref2[phone]"],
+      relation: obj["ref2[relation]"],
+    };
 
     google.script.run
       .withSuccessHandler((res) => {
@@ -560,8 +573,8 @@
         if (badge) {
           badge.textContent = data["Status"];
           badge.className = `px-3 py-1 rounded-full text-xs font-bold ${data["Status"] === "Active"
-              ? "bg-green-100 text-green-700"
-              : "bg-gray-100 text-gray-600"
+            ? "bg-green-100 text-green-700"
+            : "bg-gray-100 text-gray-600"
             }`;
         }
 
@@ -684,11 +697,14 @@
           "p-us-eligible",
           `US Eligible: ${data["US Eligible?"]} | US Citizen: ${data["US Citizen?"]}`
         );
-        const refEl = document.getElementById("p-reference-contact");
-        if (refEl) {
-          refEl.innerHTML = `Reference 1: ${data["Reference 1"] || "--"
-            }<br>Reference 2: ${data["Reference 2"] || "--"}`;
-        }
+        // NEW Reference Population
+        set("p-ref1-name", data["Ref1 Name"]);
+        set("p-ref1-phone", data["Ref1 Phone"]);
+        set("p-ref1-relation", data["Ref1 Relation"]);
+
+        set("p-ref2-name", data["Ref2 Name"]);
+        set("p-ref2-phone", data["Ref2 Phone"]);
+        set("p-ref2-relation", data["Ref2 Relation"]);
         set(
           "p-criminal-conviction",
           `Criminal Conviction: ${data["Criminal Conviction?"]} | Conviction Details: ${data["Conviction Details"]}`
