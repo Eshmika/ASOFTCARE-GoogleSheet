@@ -360,9 +360,20 @@
             DETAILS
           </h3>
           <div class="grid grid-cols-1 gap-4">
-            <div>
-              <p class="text-xs text-gray-400 uppercase">DOB / Gender</p>
-              <p class="text-sm font-medium" id="p-dob">--</p>
+            <div class="flex gap-4">
+              <div class="flex-1">
+                <p class="text-xs text-gray-400 uppercase">DOB</p>
+                <p
+                  class="text-sm font-medium flex items-center gap-2"
+                  id="p-dob"
+                >
+                  --
+                </p>
+              </div>
+              <div class="flex-1">
+                <p class="text-xs text-gray-400 uppercase">Gender</p>
+                <p class="text-sm font-medium" id="p-gender">--</p>
+              </div>
             </div>
 
             <div class="flex gap-4">
@@ -426,14 +437,35 @@
           >
             <i class="ph ph-car text-[#65c027]"></i> TRANSPORTATION
           </h3>
-          <div class="grid grid-cols-1 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- License Info -->
             <div>
-              <p class="text-xs text-gray-400 uppercase">License</p>
-              <p class="text-sm font-medium" id="p-license">--</p>
+              <p class="text-xs text-gray-400 uppercase">Driver License?</p>
+              <p class="text-sm font-medium" id="p-has-license">--</p>
             </div>
             <div>
-              <p class="text-xs text-gray-400 uppercase">Car</p>
-              <p class="text-sm font-medium" id="p-car">--</p>
+              <p class="text-xs text-gray-400 uppercase">License State</p>
+              <p class="text-sm font-medium" id="p-license-state">--</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">License #</p>
+              <p class="text-sm font-medium" id="p-license-num">--</p>
+            </div>
+
+            <!-- Car Info -->
+            <div class="md:col-span-3 border-t border-gray-50 my-2"></div>
+
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Has Car?</p>
+              <p class="text-sm font-medium" id="p-has-car">--</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Model</p>
+              <p class="text-sm font-medium" id="p-car-model">--</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 uppercase">Insurance?</p>
+              <p class="text-sm font-medium" id="p-has-insurance">--</p>
             </div>
           </div>
         </div>

@@ -550,7 +550,23 @@
         set("p-state", data["State"]);
         set("p-zip", data["Zip"]);
 
-        set("p-dob", `${data["DOB"] || "--"} (${data["Gender"] || "--"})`);
+        // DOB with Age & Icon
+        let dobHtml = "--";
+        if (data["DOB"]) {
+          const dobDate = new Date(data["DOB"]);
+          if (!isNaN(dobDate.getTime())) {
+            const diff = Date.now() - dobDate.getTime();
+            const ageDate = new Date(diff);
+            const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+            dobHtml = `<span>${data["DOB"]}</span> <span class="text-gray-500">(${age})</span> <i class="ph ph-cake text-pink-400 text-lg"></i>`;
+          } else {
+            dobHtml = data["DOB"];
+          }
+        }
+        const dobEl = document.getElementById("p-dob");
+        if (dobEl) dobEl.innerHTML = dobHtml;
+
+        set("p-gender", data["Gender"]);
         set(
           "p-marital",
           `${data["Marital Status"] || "--"} ${
@@ -627,14 +643,13 @@
           }
         }
 
-        set(
-          "p-license",
-          `Driver License: ${data["Driver License?"]} | License State: ${data["License State"]} | License #: ${data["License #"]}`
-        );
-        set(
-          "p-car",
-          `Has Car: ${data["Has Car?"]} | Model: ${data["Car Make/Model"]} | Insurance: ${data["Has Insurance?"]}`
-        );
+        set("p-has-license", data["Driver License?"]);
+        set("p-license-state", data["License State"]);
+        set("p-license-num", data["License #"]);
+
+        set("p-has-car", data["Has Car?"]);
+        set("p-car-model", data["Car Make/Model"]);
+        set("p-has-insurance", data["Has Insurance?"]);
         set(
           "p-us-eligible",
           `US Eligible: ${data["US Eligible?"]} | US Citizen: ${data["US Citizen?"]}`
