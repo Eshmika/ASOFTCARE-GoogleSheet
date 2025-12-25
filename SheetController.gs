@@ -190,6 +190,32 @@ function getOrCreateSheet() {
         .getRange(1, sheet.getLastColumn() + 1)
         .setValue("Years of Experience");
     }
+
+    // Add Detailed Employment History Columns
+    const empHeaders = sheet
+      .getRange(1, 1, 1, sheet.getLastColumn())
+      .getValues()[0];
+    if (!empHeaders.includes("Emp1 Company")) {
+      const newHeaders = [
+        "Emp1 Company",
+        "Emp1 Title",
+        "Emp1 Supervisor",
+        "Emp1 Phone",
+        "Emp1 Duties",
+        "Emp2 Company",
+        "Emp2 Title",
+        "Emp2 Supervisor",
+        "Emp2 Phone",
+        "Emp2 Duties",
+        "Emp3 Company",
+        "Emp3 Title",
+        "Emp3 Supervisor",
+        "Emp3 Phone",
+        "Emp3 Duties",
+      ];
+      const startCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, startCol, 1, newHeaders.length).setValues([newHeaders]);
+    }
   }
   return sheet;
 }
@@ -437,6 +463,35 @@ function submitFullApplication(form) {
     const usernameIdx = headers.indexOf("Username");
     if (usernameIdx > -1) {
       sheet.getRange(r, usernameIdx + 1).setValue(form.username || "");
+    }
+
+    // Save Detailed Employment History
+    // Helper to save if Index exists
+    const save = (header, val) => {
+      const idx = headers.indexOf(header);
+      if (idx > -1) sheet.getRange(r, idx + 1).setValue(val || "");
+    };
+
+    if (form.emp1) {
+      save("Emp1 Company", form.emp1.company);
+      save("Emp1 Title", form.emp1.title);
+      save("Emp1 Supervisor", form.emp1.supervisor);
+      save("Emp1 Phone", form.emp1.phone);
+      save("Emp1 Duties", form.emp1.duties);
+    }
+    if (form.emp2) {
+      save("Emp2 Company", form.emp2.company);
+      save("Emp2 Title", form.emp2.title);
+      save("Emp2 Supervisor", form.emp2.supervisor);
+      save("Emp2 Phone", form.emp2.phone);
+      save("Emp2 Duties", form.emp2.duties);
+    }
+    if (form.emp3) {
+      save("Emp3 Company", form.emp3.company);
+      save("Emp3 Title", form.emp3.title);
+      save("Emp3 Supervisor", form.emp3.supervisor);
+      save("Emp3 Phone", form.emp3.phone);
+      save("Emp3 Duties", form.emp3.duties);
     }
 
     return { success: true };

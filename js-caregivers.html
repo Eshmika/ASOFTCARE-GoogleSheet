@@ -185,9 +185,26 @@
     setVal("edit-otherEdu", d["Other Edu"]);
     setVal("edit-otherDegree", d["Other Degree"]);
 
-    setVal("edit-emp1", d["Employer 1"]);
-    setVal("edit-emp2", d["Employer 2"]);
-    setVal("edit-emp3", d["Employer 3"]);
+    // Emp 1
+    setVal("edit-emp1-company", d["Emp1 Company"]);
+    setVal("edit-emp1-title", d["Emp1 Title"]);
+    setVal("edit-emp1-supervisor", d["Emp1 Supervisor"]);
+    setVal("edit-emp1-phone", d["Emp1 Phone"]);
+    setVal("edit-emp1-duties", d["Emp1 Duties"]);
+
+    // Emp 2
+    setVal("edit-emp2-company", d["Emp2 Company"]);
+    setVal("edit-emp2-title", d["Emp2 Title"]);
+    setVal("edit-emp2-supervisor", d["Emp2 Supervisor"]);
+    setVal("edit-emp2-phone", d["Emp2 Phone"]);
+    setVal("edit-emp2-duties", d["Emp2 Duties"]);
+
+    // Emp 3
+    setVal("edit-emp3-company", d["Emp3 Company"]);
+    setVal("edit-emp3-title", d["Emp3 Title"]);
+    setVal("edit-emp3-supervisor", d["Emp3 Supervisor"]);
+    setVal("edit-emp3-phone", d["Emp3 Phone"]);
+    setVal("edit-emp3-duties", d["Emp3 Duties"]);
 
     setVal("edit-ref1", d["Reference 1"]);
     setVal("edit-ref2", d["Reference 2"]);
@@ -314,9 +331,28 @@
 
     // SPECIAL MAPPING for SheetController compat
     // The controller expects objects for these, so we mock them to match the string value
-    obj.emp1 = { company: obj.emp1_full || "", title: "" };
-    obj.emp2 = { company: obj.emp2_full || "", title: "" };
-    obj.emp3 = { company: obj.emp3_full || "", title: "" };
+    // SPECIAL MAPPING for SheetController compat
+    obj.emp1 = {
+      company: obj["emp1[company]"],
+      title: obj["emp1[title]"],
+      supervisor: obj["emp1[supervisor]"],
+      phone: obj["emp1[phone]"],
+      duties: obj["emp1[duties]"],
+    };
+    obj.emp2 = {
+      company: obj["emp2[company]"],
+      title: obj["emp2[title]"],
+      supervisor: obj["emp2[supervisor]"],
+      phone: obj["emp2[phone]"],
+      duties: obj["emp2[duties]"],
+    };
+    obj.emp3 = {
+      company: obj["emp3[company]"],
+      title: obj["emp3[title]"],
+      supervisor: obj["emp3[supervisor]"],
+      phone: obj["emp3[phone]"],
+      duties: obj["emp3[duties]"],
+    };
 
     obj.ref1 = { name: obj.ref1_full || "", phone: "" };
     obj.ref2 = { name: obj.ref2_full || "", phone: "" };
@@ -730,18 +766,30 @@
 
         set("p-other-name", data["Other Edu"]);
         set("p-other-degree", data["Other Degree"]);
-        const empEl = document.getElementById("p-emp");
-        if (empEl) {
-          empEl.innerHTML = `Employer 1: ${data["Employer 1"] || "--"
-            }<br>Employer 2: ${data["Employer 2"] || "--"}<br>Employer 3: ${data["Employer 3"] || "--"
-            }`;
-        }
+        // Employer 1
+        set("p-emp1-company", data["Emp1 Company"]);
+        set("p-emp1-title", data["Emp1 Title"]);
+        set("p-emp1-supervisor", data["Emp1 Supervisor"]);
+        set("p-emp1-phone", data["Emp1 Phone"]);
+        set("p-emp1-duties", data["Emp1 Duties"]);
+
+        // Employer 2
+        set("p-emp2-company", data["Emp2 Company"]);
+        set("p-emp2-title", data["Emp2 Title"]);
+        set("p-emp2-supervisor", data["Emp2 Supervisor"]);
+        set("p-emp2-phone", data["Emp2 Phone"]);
+        set("p-emp2-duties", data["Emp2 Duties"]);
+
+        // Employer 3
+        set("p-emp3-company", data["Emp3 Company"]);
+        set("p-emp3-title", data["Emp3 Title"]);
+        set("p-emp3-supervisor", data["Emp3 Supervisor"]);
+        set("p-emp3-phone", data["Emp3 Phone"]);
+        set("p-emp3-duties", data["Emp3 Duties"]);
         set("p-hours", data["Hours Avail"]);
         set("p-times", data["Times Avail"]);
-        set(
-          "p-extra-avail",
-          `Emerg: ${data["Emergency Avail?"]} | Live-In: ${data["Live-in Avail?"]}`
-        );
+        set("p-emergency-avail", data["Emergency Avail?"]);
+        set("p-live-in-avail", data["Live-in Avail?"]);
         set("p-emergency-name", data["Emergency Contact"]);
         set(
           "p-emergency-contact",
