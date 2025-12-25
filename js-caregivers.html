@@ -892,4 +892,40 @@
       })
       .handleCaregiverSubmission(data);
   }
+
+  // --- Phone Masking ---
+  function setupPhoneMasks() {
+    const ids = [
+      "edit-phone",
+      "edit-emPhone",
+      "edit-emp1-phone",
+      "edit-emp2-phone",
+      "edit-emp3-phone",
+      "edit-ref1-phone",
+      "edit-ref2-phone"
+    ];
+
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("input", (e) => {
+          let val = e.target.value.replace(/\D/g, "");
+          if (val.length > 10) val = val.substring(0, 10);
+          if (val.length > 6) {
+            val = val.replace(/^(\d{3})(\d{3})(\d+)/, "($1) $2-$3");
+          } else if (val.length > 3) {
+            val = val.replace(/^(\d{3})(\d+)/, "($1) $2");
+          }
+          e.target.value = val;
+        });
+      }
+    });
+  }
+
+  // Initialize masks
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupPhoneMasks);
+  } else {
+    setupPhoneMasks();
+  }
 </script>
