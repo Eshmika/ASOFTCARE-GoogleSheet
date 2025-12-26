@@ -259,6 +259,12 @@
               <p class="text-sm font-medium" id="p-yearsOfExperience">--</p>
             </div>
             <div>
+              <p class="text-xs text-gray-400 uppercase">Name of the Editor</p>
+              <p class="text-sm font-medium text-gray-800" id="p-editor-name">
+                --
+              </p>
+            </div>
+            <div>
               <p class="text-xs text-gray-400 uppercase">Last Edited date</p>
               <p class="text-sm font-medium text-gray-800" id="p-last-reviewed">
                 --
@@ -504,11 +510,11 @@
             </button>
             <button
               class="w-full bg-orange-50 hover:bg-orange-100 text-orange-600 font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
-              <i class="ph ph-user-switch"></i> Send Username change
+              <i class="ph ph-user-switch"></i> Reset Username
             </button>
             <button
               class="w-full bg-green-50 hover:bg-green-100 text-green-600 font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
-              <i class="ph ph-lock-key-open"></i> Send Password reset
+              <i class="ph ph-lock-key-open"></i> Reset Password
             </button>
           </div>
         </div>
@@ -656,21 +662,40 @@
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Ref 1 -->
-            <div>
-              <p class="text-xs text-gray-400 uppercase mb-1">Reference 1</p>
-              <div class="text-sm">
-                <p><span class="font-medium" id="p-ref1-name">--</span></p>
-                <p class="text-gray-600 text-xs" id="p-ref1-relation">--</p>
-                <p class="text-blue-600" id="p-ref1-phone">--</p>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <h4 class="text-xs font-bold text-gray-500 uppercase mb-3 border-b border-gray-200 pb-2">Reference 1</h4>
+              <div class="space-y-3">
+                <div>
+                  <p class="text-[10px] text-gray-400 uppercase mb-0.5">Name</p>
+                  <p class="text-sm font-medium text-gray-900" id="p-ref1-name">--</p>
+                </div>
+                <div>
+                  <p class="text-[10px] text-gray-400 uppercase mb-0.5">Relation</p>
+                  <p class="text-sm text-gray-700" id="p-ref1-relation">--</p>
+                </div>
+                <div>
+                  <p class="text-[10px] text-gray-400 uppercase mb-0.5">Phone</p>
+                  <p class="text-sm text-blue-600" id="p-ref1-phone">--</p>
+                </div>
               </div>
             </div>
+
             <!-- Ref 2 -->
-            <div>
-              <p class="text-xs text-gray-400 uppercase mb-1">Reference 2</p>
-              <div class="text-sm">
-                <p><span class="font-medium" id="p-ref2-name">--</span></p>
-                <p class="text-gray-600 text-xs" id="p-ref2-relation">--</p>
-                <p class="text-blue-600" id="p-ref2-phone">--</p>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <h4 class="text-xs font-bold text-gray-500 uppercase mb-3 border-b border-gray-200 pb-2">Reference 2</h4>
+              <div class="space-y-3">
+                <div>
+                  <p class="text-[10px] text-gray-400 uppercase mb-0.5">Name</p>
+                  <p class="text-sm font-medium text-gray-900" id="p-ref2-name">--</p>
+                </div>
+                <div>
+                  <p class="text-[10px] text-gray-400 uppercase mb-0.5">Relation</p>
+                  <p class="text-sm text-gray-700" id="p-ref2-relation">--</p>
+                </div>
+                <div>
+                  <p class="text-[10px] text-gray-400 uppercase mb-0.5">Phone</p>
+                  <p class="text-sm text-blue-600" id="p-ref2-phone">--</p>
+                </div>
               </div>
             </div>
           </div>
