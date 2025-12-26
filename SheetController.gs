@@ -58,6 +58,12 @@ function getOrCreateSheet() {
       "Emergency Contact",
       "Emerg. Phone",
       "Emerg. Relation",
+      "Emerg. Email",
+      "Emerg. Address",
+      "Emerg. Apt",
+      "Emerg. City",
+      "Emerg. State",
+      "Emerg. Zip",
       "Criminal Conviction?",
       "Conviction Details",
       "Signature Name",
@@ -115,6 +121,10 @@ function getOrCreateSheet() {
     if (!emHeaders.includes("Emerg. Email")) {
       sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Emerg. Email");
       sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Emerg. Address");
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Emerg. Apt");
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Emerg. City");
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Emerg. State");
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Emerg. Zip");
     }
 
     // Add Payment Details Columns
@@ -411,6 +421,12 @@ function submitFullApplication(form) {
     updates["Emergency Contact"] = form.emName;
     updates["Emerg. Phone"] = form.emPhone;
     updates["Emerg. Relation"] = form.emRel;
+    updates["Emerg. Email"] = form.emEmail;
+    updates["Emerg. Address"] = form.emAddress;
+    updates["Emerg. Apt"] = form.emApt;
+    updates["Emerg. City"] = form.emCity;
+    updates["Emerg. State"] = form.emState;
+    updates["Emerg. Zip"] = form.emZip;
     updates["Criminal Conviction?"] = form.criminalHistory || "No";
     updates["Conviction Details"] = form.criminalExplain || "";
     updates["Signature Name"] = form.signName;
@@ -494,6 +510,20 @@ function submitFullApplication(form) {
       sheet.getRange(r, emEmailIdx + 1).setValue(form.emEmail || "");
     if (emAddressIdx > -1)
       sheet.getRange(r, emAddressIdx + 1).setValue(form.emAddress || "");
+
+    const emAptIdx = headers.indexOf("Emerg. Apt");
+    const emCityIdx = headers.indexOf("Emerg. City");
+    const emStateIdx = headers.indexOf("Emerg. State");
+    const emZipIdx = headers.indexOf("Emerg. Zip");
+
+    if (emAptIdx > -1)
+      sheet.getRange(r, emAptIdx + 1).setValue(form.emApt || "");
+    if (emCityIdx > -1)
+      sheet.getRange(r, emCityIdx + 1).setValue(form.emCity || "");
+    if (emStateIdx > -1)
+      sheet.getRange(r, emStateIdx + 1).setValue(form.emState || "");
+    if (emZipIdx > -1)
+      sheet.getRange(r, emZipIdx + 1).setValue(form.emZip || "");
 
     // Save Vaccination Info
     const covidIdx = headers.indexOf("Covid Vaccine");

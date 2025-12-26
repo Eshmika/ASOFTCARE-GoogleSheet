@@ -176,6 +176,10 @@
     setVal("edit-emRel", d["Emerg. Relation"]);
     setVal("edit-emEmail", d["Emerg. Email"]);
     setVal("edit-emAddress", d["Emerg. Address"]);
+    setVal("edit-emApt", d["Emerg. Apt"]);
+    setVal("edit-emCity", d["Emerg. City"]);
+    setVal("edit-emState", d["Emerg. State"]);
+    setVal("edit-emZip", d["Emerg. Zip"]);
 
     // New Sections Mapped
     setVal("edit-hsName", d["High School"]);
@@ -295,15 +299,17 @@
   function toggleEditEmAddress() {
     const isChecked = document.getElementById("edit-emSameAsAddress").checked;
     if (isChecked) {
-      const addr = document.getElementById("edit-address").value;
-      const city = document.getElementById("edit-city").value;
-      const state = document.getElementById("edit-state").value;
-      const zip = document.getElementById("edit-zip").value;
-
-      const fullAddress = [addr, city, state, zip].filter(Boolean).join(", ");
-      document.getElementById("edit-emAddress").value = fullAddress;
+      document.getElementById("edit-emAddress").value = document.getElementById("edit-address").value;
+      document.getElementById("edit-emApt").value = document.getElementById("edit-apt").value;
+      document.getElementById("edit-emCity").value = document.getElementById("edit-city").value;
+      document.getElementById("edit-emState").value = document.getElementById("edit-state").value;
+      document.getElementById("edit-emZip").value = document.getElementById("edit-zip").value;
     } else {
       document.getElementById("edit-emAddress").value = "";
+      document.getElementById("edit-emApt").value = "";
+      document.getElementById("edit-emCity").value = "";
+      document.getElementById("edit-emState").value = "";
+      document.getElementById("edit-emZip").value = "";
     }
   }
 
@@ -701,10 +707,19 @@
         set("p-ref1-name", data["Ref1 Name"]);
         set("p-ref1-phone", data["Ref1 Phone"]);
         set("p-ref1-relation", data["Ref1 Relation"]);
-
         set("p-ref2-name", data["Ref2 Name"]);
         set("p-ref2-phone", data["Ref2 Phone"]);
         set("p-ref2-relation", data["Ref2 Relation"]);
+
+        set("p-emergency-name", data["Emergency Contact"]);
+        set("p-emergency-contact", data["Emerg. Phone"]);
+        set("p-emergency-email", data["Emerg. Email"]);
+        set("p-emergency-address", data["Emerg. Address"]);
+        set("p-emergency-apt", data["Emerg. Apt"]);
+        set("p-emergency-city", data["Emerg. City"]);
+        set("p-emergency-state", data["Emerg. State"]);
+        set("p-emergency-zip", data["Emerg. Zip"]);
+
         set(
           "p-criminal-conviction",
           `Criminal Conviction: ${data["Criminal Conviction?"]} | Conviction Details: ${data["Conviction Details"]}`

@@ -336,11 +336,29 @@
               <p class="text-xs text-gray-400 uppercase">Email</p>
               <p class="text-sm font-medium mt-1" id="p-emergency-email">--</p>
             </div>
-            <div>
-              <p class="text-xs text-gray-400 uppercase">Address</p>
-              <p class="text-sm font-medium mt-1" id="p-emergency-address">
-                --
-              </p>
+            <div class="flex gap-4">
+              <div class="flex-1">
+                <p class="text-xs text-gray-400 uppercase">Address</p>
+                <p class="text-sm font-medium" id="p-emergency-address">--</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 uppercase">Apt</p>
+                <p class="text-sm font-medium" id="p-emergency-apt">--</p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="flex-1">
+                <p class="text-xs text-gray-400 uppercase">City</p>
+                <p class="text-sm font-medium" id="p-emergency-city">--</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 uppercase">State</p>
+                <p class="text-sm font-medium" id="p-emergency-state">--</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 uppercase">Zip</p>
+                <p class="text-sm font-medium" id="p-emergency-zip">--</p>
+              </div>
             </div>
           </div>
         </div>
@@ -980,6 +998,26 @@
                 </label>
               </div>
               <input type="text" name="emAddress" id="edit-emAddress" class="input-field text-sm py-1" />
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-xs text-gray-400 uppercase mb-1">Apt</label>
+                <input type="text" name="emApt" id="edit-emApt" class="input-field text-sm py-1" />
+              </div>
+              <div>
+                <label class="block text-xs text-gray-400 uppercase mb-1">City</label>
+                <input type="text" name="emCity" id="edit-emCity" class="input-field text-sm py-1" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-xs text-gray-400 uppercase mb-1">State</label>
+                <input type="text" name="emState" id="edit-emState" class="input-field text-sm py-1" />
+              </div>
+              <div>
+                <label class="block text-xs text-gray-400 uppercase mb-1">Zip</label>
+                <input type="text" name="emZip" id="edit-emZip" maxlength="5" class="input-field text-sm py-1" />
+              </div>
             </div>
           </div>
         </div>
