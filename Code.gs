@@ -200,7 +200,7 @@ function doGet(e) {
 }
 
 function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+  return HtmlService.createTemplateFromFile(filename).evaluate().getContent();
 }
 
 // Helper to check if ID exists in Sheet (Called by doGet)
