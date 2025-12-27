@@ -68,6 +68,14 @@
                         </div>
                     `;
           }
+        } else if (stage === "Assessment") {
+          actionHtml = `
+                    <div class="flex items-center justify-end gap-2">
+                        <button onclick="openAssessmentForm('${client.id}')" class="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-bold hover:bg-purple-200 flex items-center gap-1">
+                            <i class="ph ph-plus-circle"></i> Add Details
+                        </button>                        
+                    </div>
+                `;
         }
 
         row.innerHTML = `

@@ -1,0 +1,118 @@
+<script>
+  function toggleClientStageView(view) {
+    const main = document.getElementById("client-stages-main");
+    const form = document.getElementById("client-assessment-view");
+
+    if (view === "form") {
+      main.classList.add("hidden");
+      form.classList.remove("hidden");
+    } else {
+      main.classList.remove("hidden");
+      form.classList.add("hidden");
+    }
+  }
+
+  function openAssessmentForm(clientId) {
+    toggleClientStageView("form");
+    document.getElementById("assessmentDetailsForm").reset();
+    document.getElementById("as-age-display").textContent = "-- years old";
+
+    google.script.run
+      .withSuccessHandler((data) => {
+        if (!data) return;
+        const setVal = (id, val) => {
+          const el = document.getElementById(id);
+          if (el) el.value = val || "";
+        };
+
+        setVal("as-id", data.id);
+        setVal("as-firstName", data.firstName);
+        setVal("as-middleName", data.middleName);
+        setVal("as-lastName", data.lastName);
+        setVal("as-email", data.email);
+        setVal("as-clientPhone", data.clientPhone);
+        setVal("as-username", data.username);
+        setVal("as-gender", data.gender);
+        setVal("as-maritalStatus", data.maritalStatus);
+        setVal("as-spouseName", data.spouseName);
+        setVal("as-ssn", data.ssn);
+        setVal("as-ein", data.ein);
+
+        if (data.dob) {
+          setVal("as-dob", data.dob);
+          updateClientAge(data.dob);
+        }
+      })
+      .getClientDetails(clientId);
+  }
+
+  function updateClientAge(dobValue) {
+    const display = document.getElementById("as-age-display");
+    if (!dobValue) {
+      display.textContent = "-- years old";
+      return;
+    }
+    const birthDate = new Date(dobValue);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    display.textContent = `${age} years old`;
+  }
+
+  function formatSSN(input) {
+    let value = input.value.replace(/\D/g, "");
+    if (value.length > 9) value = value.substring(0, 9);
+    let formatted = "";
+    if (value.length > 0) {
+      formatted = value.substring(0, 3);
+      if (value.length > 3) formatted += "-" + value.substring(3, 5);
+      if (value.length > 5) formatted += "-" + value.substring(5, 9);
+    }
+    input.value = formatted;
+  }
+
+  function formatEIN(input) {
+    let value = input.value.replace(/\D/g, "");
+    if (value.length > 9) value = value.substring(0, 9);
+    let formatted = "";
+    if (value.length > 0) {
+      formatted = value.substring(0, 2);
+      if (value.length > 2) formatted += "-" + value.substring(2, 9);
+    }
+    input.value = formatted;
+  }
+
+  function submitAssessmentForm(e) {
+    e.preventDefault();
+    const btn = document.getElementById("saveAssessmentBtn");
+    btn.disabled = true;
+    btn.textContent = "Saving...";
+
+    const form = document.getElementById("assessmentDetailsForm");
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => (data[key] = value));
+
+    google.script.run
+      .withSuccessHandler((existing) => {
+        const merged = { ...existing, ...data };
+        google.script.run
+          .withSuccessHandler((res) => {
+            btn.disabled = false;
+            btn.textContent = "Save Details";
+            if (res.success) {
+              Swal.fire("Success", "Assessment details saved!", "success");
+              toggleClientStageView("stages");
+              loadClientStages();
+            } else {
+              Swal.fire("Error", res.message, "error");
+            }
+          })
+          .updateClient(merged);
+      })
+      .getClientDetails(data.id);
+  }
+</script>
