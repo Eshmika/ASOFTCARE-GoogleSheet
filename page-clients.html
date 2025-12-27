@@ -125,193 +125,80 @@
     <form
       id="clientForm"
       onsubmit="submitClientForm(event)"
-      class="max-w-5xl bg-white rounded-xl shadow-md border border-gray-100 p-8 space-y-8"
+      class="max-w-3xl bg-white rounded-xl shadow-md border border-gray-100 p-8 space-y-8"
     >
-      <!-- Personal Info -->
+      <!-- Initial Contact Information -->
       <div>
         <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-          Client Information
+          Initial Contact Information
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label class="input-label">First Name</label
-            ><input type="text" name="firstName" required class="input-field" />
-          </div>
-          <div>
-            <label class="input-label">Middle Name</label
-            ><input type="text" name="middleName" class="input-field" />
-          </div>
-          <div>
-            <label class="input-label">Last Name</label
-            ><input type="text" name="lastName" required class="input-field" />
-          </div>
-
-          <div>
-            <label class="input-label">Date of Birth</label
-            ><input type="date" name="dob" required class="input-field" />
-          </div>
-          <div>
-            <label class="input-label">Gender</label
-            ><select name="gender" class="input-field">
-              <option>Male</option>
-              <option>Female</option>
-            </select>
-          </div>
-          <div>
-            <label class="input-label">Status</label>
-            <select name="status" class="input-field">
-              <option>Active</option>
-              <option>Inactive</option>
-              <option>Cancelled service</option>
-              <option>Temporary hospital stay</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="input-label">Email</label
-            ><input type="email" name="email" class="input-field" />
-          </div>
-          <div>
-            <label class="input-label">Phone</label
-            ><input
-              type="tel"
-              name="phone"
+            <label class="input-label">Date</label>
+            <input
+              type="date"
+              name="contactDate"
+              id="contactDate"
               required
-              maxlength="14"
-              class="input-field"
+              class="input-field bg-gray-50"
+              readonly
             />
           </div>
           <div>
-            <label class="input-label">Type</label>
-            <select name="type" class="input-field">
-              <option>Lead Agency</option>
-              <option>LTCI</option>
-              <option>Medicare</option>
-              <option>Private Pay</option>
-              <option>VA</option>
-            </select>
+            <label class="input-label">Free Assessment Date/Time</label>
+            <input
+              type="datetime-local"
+              name="assessmentDateTime"
+              required
+              class="input-field"
+            />
           </div>
-
-          <div class="md:col-span-3 grid grid-cols-3 gap-4">
-            <div class="col-span-1">
-              <label class="input-label">Address</label
-              ><input
-                type="text"
-                name="address"
-                id="add-cl-address"
-                class="input-field"
-              />
-            </div>
-            <div>
-              <label class="input-label">City</label
-              ><input
-                type="text"
-                name="city"
-                id="add-cl-city"
-                class="input-field"
-              />
-            </div>
-            <div>
-              <label class="input-label">Zip</label
-              ><input
-                type="text"
-                name="zip"
-                id="add-cl-zip"
-                maxlength="5"
-                class="input-field"
-              />
-            </div>
-          </div>
-
-          <div
-            class="md:col-span-3 grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded"
-          >
-            <div>
-              <label class="input-label">Living Alone?</label
-              ><select name="livingAlone" class="input-field">
-                <option>Yes</option>
-                <option>No</option>
-              </select>
-            </div>
-            <div>
-              <label class="input-label">Language</label>
-              <select name="languages" class="input-field">
-                <option>ENGLISH</option>
-                <option>ARABIC</option>
-                <option>FRENCH</option>
-                <option>ARMENIAN</option>
-                <option>CHINISE</option>
-              </select>
-            </div>
+          <div class="md:col-span-2">
+            <label class="input-label">Coordinator</label>
+            <input
+              type="text"
+              name="coordinator"
+              required
+              class="input-field"
+              placeholder="Enter coordinator name"
+            />
           </div>
         </div>
       </div>
 
-      <!-- Emergency Contact -->
+      <!-- Representative -->
       <div>
         <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-          Emergency Contact
+          Representative
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label class="input-label">Name</label
-            ><input type="text" name="emName" required class="input-field" />
+            <label class="input-label">Name of Person Calling</label>
+            <input
+              type="text"
+              name="repName"
+              required
+              class="input-field"
+              placeholder="Enter representative name"
+            />
           </div>
           <div>
-            <label class="input-label">Relationship</label
-            ><input type="text" name="emRel" class="input-field" />
-          </div>
-          <div>
-            <label class="input-label">Email</label
-            ><input type="email" name="emEmail" class="input-field" />
-          </div>
-          <div>
-            <label class="input-label">Phone</label
-            ><input
+            <label class="input-label">Phone</label>
+            <input
               type="tel"
-              name="emPhone"
+              name="repPhone"
               required
               maxlength="14"
               class="input-field"
+              placeholder="(XXX) XXX-XXXX"
             />
-          </div>
-
-          <div class="md:col-span-2 grid grid-cols-3 gap-4">
-            <div>
-              <label class="input-label">Address</label
-              ><input
-                type="text"
-                name="emAddress"
-                id="add-cl-emAddress"
-                class="input-field"
-              />
-            </div>
-            <div>
-              <label class="input-label">City</label
-              ><input
-                type="text"
-                name="emCity"
-                id="add-cl-emCity"
-                class="input-field"
-              />
-            </div>
-            <div>
-              <label class="input-label">Zip</label
-              ><input
-                type="text"
-                name="emZip"
-                id="add-cl-emZip"
-                maxlength="5"
-                class="input-field"
-              />
-            </div>
           </div>
         </div>
       </div>
 
       <div class="flex justify-end pt-4">
         <button type="submit" id="saveClientBtn" class="btn-primary">
-          Register Client & Send Email
+          Save Client Information
         </button>
       </div>
     </form>
@@ -464,255 +351,85 @@
     <form
       id="clientEditForm"
       onsubmit="submitEditClientForm(event)"
-      class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 space-y-8"
+      class="max-w-3xl bg-white p-8 rounded-xl shadow-sm border border-gray-100 space-y-8"
     >
       <input type="hidden" name="id" id="ce-id" />
 
-      <!-- Personal Info -->
+      <!-- Initial Contact Information -->
       <div>
         <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-          Personal Information
+          Initial Contact Information
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label class="input-label">First Name</label
-            ><input
-              type="text"
-              name="firstName"
-              id="ce-firstName"
-              required
-              class="input-field"
-            />
-          </div>
-          <div>
-            <label class="input-label">Middle Name</label
-            ><input
-              type="text"
-              name="middleName"
-              id="ce-middleName"
-              class="input-field"
-            />
-          </div>
-          <div>
-            <label class="input-label">Last Name</label
-            ><input
-              type="text"
-              name="lastName"
-              id="ce-lastName"
-              required
-              class="input-field"
-            />
-          </div>
-
-          <div>
-            <label class="input-label">Status</label>
-            <select name="status" id="ce-status" class="input-field">
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-              <option value="Cancelled service">Cancelled service</option>
-              <option value="Temporary hospital stay">
-                Temporary hospital stay
-              </option>
-            </select>
-          </div>
-          <div>
-            <label class="input-label">Date of Birth</label
-            ><input
+            <label class="input-label">Date</label>
+            <input
               type="date"
-              name="dob"
-              id="ce-dob"
+              name="contactDate"
+              id="ce-contactDate"
               required
               class="input-field"
             />
           </div>
           <div>
-            <label class="input-label">Gender</label>
-            <select name="gender" id="ce-gender" class="input-field">
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Contact Info -->
-      <div>
-        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-          Contact Information
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label class="input-label">Email</label
-            ><input
-              type="email"
-              name="email"
-              id="ce-email"
-              class="input-field"
-            />
-          </div>
-          <div>
-            <label class="input-label">Phone</label
-            ><input
-              type="tel"
-              name="phone"
-              id="ce-phone"
+            <label class="input-label">Free Assessment Date/Time</label>
+            <input
+              type="datetime-local"
+              name="assessmentDateTime"
+              id="ce-assessmentDateTime"
               required
-              maxlength="14"
               class="input-field"
             />
-          </div>
-          <div class="md:col-span-2 grid grid-cols-3 gap-4">
-            <div>
-              <label class="input-label">Address</label
-              ><input
-                type="text"
-                name="address"
-                id="ce-address"
-                class="input-field"
-              />
-            </div>
-            <div>
-              <label class="input-label">City</label
-              ><input
-                type="text"
-                name="city"
-                id="ce-city"
-                class="input-field"
-              />
-            </div>
-            <div>
-              <label class="input-label">Zip</label
-              ><input
-                type="text"
-                name="zip"
-                id="ce-zip"
-                maxlength="5"
-                class="input-field"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Service Details -->
-      <div>
-        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-          Service Details
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label class="input-label">Client Type</label>
-            <select name="type" id="ce-type" class="input-field">
-              <option value="Lead Agency">Lead Agency</option>
-              <option value="LTCI">LTCI</option>
-              <option value="Medicare">Medicare</option>
-              <option value="Private Pay">Private Pay</option>
-              <option value="VA">VA</option>
-            </select>
-          </div>
-          <div>
-            <label class="input-label">Living Alone?</label>
-            <select name="livingAlone" id="ce-livingAlone" class="input-field">
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
           </div>
           <div class="md:col-span-2">
-            <label class="input-label">Languages Spoken</label
-            ><input
+            <label class="input-label">Coordinator</label>
+            <input
               type="text"
-              name="languages"
-              id="ce-languages"
-              placeholder="e.g. English, Spanish"
+              name="coordinator"
+              id="ce-coordinator"
+              required
               class="input-field"
+              placeholder="Enter coordinator name"
             />
           </div>
         </div>
       </div>
 
-      <!-- Emergency Contact -->
+      <!-- Representative -->
       <div>
         <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-          Emergency Contact
+          Representative
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label class="input-label">Name</label
-            ><input
+            <label class="input-label">Name of Person Calling</label>
+            <input
               type="text"
-              name="emName"
-              id="ce-emName"
+              name="repName"
+              id="ce-repName"
               required
               class="input-field"
+              placeholder="Enter representative name"
             />
           </div>
           <div>
-            <label class="input-label">Relationship</label
-            ><input
-              type="text"
-              name="emRel"
-              id="ce-emRel"
-              class="input-field"
-            />
-          </div>
-          <div>
-            <label class="input-label">Email</label
-            ><input
-              type="email"
-              name="emEmail"
-              id="ce-emEmail"
-              class="input-field"
-            />
-          </div>
-          <div>
-            <label class="input-label">Phone</label
-            ><input
+            <label class="input-label">Phone</label>
+            <input
               type="tel"
-              name="emPhone"
-              id="ce-emPhone"
+              name="repPhone"
+              id="ce-repPhone"
               required
               maxlength="14"
               class="input-field"
+              placeholder="(XXX) XXX-XXXX"
             />
-          </div>
-
-          <div class="md:col-span-2 grid grid-cols-3 gap-4">
-            <div>
-              <label class="input-label">Address</label
-              ><input
-                type="text"
-                name="emAddress"
-                id="ce-emAddress"
-                class="input-field"
-              />
-            </div>
-            <div>
-              <label class="input-label">City</label
-              ><input
-                type="text"
-                name="emCity"
-                id="ce-emCity"
-                class="input-field"
-              />
-            </div>
-            <div>
-              <label class="input-label">Zip</label
-              ><input
-                type="text"
-                name="emZip"
-                id="ce-emZip"
-                maxlength="5"
-                class="input-field"
-              />
-            </div>
           </div>
         </div>
       </div>
 
       <div class="flex justify-end pt-4">
         <button type="submit" id="updateClientBtn" class="btn-primary">
-          Update Client
+          Update Client Information
         </button>
       </div>
     </form>

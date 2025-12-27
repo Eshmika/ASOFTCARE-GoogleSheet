@@ -8,29 +8,13 @@ function getOrCreateClientSheet() {
     sheet = ss.insertSheet(CLIENT_SHEET_NAME);
     const headers = [
       "Client ID",
-      "First Name",
-      "Middle Name",
-      "Last Name",
-      "Status",
-      "DOB",
-      "Gender",
-      "Email",
-      "Phone",
-      "Type",
-      "Address",
-      "City",
-      "Zip",
-      "Emerg Name",
-      "Emerg Relation",
-      "Emerg Email",
-      "Emerg Phone",
-      "Emerg Address",
-      "Emerg City",
-      "Emerg Zip",
-      "Living Alone",
-      "Languages",
+      "Contact Date",
+      "Free Assessment Date/Time",
+      "Coordinator",
+      "Representative Name",
+      "Representative Phone",
       "Created At",
-      "Last Reviewed"
+      "Last Reviewed",
     ];
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     sheet
@@ -40,10 +24,16 @@ function getOrCreateClientSheet() {
       .setFontWeight("bold");
     sheet.setFrozenRows(1);
   } else {
-    // Migration: Add Last Reviewed if missing
-    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-    if (!headers.includes("Last Reviewed")) {
-      sheet.getRange(1, sheet.getLastColumn() + 1).setValue("Last Reviewed");
+    // Migration: Check if we need to migrate from old schema to new schema
+    const headers = sheet
+      .getRange(1, 1, 1, sheet.getLastColumn())
+      .getValues()[0];
+
+    // If old schema detected (has "First Name" column), we keep it as-is
+    // New clients will use the new simplified schema
+    if (!headers.includes("Contact Date") && headers.includes("First Name")) {
+      // This is the old schema - we don't modify it
+      // Future: You could add migration logic here if needed
     }
   }
   return sheet;
@@ -52,7 +42,7 @@ function getOrCreateClientSheet() {
 function handleClientSubmission(data) {
   const sheet = getOrCreateClientSheet();
   const lastRow = sheet.getLastRow();
-  
+
   // Generate ID: CL + Random 4 digits
   // Example: CL1234
   const randomPart = Math.floor(1000 + Math.random() * 9000); // 4 digit random
@@ -61,37 +51,21 @@ function handleClientSubmission(data) {
   // Format Array for Sheet
   const rowData = [
     newId,
-    data.firstName,
-    data.middleName,
-    data.lastName,
-    data.status,
-    data.dob,
-    data.gender,
-    data.email,
-    data.phone,
-    data.type,
-    data.address,
-    data.city,
-    data.zip,
-    data.emName,
-    data.emRel,
-    data.emEmail,
-    data.emPhone,
-    data.emAddress,
-    data.emCity,
-    data.emZip,
-    data.livingAlone,
-    data.languages,
+    data.contactDate,
+    data.assessmentDateTime,
+    data.coordinator,
+    data.repName,
+    data.repPhone,
     new Date(),
-    new Date() // Initial Last Reviewed
+    new Date(), // Initial Last Reviewed
   ];
 
   sheet.appendRow(rowData);
-
-  // Send Welcome Email
-  sendClientWelcomeEmail(data, newId);
-
-  return { success: true, message: "Client added successfully!", id: newId };
+  return {
+    success: true,
+    message: "Client information saved successfully!",
+    id: newId,
+  };
 }
 
 function getClientList() {
@@ -111,14 +85,14 @@ function getClientList() {
     .filter((row) => row[0] !== "")
     .map((row) => ({
       id: row[0],
-      name: `${row[1]} ${row[3]}`, // First + Last
-      email: row[7],
-      phone: row[8],
-      status: row[4],
-      type: row[9],
-      city: row[11],
-      zip: row[12],
-      lastReviewed: reviewIdx > -1 ? row[reviewIdx] : "--"
+      name: row[4] || "Unknown", // Representative Name
+      email: "--",
+      phone: row[5] || "--", // Representative Phone
+      status: "Pending",
+      type: "Initial Contact",
+      city: "--",
+      zip: "--",
+      lastReviewed: reviewIdx > -1 ? row[reviewIdx] : "--",
     }))
     .reverse();
 }
@@ -128,35 +102,22 @@ function getClientDetails(id) {
   const lastRow = sheet.getLastRow();
   if (lastRow <= 1) return null;
 
-  const data = sheet.getRange(2, 1, lastRow - 1, 23).getDisplayValues();
+  const maxCols = sheet.getLastColumn();
+  const data = sheet.getRange(2, 1, lastRow - 1, maxCols).getDisplayValues();
   const row = data.find((r) => r[0] === id);
 
   if (!row) return null;
 
+  // Return data based on new simplified schema
   return {
     id: row[0],
-    firstName: row[1],
-    middleName: row[2],
-    lastName: row[3],
-    status: row[4],
-    dob: row[5],
-    gender: row[6],
-    email: row[7],
-    phone: row[8],
-    type: row[9],
-    address: row[10],
-    city: row[11],
-    zip: row[12],
-    emName: row[13],
-    emRel: row[14],
-    emEmail: row[15],
-    emPhone: row[16],
-    emAddress: row[17],
-    emCity: row[18],
-    emZip: row[19],
-    livingAlone: row[20],
-    languages: row[21],
-    createdAt: row[22],
+    contactDate: row[1],
+    assessmentDateTime: row[2],
+    coordinator: row[3],
+    repName: row[4],
+    repPhone: row[5],
+    createdAt: row[6],
+    lastReviewed: row[7],
   };
 }
 
@@ -165,7 +126,10 @@ function updateClient(data) {
   const lastRow = sheet.getLastRow();
   if (lastRow <= 1) return { success: false, message: "No clients found." };
 
-  const ids = sheet.getRange(2, 1, lastRow - 1, 1).getDisplayValues().flat();
+  const ids = sheet
+    .getRange(2, 1, lastRow - 1, 1)
+    .getDisplayValues()
+    .flat();
   const rowIndex = ids.indexOf(data.id);
 
   if (rowIndex === -1) {
@@ -174,30 +138,14 @@ function updateClient(data) {
 
   const rowNum = rowIndex + 2; // +2 because of header and 0-based index
 
-  // Update columns 2-22 (First Name to Languages)
-  // Note: Created At (col 23) is not updated
+  // Update columns 2-6 (Contact Date to Representative Phone)
+  // Note: Created At (col 7) is not updated
   const rowData = [
-    data.firstName,
-    data.middleName,
-    data.lastName,
-    data.status,
-    data.dob,
-    data.gender,
-    data.email,
-    data.phone,
-    data.type,
-    data.address,
-    data.city,
-    data.zip,
-    data.emName,
-    data.emRel,
-    data.emEmail,
-    data.emPhone,
-    data.emAddress,
-    data.emCity,
-    data.emZip,
-    data.livingAlone,
-    data.languages,
+    data.contactDate,
+    data.assessmentDateTime,
+    data.coordinator,
+    data.repName,
+    data.repPhone,
   ];
 
   sheet.getRange(rowNum, 2, 1, rowData.length).setValues([rowData]);

@@ -201,68 +201,6 @@ function resendCaregiverEmail(caregiverId) {
   }
 }
 
-function sendClientWelcomeEmail(data, clientId) {
-  console.log(`Sending Client Email to ${data.email}`);
-
-  var attachments = [];
-  // Use same file IDs or new ones if you have specific client docs
-  const fileIds = [
-    "1k4IZdrjQSms38CUoNH6fEOBAAmUmgewf",
-    "139dpgbPksf5bKPJFTA4XTSO3hJLtn3sS",
-    "1hE8OY6pSg2G3pVBYtGLiiSB_z3eephuu",
-    "1HpOWueHbO1u9_jaYN9eLjL3R3hooPbq-",
-    "1ImB8W3OQ9AsZMJZL5cfe1fgB3zj2jO7Y",
-    "1hlQRUN-Q7HqXHnpsFJsfSHjgJ-k4TudT",
-    "1TWSTlXxwbzXnP66WdMXMedlWSC-h_W6D",
-    "1CJqLRnil4-14uwVNUn4RM5OM2_p9rHSW",
-    "144-f4h2tz57_X9159j2vQBhQnhorl7VB",
-    "1A1lAQUknKwKEELsvqRSCRr4XDfr-E0wb",
-    "1eImrE6-veG9YMydn8sJvmj307AeYOLhh",
-    "1KgHNBUBxzA_uaT_ndf1GMf2KiJI-pimP",
-    "1ksWSuifLPBESZrF8HbZRed2OjyuOES6A",
-  ];
-
-  fileIds.forEach((id) => {
-    try {
-      const file = DriveApp.getFileById(id);
-      attachments.push(file.getBlob());
-    } catch (e) {
-      console.error(`Error attaching file ${id}: ${e.message}`);
-    }
-  });
-
-  const subject = `Welcome to Allevia Senior Care - Registration Successful (${clientId})`;
-
-  const htmlBody = `
-    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-      <div style="background-color: #65c027; padding: 24px; text-align: center;">
-        <h2 style="color: white; margin: 0;">Allevia Senior Care</h2>
-        <p style="color: #f0fdf4; margin: 5px 0 0;">Client Registration</p>
-      </div>
-      
-      <div style="padding: 30px;">
-        <p>Dear <strong>${data.firstName} ${data.lastName}</strong>,</p>
-        
-        <p>Welcome to the Allevia family. Your client profile has been successfully created.</p>
-        
-        <div style="background-color: #f8fafc; padding: 15px; border-left: 4px solid #65c027; margin: 20px 0;">
-          <p style="margin: 0; font-size: 14px;"><strong>Client ID:</strong> ${clientId}</p>
-          <p style="margin: 5px 0 0; font-size: 14px;"><strong>Service Type:</strong> ${data.type}</p>
-        </div>
-
-        <p><strong>Next Steps:</strong> Please find the attached registration documents. Kindly review and sign them at your earliest convenience.</p>
-      </div>
-    </div>
-  `;
-
-  MailApp.sendEmail({
-    to: data.email,
-    subject: subject,
-    htmlBody: htmlBody,
-    attachments: attachments,
-  });
-}
-
 function sendRejectionEmail(caregiverId) {
   try {
     const details = getCaregiverDetails(caregiverId);

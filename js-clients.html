@@ -12,6 +12,11 @@
 
     const target = document.getElementById("cl-subview-" + subView);
     if (target) target.classList.remove("hidden");
+
+    // Set today's date when switching to add view
+    if (subView === "add" && typeof setTodayDate === "function") {
+      setTodayDate();
+    }
   }
 
   function loadClientList() {
@@ -142,10 +147,12 @@
     google.script.run
       .withSuccessHandler((res) => {
         btn.disabled = false;
-        btn.textContent = "Register Client & Send Email";
+        btn.textContent = "Save Client Information";
         if (res.success) {
-          Swal.fire("Success", "Client Registered!", "success");
+          Swal.fire("Success", "Client Information Saved!", "success");
           form.reset();
+          // Reset today's date after form reset
+          setTodayDate();
           switchClView("list");
           loadClientList();
         } else {
@@ -154,6 +161,21 @@
       })
       .handleClientSubmission(data);
   }
+
+  // Function to set today's date
+  function setTodayDate() {
+    const dateInput = document.getElementById("contactDate");
+    if (dateInput) {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      dateInput.value = `${year}-${month}-${day}`;
+    }
+  }
+
+  // Initialize date when page loads or when switching to add view
+  document.addEventListener("DOMContentLoaded", setTodayDate);
 
   function loadClientProfile(id) {
     switchClView("profile");
@@ -177,49 +199,51 @@
       if (el) el.textContent = val || "--";
     };
 
-    set(
-      "cp-initials",
-      (data.firstName?.[0] || "") + (data.lastName?.[0] || "")
-    );
-    set(
-      "cp-name",
-      `${data.firstName} ${data.middleName || ""} ${data.lastName}`
-    );
-    set("cp-id", data.id);
-    set("cp-status", data.status);
-    set("cp-email", data.email);
-    set("cp-phone", data.phone);
-    set(
-      "cp-address",
-      `${data.address || ""}, ${data.city || ""} ${data.zip || ""}`
-    );
+    // Set initials from representative name
+    const repName = data.repName || "";
+    const nameParts = repName.split(" ");
+    const initials =
+      nameParts.length > 1
+        ? nameParts[0][0] + nameParts[nameParts.length - 1][0]
+        : repName[0] || "?";
 
-    // Format DOB
-    let dob = data.dob;
-    if (dob) {
-      const d = new Date(dob);
+    set("cp-initials", initials);
+    set("cp-name", data.repName);
+    set("cp-id", data.id);
+    set("cp-status", "Pending Assessment");
+    set("cp-email", "--");
+    set("cp-phone", data.repPhone);
+    set("cp-address", "--");
+
+    // Format Contact Date
+    let contactDate = data.contactDate;
+    if (contactDate) {
+      const d = new Date(contactDate);
       if (!isNaN(d.getTime())) {
-        dob = d.toLocaleDateString();
+        contactDate = d.toLocaleDateString();
       }
     }
-    set("cp-dob", dob);
+    set("cp-dob", contactDate);
 
-    set("cp-gender", data.gender);
-    set("cp-type", data.type);
-    set(
-      "cp-living",
-      data.livingAlone === "Yes" ? "Living Alone" : "Not Living Alone"
-    );
-    set("cp-languages", data.languages);
+    // Format Assessment Date/Time
+    let assessmentDateTime = data.assessmentDateTime;
+    if (assessmentDateTime) {
+      const d = new Date(assessmentDateTime);
+      if (!isNaN(d.getTime())) {
+        assessmentDateTime = d.toLocaleString();
+      }
+    }
 
-    set("cp-emName", data.emName);
-    set("cp-emRel", data.emRel);
-    set("cp-emPhone", data.emPhone);
-    set("cp-emEmail", data.emEmail);
-    set(
-      "cp-emAddress",
-      `${data.emAddress || ""}, ${data.emCity || ""} ${data.emZip || ""}`
-    );
+    set("cp-gender", assessmentDateTime);
+    set("cp-type", "Initial Contact");
+    set("cp-living", data.coordinator);
+    set("cp-languages", "--");
+
+    set("cp-emName", "--");
+    set("cp-emRel", "--");
+    set("cp-emPhone", "--");
+    set("cp-emEmail", "--");
+    set("cp-emAddress", "--");
 
     document.getElementById("clProfileLoading").classList.add("hidden");
     document.getElementById("clProfileContent").classList.remove("hidden");
@@ -236,37 +260,31 @@
     };
 
     setVal("ce-id", d.id);
-    setVal("ce-firstName", d.firstName);
-    setVal("ce-middleName", d.middleName);
-    setVal("ce-lastName", d.lastName);
-    setVal("ce-status", d.status);
 
-    // Format DOB for input[type="date"]
-    let dob = "";
-    if (d.dob) {
-      const dateObj = new Date(d.dob);
+    // Format Contact Date for input[type="date"]
+    let contactDate = "";
+    if (d.contactDate) {
+      const dateObj = new Date(d.contactDate);
       if (!isNaN(dateObj.getTime())) {
-        dob = dateObj.toISOString().split("T")[0];
+        contactDate = dateObj.toISOString().split("T")[0];
       }
     }
-    setVal("ce-dob", dob);
+    setVal("ce-contactDate", contactDate);
 
-    setVal("ce-gender", d.gender);
-    setVal("ce-email", d.email);
-    setVal("ce-phone", d.phone);
-    setVal("ce-address", d.address);
-    setVal("ce-city", d.city);
-    setVal("ce-zip", d.zip);
-    setVal("ce-type", d.type);
-    setVal("ce-livingAlone", d.livingAlone);
-    setVal("ce-languages", d.languages);
-    setVal("ce-emName", d.emName);
-    setVal("ce-emRel", d.emRel);
-    setVal("ce-emEmail", d.emEmail);
-    setVal("ce-emPhone", d.emPhone);
-    setVal("ce-emAddress", d.emAddress);
-    setVal("ce-emCity", d.emCity);
-    setVal("ce-emZip", d.emZip);
+    // Format Assessment DateTime for input[type="datetime-local"]
+    let assessmentDateTime = "";
+    if (d.assessmentDateTime) {
+      const dateObj = new Date(d.assessmentDateTime);
+      if (!isNaN(dateObj.getTime())) {
+        // Format as YYYY-MM-DDTHH:MM for datetime-local input
+        assessmentDateTime = dateObj.toISOString().slice(0, 16);
+      }
+    }
+    setVal("ce-assessmentDateTime", assessmentDateTime);
+
+    setVal("ce-coordinator", d.coordinator);
+    setVal("ce-repName", d.repName);
+    setVal("ce-repPhone", d.repPhone);
   }
 
   function submitEditClientForm(e) {
@@ -283,9 +301,9 @@
     google.script.run
       .withSuccessHandler((res) => {
         btn.disabled = false;
-        btn.textContent = "Update Client";
+        btn.textContent = "Update Client Information";
         if (res.success) {
-          Swal.fire("Success", "Client Updated!", "success");
+          Swal.fire("Success", "Client Information Updated!", "success");
           // Reload profile with new data
           loadClientProfile(data.id);
         } else {
