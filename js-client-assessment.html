@@ -62,6 +62,22 @@
     }
   }
 
+  function syncAuthAddress(checkbox) {
+    const fields = ["Address", "Apt", "City", "State", "Zip"];
+    const container = document.getElementById("auth-address-fields");
+
+    if (checkbox.checked) {
+      container.classList.add("opacity-50", "pointer-events-none");
+      fields.forEach((f) => {
+        const clientRel = document.getElementById(`as-client${f}`);
+        const authRel = document.getElementById(`as-auth${f}`);
+        if (clientRel && authRel) authRel.value = clientRel.value;
+      });
+    } else {
+      container.classList.remove("opacity-50", "pointer-events-none");
+    }
+  }
+
   function openAssessmentForm(clientId) {
     toggleClientStageView("form");
     document.getElementById("assessmentDetailsForm").reset();
@@ -75,6 +91,9 @@
       .classList.remove("opacity-50", "pointer-events-none");
     document
       .getElementById("ec-address-fields")
+      .classList.remove("opacity-50", "pointer-events-none");
+    document
+      .getElementById("auth-address-fields")
       .classList.remove("opacity-50", "pointer-events-none");
 
     google.script.run
@@ -166,6 +185,17 @@
         setVal("as-emergencyState", data.emergencyState);
         setVal("as-emergencyZip", data.emergencyZip);
 
+        // Authorized Contact fields
+        setVal("as-authName", data.authName);
+        setVal("as-authPhone", data.authPhone);
+        setVal("as-authEmail", data.authEmail);
+        setVal("as-authRelationship", data.authRelationship);
+        setVal("as-authAddress", data.authAddress);
+        setVal("as-authApt", data.authApt);
+        setVal("as-authCity", data.authCity);
+        setVal("as-authState", data.authState);
+        setVal("as-authZip", data.authZip);
+
         // Check if billing same as primary
         const isBillingSame =
           data.clientAddress === data.billingAddress &&
@@ -187,6 +217,18 @@
           document.getElementById("as-ec-same-address").checked = true;
           document
             .getElementById("ec-address-fields")
+            .classList.add("opacity-50", "pointer-events-none");
+        }
+
+        // Check if auth address same as primary
+        const isAuthSame =
+          data.clientAddress === data.authAddress &&
+          data.clientZip === data.authZip &&
+          data.authAddress !== "";
+        if (isAuthSame) {
+          document.getElementById("as-auth-same-address").checked = true;
+          document
+            .getElementById("auth-address-fields")
             .classList.add("opacity-50", "pointer-events-none");
         }
 
@@ -252,6 +294,15 @@
       data.emergencyCity = data.clientCity;
       data.emergencyState = data.clientState;
       data.emergencyZip = data.clientZip;
+    }
+
+    // Handle Authorized Address sync if checked
+    if (document.getElementById("as-auth-same-address").checked) {
+      data.authAddress = data.clientAddress;
+      data.authApt = data.clientApt;
+      data.authCity = data.clientCity;
+      data.authState = data.clientState;
+      data.authZip = data.clientZip;
     }
 
     google.script.run
