@@ -25,6 +25,16 @@
   function toggleDetailInput(select, containerId, triggerValue) {
     const container = document.getElementById(containerId);
     if (!container) return;
+
+    if (select.type === "checkbox") {
+      if (select.checked) {
+        container.classList.remove("hidden");
+      } else {
+        container.classList.add("hidden");
+      }
+      return;
+    }
+
     if (select.value === triggerValue) {
       if (
         container.classList.contains("md:flex-row") ||
@@ -178,6 +188,8 @@
       "as-assistDirections-detail",
       "as-covidVaccine-detail",
       "as-fluVaccine-detail",
+      "as-careLang-other-container",
+      "as-careAccommodation-other-container",
     ].forEach((id) => {
       const el = document.getElementById(id);
       if (el) {
@@ -715,6 +727,91 @@
         setVal("as-careSmokePremises", data.careSmokePremises);
         setVal("as-careSmokeNote", data.careSmokeNote);
 
+        // Care Skills
+        const skillItems = (data.careSkills || "")
+          .split(",")
+          .map((s) => s.trim());
+        document.getElementsByName("careSkills").forEach((cb) => {
+          cb.checked = skillItems.includes(cb.value);
+        });
+
+        // Care Languages
+        const careLangItems = (data.careLanguages || "")
+          .split(",")
+          .map((s) => s.trim());
+        const careKnownLangs = [
+          "English",
+          "French",
+          "Spanish",
+          "Arabic",
+          "Mandrin",
+          "Hindi",
+          "Portuguese",
+          "Russian",
+          "Japanese",
+          "German",
+          "Turkish",
+          "Swahili",
+          "Somali",
+          "Chinese",
+          "Bengali",
+        ];
+        document.getElementsByName("careLanguages").forEach((cb) => {
+          if (cb.value !== "Other") {
+            cb.checked = careLangItems.includes(cb.value);
+          }
+        });
+        const otherCareLangVal = careLangItems
+          .filter((l) => !careKnownLangs.includes(l) && l !== "")
+          .join(", ");
+        if (otherCareLangVal) {
+          const careOtherCb = document.getElementById("as-careLang-other-cb");
+          if (careOtherCb) careOtherCb.checked = true;
+          document
+            .getElementById("as-careLang-other-container")
+            .classList.remove("hidden");
+          document.getElementById("as-careLang-other").value = otherCareLangVal;
+        }
+
+        // Care Covid
+        setVal("as-careCovidVaccine", data.careCovidVaccine);
+
+        // Care Live-in
+        if (data.careLiveIn) {
+          const r = document.querySelector(
+            `input[name="careLiveIn"][value="${data.careLiveIn}"]`
+          );
+          if (r) r.checked = true;
+        } else {
+          const rList = document.querySelectorAll(`input[name="careLiveIn"]`);
+          rList.forEach((r) => (r.checked = false));
+        }
+
+        // Care Accommodation
+        const accomItems = (data.careAccommodation || "")
+          .split(",")
+          .map((s) => s.trim());
+        const knownAccom = ["Bedroom", "Bath"];
+        document.getElementsByName("careAccommodation").forEach((cb) => {
+          if (cb.value !== "Other") {
+            cb.checked = accomItems.includes(cb.value);
+          }
+        });
+        const otherAccomVal = accomItems
+          .filter((l) => !knownAccom.includes(l) && l !== "")
+          .join(", ");
+        if (otherAccomVal) {
+          const accomOtherCb = document.getElementById(
+            "as-careAccommodation-other-cb"
+          );
+          if (accomOtherCb) accomOtherCb.checked = true;
+          document
+            .getElementById("as-careAccommodation-other-container")
+            .classList.remove("hidden");
+          document.getElementById("as-careAccommodation-other").value =
+            otherAccomVal;
+        }
+
         // Run sync initially
         syncCareMatching();
       })
@@ -914,6 +1011,51 @@
       .filter((cb) => cb.checked)
       .map((cb) => cb.value);
     data.carePetsList = selectedPetList.join(", ");
+
+    // Handle Care Skills
+    data.careSkills = Array.from(document.getElementsByName("careSkills"))
+      .filter((cb) => cb.checked)
+      .map((cb) => cb.value)
+      .join(", ");
+
+    // Handle Care Languages
+    let selectedCareLangs = Array.from(
+      document.getElementsByName("careLanguages")
+    )
+      .filter((cb) => cb.checked && cb.value !== "Other")
+      .map((cb) => cb.value);
+    if (
+      document.getElementById("as-careLang-other-cb") &&
+      document.getElementById("as-careLang-other-cb").checked
+    ) {
+      const oVal = document.getElementById("as-careLang-other").value;
+      if (oVal) selectedCareLangs.push(oVal);
+    }
+    data.careLanguages = selectedCareLangs.join(", ");
+
+    // Handle Care Covid
+    data.careCovidVaccine = document.getElementById(
+      "as-careCovidVaccine"
+    ).value;
+
+    // Handle Care Live-in
+    const dl = document.querySelector('input[name="careLiveIn"]:checked');
+    data.careLiveIn = dl ? dl.value : "";
+
+    // Handle Care Accommodation
+    let selectedAccom = Array.from(
+      document.getElementsByName("careAccommodation")
+    )
+      .filter((cb) => cb.checked && cb.value !== "Other")
+      .map((cb) => cb.value);
+    if (
+      document.getElementById("as-careAccommodation-other-cb") &&
+      document.getElementById("as-careAccommodation-other-cb").checked
+    ) {
+      const oVal = document.getElementById("as-careAccommodation-other").value;
+      if (oVal) selectedAccom.push(oVal);
+    }
+    data.careAccommodation = selectedAccom.join(", ");
 
     // Handle Billing Address sync if checked
     if (document.getElementById("as-same-address").checked) {
