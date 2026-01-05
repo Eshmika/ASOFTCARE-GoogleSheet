@@ -2583,6 +2583,244 @@
         </div>
       </div>
 
+      <!-- 16. VACCINATION SECTION -->
+      <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:col-span-2"
+      >
+        <h3
+          class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2"
+        >
+          <i class="ph ph-syringe text-purple-600"></i> VACCINATION
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Covid vaccination -->
+          <div>
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Covid vaccination</label
+            >
+            <select
+              name="covidVaccine"
+              id="as-covidVaccine"
+              class="input-field text-sm py-2"
+              onchange="toggleDetailInput(this, 'as-covidVaccine-detail', 'Yes')"
+            >
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+            <div id="as-covidVaccine-detail" class="mt-2 hidden">
+              <input
+                type="text"
+                name="covidVaccineDetail"
+                id="as-covidVaccineDetail"
+                placeholder="Type in answer"
+                class="input-field text-sm py-2"
+              />
+            </div>
+          </div>
+
+          <!-- Flu/cold vaccination -->
+          <div>
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Flu/cold vaccination</label
+            >
+            <select
+              name="fluVaccine"
+              id="as-fluVaccine"
+              class="input-field text-sm py-2"
+              onchange="toggleDetailInput(this, 'as-fluVaccine-detail', 'Yes')"
+            >
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+            <div id="as-fluVaccine-detail" class="mt-2 hidden">
+              <input
+                type="text"
+                name="fluVaccineDetail"
+                id="as-fluVaccineDetail"
+                placeholder="Type in answer"
+                class="input-field text-sm py-2"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 17. DOCTORS SECTION -->
+      <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:col-span-2"
+      >
+        <h3
+          class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2"
+        >
+          <i class="ph ph-stethoscope text-purple-600"></i> DOCTORS
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Primary Dr. name -->
+          <div>
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Primary Dr. name</label
+            >
+            <input
+              type="text"
+              name="primaryDrName"
+              id="as-primaryDrName"
+              class="input-field text-sm py-2"
+              placeholder="Dr. Name"
+            />
+          </div>
+
+          <!-- Office Name -->
+          <div>
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Office Name</label
+            >
+            <input
+              type="text"
+              name="drOfficeName"
+              id="as-drOfficeName"
+              class="input-field text-sm py-2"
+              placeholder="Office Name"
+            />
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Phone</label
+            >
+            <input
+              type="text"
+              name="drPhone"
+              id="as-drPhone"
+              class="input-field text-sm py-2"
+              placeholder="Phone Number"
+            />
+          </div>
+
+          <!-- Address -->
+          <div>
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Address</label
+            >
+            <input
+              type="text"
+              name="drAddress"
+              id="as-drAddress"
+              class="input-field text-sm py-2"
+              placeholder="Address"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- 18. HOSPITAL SECTION -->
+      <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:col-span-2"
+      >
+        <h3
+          class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2"
+        >
+          <i class="ph ph-hospital text-purple-600"></i> HOSPITAL
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Hospital Name -->
+          <div>
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Hospital Name</label
+            >
+            <input
+              type="text"
+              name="hospitalName"
+              id="as-hospitalName"
+              class="input-field text-sm py-2"
+              placeholder="Hospital Name"
+            />
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Phone</label
+            >
+            <input
+              type="text"
+              name="hospitalPhone"
+              id="as-hospitalPhone"
+              class="input-field text-sm py-2"
+              placeholder="Phone Number"
+            />
+          </div>
+
+          <!-- Address -->
+          <div class="md:col-span-2">
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Address</label
+            >
+            <input
+              type="text"
+              name="hospitalAddress"
+              id="as-hospitalAddress"
+              class="input-field text-sm py-2"
+              placeholder="Address"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- 19. PHARMACY SECTION -->
+      <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:col-span-2"
+      >
+        <h3
+          class="font-bold text-gray-800 border-b pb-3 mb-4 flex items-center gap-2"
+        >
+          <i class="ph ph-first-aid text-purple-600"></i> PHARMACY
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Pharmacy Name -->
+          <div>
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Pharmacy Name</label
+            >
+            <input
+              type="text"
+              name="pharmacyName"
+              id="as-pharmacyName"
+              class="input-field text-sm py-2"
+              placeholder="Pharmacy Name"
+            />
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Phone</label
+            >
+            <input
+              type="text"
+              name="pharmacyPhone"
+              id="as-pharmacyPhone"
+              class="input-field text-sm py-2"
+              placeholder="Phone Number"
+            />
+          </div>
+
+          <!-- Address -->
+          <div class="md:col-span-2">
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Address</label
+            >
+            <input
+              type="text"
+              name="pharmacyAddress"
+              id="as-pharmacyAddress"
+              class="input-field text-sm py-2"
+              placeholder="Address"
+            />
+          </div>
+        </div>
+      </div>
+
       <!-- SUBMIT BUTTON -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <button

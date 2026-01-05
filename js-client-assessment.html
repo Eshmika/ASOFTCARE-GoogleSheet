@@ -176,6 +176,8 @@
       "as-pets-detail",
       "as-allergies-detail",
       "as-assistDirections-detail",
+      "as-covidVaccine-detail",
+      "as-fluVaccine-detail",
     ].forEach((id) => {
       const el = document.getElementById(id);
       if (el) {
@@ -649,6 +651,39 @@
         setVal("as-takingMed", data.takingMed);
         setVal("as-medOverseer", data.medOverseer);
         setVal("as-medList", data.medList);
+
+        // Vaccination Loading
+        setVal("as-covidVaccine", data.covidVaccine);
+        if (data.covidVaccine === "Yes") {
+          document
+            .getElementById("as-covidVaccine-detail")
+            .classList.remove("hidden");
+          setVal("as-covidVaccineDetail", data.covidVaccineDetail);
+        }
+
+        setVal("as-fluVaccine", data.fluVaccine);
+        if (data.fluVaccine === "Yes") {
+          document
+            .getElementById("as-fluVaccine-detail")
+            .classList.remove("hidden");
+          setVal("as-fluVaccineDetail", data.fluVaccineDetail);
+        }
+
+        // Doctors Loading
+        setVal("as-primaryDrName", data.primaryDrName);
+        setVal("as-drOfficeName", data.drOfficeName);
+        setVal("as-drPhone", data.drPhone);
+        setVal("as-drAddress", data.drAddress);
+
+        // Hospital Loading
+        setVal("as-hospitalName", data.hospitalName);
+        setVal("as-hospitalPhone", data.hospitalPhone);
+        setVal("as-hospitalAddress", data.hospitalAddress);
+
+        // Pharmacy Loading
+        setVal("as-pharmacyName", data.pharmacyName);
+        setVal("as-pharmacyPhone", data.pharmacyPhone);
+        setVal("as-pharmacyAddress", data.pharmacyAddress);
       })
       .getClientDetails(clientId);
   }
