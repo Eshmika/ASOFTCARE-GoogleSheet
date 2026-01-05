@@ -461,6 +461,18 @@
           (cb) => (cb.checked = houseItems.includes(cb.value))
         );
 
+        // Mobility
+        const mobItems = (data.mobility || "").split(",").map((s) => s.trim());
+        const mobChecks = document.getElementsByName("mobility");
+        mobChecks.forEach((cb) => (cb.checked = mobItems.includes(cb.value)));
+
+        // Dietary Information
+        const dietItems = (data.dietaryInfo || "")
+          .split(",")
+          .map((s) => s.trim());
+        const dietChecks = document.getElementsByName("dietaryInfo");
+        dietChecks.forEach((cb) => (cb.checked = dietItems.includes(cb.value)));
+
         // Check if billing same as primary
         const isBillingSame =
           data.clientAddress === data.billingAddress &&
@@ -531,6 +543,8 @@
           "transportation",
           "mealPreparation",
           "lightHousekeeping",
+          "mobility",
+          "dietaryInfo",
         ].includes(key)
       ) {
         data[key] = value;
@@ -642,6 +656,20 @@
       .filter((cb) => cb.checked)
       .map((cb) => cb.value);
     data.lightHousekeeping = selectedHouse.join(", ");
+
+    // Handle Mobility
+    const mobChecks = document.getElementsByName("mobility");
+    const selectedMob = Array.from(mobChecks)
+      .filter((cb) => cb.checked)
+      .map((cb) => cb.value);
+    data.mobility = selectedMob.join(", ");
+
+    // Handle Dietary Information
+    const dietChecks = document.getElementsByName("dietaryInfo");
+    const selectedDiet = Array.from(dietChecks)
+      .filter((cb) => cb.checked)
+      .map((cb) => cb.value);
+    data.dietaryInfo = selectedDiet.join(", ");
 
     // Handle Billing Address sync if checked
     if (document.getElementById("as-same-address").checked) {
