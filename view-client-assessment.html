@@ -29,7 +29,7 @@
           <i class="ph ph-user-circle text-purple-600"></i> CLIENT PROFILE
         </h3>
         <div class="space-y-4">
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-3 gap-4">
             <div>
               <label class="block text-xs text-gray-400 uppercase mb-1"
                 >First Name</label
@@ -39,6 +39,17 @@
                 name="firstName"
                 id="as-firstName"
                 required
+                class="input-field text-sm py-2"
+              />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 uppercase mb-1"
+                >Middle Name</label
+              >
+              <input
+                type="text"
+                name="middleName"
+                id="as-middleName"
                 class="input-field text-sm py-2"
               />
             </div>
@@ -55,41 +66,32 @@
               />
             </div>
           </div>
-          <div>
-            <label class="block text-xs text-gray-400 uppercase mb-1"
-              >Middle Name</label
-            >
-            <input
-              type="text"
-              name="middleName"
-              id="as-middleName"
-              class="input-field text-sm py-2"
-            />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-400 uppercase mb-1"
-              >E-mail</label
-            >
-            <input
-              type="email"
-              name="email"
-              id="as-email"
-              class="input-field text-sm py-2"
-            />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-400 uppercase mb-1"
-              >Client Phone</label
-            >
-            <input
-              type="tel"
-              name="clientPhone"
-              id="as-clientPhone"
-              required
-              class="input-field text-sm py-2"
-              oninput="formatPhone(this)"
-              placeholder="(XXX) XXX-XXXX"
-            />
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-gray-400 uppercase mb-1"
+                >E-mail</label
+              >
+              <input
+                type="email"
+                name="email"
+                id="as-email"
+                class="input-field text-sm py-2"
+              />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 uppercase mb-1"
+                >Client Phone</label
+              >
+              <input
+                type="tel"
+                name="clientPhone"
+                id="as-clientPhone"
+                required
+                class="input-field text-sm py-2"
+                oninput="formatPhone(this)"
+                placeholder="(XXX) XXX-XXXX"
+              />
+            </div>
           </div>
           <div>
             <label class="block text-xs text-gray-400 uppercase mb-1"
@@ -120,6 +122,26 @@
               </select>
             </div>
             <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="block text-xs text-gray-400 uppercase">DOB</label>
+                <span
+                  id="as-age-display"
+                  class="text-xs font-bold text-purple-600"
+                  >-- years old</span
+                >
+              </div>
+              <input
+                type="date"
+                name="dob"
+                id="as-dob"
+                required
+                class="input-field text-sm py-2"
+                onchange="updateClientAge(this.value)"
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
               <label class="block text-xs text-gray-400 uppercase mb-1"
                 >Marital Status</label
               >
@@ -137,35 +159,17 @@
                 <option value="Other">Other</option>
               </select>
             </div>
-          </div>
-          <div>
-            <label class="block text-xs text-gray-400 uppercase mb-1"
-              >Spouse Full Name</label
-            >
-            <input
-              type="text"
-              name="spouseName"
-              id="as-spouseName"
-              class="input-field text-sm py-2"
-            />
-          </div>
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <label class="block text-xs text-gray-400 uppercase">DOB</label>
-              <span
-                id="as-age-display"
-                class="text-xs font-bold text-purple-600"
-                >-- years old</span
+            <div>
+              <label class="block text-xs text-gray-400 uppercase mb-1"
+                >Spouse Full Name</label
               >
+              <input
+                type="text"
+                name="spouseName"
+                id="as-spouseName"
+                class="input-field text-sm py-2"
+              />
             </div>
-            <input
-              type="date"
-              name="dob"
-              id="as-dob"
-              required
-              class="input-field text-sm py-2"
-              onchange="updateClientAge(this.value)"
-            />
           </div>
           <div class="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100">
             <div>
@@ -225,21 +229,7 @@
               />
             </div>
           </div>
-          <div>
-            <label class="block text-xs text-gray-400 uppercase mb-1"
-              >Code Status</label
-            >
-            <select
-              name="codeStatus"
-              id="as-codeStatus"
-              class="input-field text-sm py-2"
-            >
-              <option value="">Select...</option>
-              <option value="Full code">Full code</option>
-              <option value="DNR">DNR</option>
-              <option value="Comfort care">Comfort care</option>
-            </select>
-          </div>
+
           <div>
             <label class="block text-xs text-gray-400 uppercase mb-2"
               >Languages</label
@@ -1230,6 +1220,21 @@
           <i class="ph ph-stethoscope text-purple-600"></i> FULL ASSESSMENT
         </h3>
         <div class="space-y-4">
+          <div>
+            <label class="block text-xs text-gray-400 uppercase mb-1"
+              >Code Status</label
+            >
+            <select
+              name="codeStatus"
+              id="as-codeStatus"
+              class="input-field text-sm py-2"
+            >
+              <option value="">Select...</option>
+              <option value="Full code">Full code</option>
+              <option value="DNR">DNR</option>
+              <option value="Comfort care">Comfort care</option>
+            </select>
+          </div>
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs text-gray-400 uppercase mb-1"
