@@ -715,15 +715,6 @@
 
         // Care Matching Loading
         setVal("as-careGender", data.careGender);
-        setVal("as-carePets", data.carePets); // Should match data.pets if synced
-        if (data.carePets === "Yes") {
-          document
-            .getElementById("as-carePets-detail")
-            .classList.remove("hidden");
-        }
-        setVal("as-carePetsNote", data.carePetsNote);
-
-        setVal("as-careSmoking", data.careSmoking); // Should match data.smoke
         setVal("as-careSmokePremises", data.careSmokePremises);
         setVal("as-careSmokeNote", data.careSmokeNote);
 
