@@ -4,6 +4,62 @@ function getOrCreateClientSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName(CLIENT_SHEET_NAME);
 
+  const additionalHeaders = [
+    "Mobility",
+    "Daily Living Skills",
+    "Transportation",
+    "Meal Preparation",
+    "Light Housekeeping",
+    "Dietary Information",
+    "Live Alone",
+    "Live Family",
+    "Live Family Name",
+    "Live Senior",
+    "Live Senior Name",
+    "Live Senior Address",
+    "Live Rehab",
+    "Live Rehab Name",
+    "Live Rehab Address",
+    "Smoke",
+    "Drink",
+    "Medication Reminder",
+    "Self Admin Med",
+    "Allergies",
+    "Allergies Detail",
+    "Assist Directions",
+    "Assist Directions Detail",
+    "Taking Med",
+    "Med Overseer",
+    "Med List",
+    "Covid Vaccine",
+    "Covid Vaccine Detail",
+    "Flu Vaccine",
+    "Flu Vaccine Detail",
+    "Primary Dr Name",
+    "Dr Office Name",
+    "Dr Phone",
+    "Dr Address",
+    "Hospital Name",
+    "Hospital Phone",
+    "Hospital Address",
+    "Pharmacy Name",
+    "Pharmacy Phone",
+    "Pharmacy Address",
+    "Care Certifications",
+    "Care Gender",
+    "Care Pets",
+    "Care Pets List",
+    "Care Pets Note",
+    "Care Smoking",
+    "Care Smoke Premises",
+    "Care Smoke Note",
+    "Care Skills",
+    "Care Live In",
+    "Care Accommodation",
+    "Care Languages",
+    "Care Covid Vaccine",
+  ];
+
   if (!sheet) {
     sheet = ss.insertSheet(CLIENT_SHEET_NAME);
     const headers = [
@@ -92,6 +148,7 @@ function getOrCreateClientSheet() {
       "Pets Note",
       "Created At",
       "Last Reviewed",
+      ...additionalHeaders,
     ];
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     sheet
@@ -101,16 +158,22 @@ function getOrCreateClientSheet() {
       .setFontWeight("bold");
     sheet.setFrozenRows(1);
   } else {
-    // Migration: Check if we need to migrate from old schema to new schema
-    const headers = sheet
+    // Check if we need to add new headers
+    const currentHeaders = sheet
       .getRange(1, 1, 1, sheet.getLastColumn())
       .getValues()[0];
 
-    // If old schema detected (has "First Name" column), we keep it as-is
-    // New clients will use the new simplified schema
-    if (!headers.includes("Contact Date") && headers.includes("First Name")) {
-      // This is the old schema - we don't modify it
-      // Future: You could add migration logic here if needed
+    // If "Mobility" is missing, we append the additional headers to the end
+    if (!currentHeaders.includes("Mobility")) {
+      const startCol = currentHeaders.length + 1;
+      sheet
+        .getRange(1, startCol, 1, additionalHeaders.length)
+        .setValues([additionalHeaders]);
+      sheet
+        .getRange(1, startCol, 1, additionalHeaders.length)
+        .setBackground("#65c027")
+        .setFontColor("white")
+        .setFontWeight("bold");
     }
   }
   return sheet;
@@ -118,11 +181,9 @@ function getOrCreateClientSheet() {
 
 function handleClientSubmission(data) {
   const sheet = getOrCreateClientSheet();
-  const lastRow = sheet.getLastRow();
 
   // Generate ID: CL + Random 4 digits
-  // Example: CL1234
-  const randomPart = Math.floor(1000 + Math.random() * 9000); // 4 digit random
+  const randomPart = Math.floor(1000 + Math.random() * 9000);
   const newId = `CL${randomPart}`;
 
   // Format Array for Sheet - New comprehensive schema
@@ -210,8 +271,62 @@ function handleClientSubmission(data) {
     data.pets || "",
     data.petsList || "",
     data.petsNote || "",
-    new Date(),
-    new Date(), // Initial Last Reviewed
+    new Date(), // Created At
+    new Date(), // Last Reviewed
+    // New Fields
+    data.mobility || "",
+    data.dailyLivingSkills || "",
+    data.transportation || "",
+    data.mealPreparation || "",
+    data.lightHousekeeping || "",
+    data.dietaryInfo || "",
+    data.liveAlone || "",
+    data.liveFamily || "",
+    data.liveFamilyName || "",
+    data.liveSenior || "",
+    data.liveSeniorName || "",
+    data.liveSeniorAddress || "",
+    data.liveRehab || "",
+    data.liveRehabName || "",
+    data.liveRehabAddress || "",
+    data.smoke || "",
+    data.drink || "",
+    data.medReminder || "",
+    data.selfAdminMed || "",
+    data.allergies || "",
+    data.allergiesDetail || "",
+    data.assistDirections || "",
+    data.assistDirectionsDetail || "",
+    data.takingMed || "",
+    data.medOverseer || "",
+    data.medList || "",
+    data.covidVaccine || "",
+    data.covidVaccineDetail || "",
+    data.fluVaccine || "",
+    data.fluVaccineDetail || "",
+    data.primaryDrName || "",
+    data.drOfficeName || "",
+    data.drPhone || "",
+    data.drAddress || "",
+    data.hospitalName || "",
+    data.hospitalPhone || "",
+    data.hospitalAddress || "",
+    data.pharmacyName || "",
+    data.pharmacyPhone || "",
+    data.pharmacyAddress || "",
+    data.careCertifications || "",
+    data.careGender || "",
+    data.carePets || "",
+    data.carePetsList || "",
+    data.carePetsNote || "",
+    data.careSmoking || "",
+    data.careSmokePremises || "",
+    data.careSmokeNote || "",
+    data.careSkills || "",
+    data.careLiveIn || "",
+    data.careAccommodation || "",
+    data.careLanguages || "",
+    data.careCovidVaccine || "",
   ];
 
   sheet.appendRow(rowData);
@@ -333,7 +448,14 @@ function getClientDetails(id) {
 
   if (!row) return null;
 
-  // Return data based on new comprehensive schema
+  // Row Indices:
+  // 0: Client ID
+  // ...
+  // 82: Pets Note
+  // 83: Created At
+  // 84: Last Reviewed
+  // 85: Mobility (Start of new fields)
+
   return {
     id: row[0],
     contactDate: row[1],
@@ -420,6 +542,61 @@ function getClientDetails(id) {
     petsNote: row[82],
     createdAt: row[83],
     lastReviewed: row[84],
+
+    // New Fields
+    mobility: row[85] || "",
+    dailyLivingSkills: row[86] || "",
+    transportation: row[87] || "",
+    mealPreparation: row[88] || "",
+    lightHousekeeping: row[89] || "",
+    dietaryInfo: row[90] || "",
+    liveAlone: row[91] || "",
+    liveFamily: row[92] || "",
+    liveFamilyName: row[93] || "",
+    liveSenior: row[94] || "",
+    liveSeniorName: row[95] || "",
+    liveSeniorAddress: row[96] || "",
+    liveRehab: row[97] || "",
+    liveRehabName: row[98] || "",
+    liveRehabAddress: row[99] || "",
+    smoke: row[100] || "",
+    drink: row[101] || "",
+    medReminder: row[102] || "",
+    selfAdminMed: row[103] || "",
+    allergies: row[104] || "",
+    allergiesDetail: row[105] || "",
+    assistDirections: row[106] || "",
+    assistDirectionsDetail: row[107] || "",
+    takingMed: row[108] || "",
+    medOverseer: row[109] || "",
+    medList: row[110] || "",
+    covidVaccine: row[111] || "",
+    covidVaccineDetail: row[112] || "",
+    fluVaccine: row[113] || "",
+    fluVaccineDetail: row[114] || "",
+    primaryDrName: row[115] || "",
+    drOfficeName: row[116] || "",
+    drPhone: row[117] || "",
+    drAddress: row[118] || "",
+    hospitalName: row[119] || "",
+    hospitalPhone: row[120] || "",
+    hospitalAddress: row[121] || "",
+    pharmacyName: row[122] || "",
+    pharmacyPhone: row[123] || "",
+    pharmacyAddress: row[124] || "",
+    careCertifications: row[125] || "",
+    careGender: row[126] || "",
+    carePets: row[127] || "",
+    carePetsList: row[128] || "",
+    carePetsNote: row[129] || "",
+    careSmoking: row[130] || "",
+    careSmokePremises: row[131] || "",
+    careSmokeNote: row[132] || "",
+    careSkills: row[133] || "",
+    careLiveIn: row[134] || "",
+    careAccommodation: row[135] || "",
+    careLanguages: row[136] || "",
+    careCovidVaccine: row[137] || "",
   };
 }
 
@@ -440,9 +617,8 @@ function updateClient(data) {
 
   const rowNum = rowIndex + 2; // +2 because of header and 0-based index
 
-  // Update columns 2-19 (Contact Date to Referred By)
-  // Note: Created At (col 20) is not updated
-  const rowData = [
+  // Standard Fields (Columns 2 to 83)
+  const standardFields = [
     data.contactDate || "",
     data.assessmentDateTime || "",
     data.coordinator || "",
@@ -527,14 +703,77 @@ function updateClient(data) {
     data.petsNote || "",
   ];
 
-  sheet.getRange(rowNum, 2, 1, rowData.length).setValues([rowData]);
+  sheet
+    .getRange(rowNum, 2, 1, standardFields.length)
+    .setValues([standardFields]);
 
-  // Update Last Reviewed
-  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-  const reviewIdx = headers.indexOf("Last Reviewed");
-  if (reviewIdx > -1) {
-    sheet.getRange(rowNum, reviewIdx + 1).setValue(new Date());
-  }
+  // Update Last Reviewed (Col 85)
+  // Headers indices:
+  // ... Pets Note (82 -> Col 83)
+  // Created At (83 -> Col 84)
+  // Last Reviewed (84 -> Col 85)
+  sheet.getRange(rowNum, 85).setValue(new Date());
+
+  // Additional Fields (Columns 86+)
+  const additionalFields = [
+    data.mobility || "",
+    data.dailyLivingSkills || "",
+    data.transportation || "",
+    data.mealPreparation || "",
+    data.lightHousekeeping || "",
+    data.dietaryInfo || "",
+    data.liveAlone || "",
+    data.liveFamily || "",
+    data.liveFamilyName || "",
+    data.liveSenior || "",
+    data.liveSeniorName || "",
+    data.liveSeniorAddress || "",
+    data.liveRehab || "",
+    data.liveRehabName || "",
+    data.liveRehabAddress || "",
+    data.smoke || "",
+    data.drink || "",
+    data.medReminder || "",
+    data.selfAdminMed || "",
+    data.allergies || "",
+    data.allergiesDetail || "",
+    data.assistDirections || "",
+    data.assistDirectionsDetail || "",
+    data.takingMed || "",
+    data.medOverseer || "",
+    data.medList || "",
+    data.covidVaccine || "",
+    data.covidVaccineDetail || "",
+    data.fluVaccine || "",
+    data.fluVaccineDetail || "",
+    data.primaryDrName || "",
+    data.drOfficeName || "",
+    data.drPhone || "",
+    data.drAddress || "",
+    data.hospitalName || "",
+    data.hospitalPhone || "",
+    data.hospitalAddress || "",
+    data.pharmacyName || "",
+    data.pharmacyPhone || "",
+    data.pharmacyAddress || "",
+    data.careCertifications || "",
+    data.careGender || "",
+    data.carePets || "",
+    data.carePetsList || "",
+    data.carePetsNote || "",
+    data.careSmoking || "",
+    data.careSmokePremises || "",
+    data.careSmokeNote || "",
+    data.careSkills || "",
+    data.careLiveIn || "",
+    data.careAccommodation || "",
+    data.careLanguages || "",
+    data.careCovidVaccine || "",
+  ];
+
+  sheet
+    .getRange(rowNum, 86, 1, additionalFields.length)
+    .setValues([additionalFields]);
 
   return { success: true, message: "Client updated successfully!" };
 }
