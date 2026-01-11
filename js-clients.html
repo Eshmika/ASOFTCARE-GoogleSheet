@@ -230,66 +230,153 @@
     // Helper to set text content safely
     const set = (id, val) => {
       const el = document.getElementById(id);
-      if (el) el.textContent = val || "--";
+      if (el)
+        el.textContent =
+          val === undefined || val === null || val === "" ? "--" : val;
     };
 
-    // Set initials from client name
+    // Helper to format address
+    const fmtAddr = (addr, apt, city, state, zip) => {
+      return [addr, apt ? "Apt " + apt : "", city, state, zip]
+        .filter(Boolean)
+        .join(", ");
+    };
+
+    // 1. Identity Header
     const fName = data.firstName || "";
     const mName = data.middleName || "";
     const lName = data.lastName || "";
     const fullName = [fName, mName, lName].filter(Boolean).join(" ");
 
-    const initials = fName && lName ? fName[0] + lName[0] : fName[0] || "?";
-
-    set("cp-initials", initials);
     set("cp-name", fullName);
+    set("cp-initials", (fName[0] || "") + (lName[0] || fName[0] || "?"));
     set("cp-id", data.id);
     set("cp-status", data.status);
-    set("cp-email", "--");
-    set("cp-phone", data.clientPhone);
+    set("cp-type", data.serviceTypes || "Client");
 
-    // Format full address
-    const addressParts = [
-      data.clientAddress,
-      data.clientApt ? `Apt ${data.clientApt}` : "",
-      data.clientCity,
-      data.clientState,
-      data.clientZip,
-    ]
-      .filter((part) => part)
-      .join(", ");
-    set("cp-address", addressParts || "--");
+    // 2. Personal Info
+    set("cp-dob", data.dob);
+    set("cp-gender", data.gender);
+    set("cp-ssn", data.ssn);
+    set("cp-maritalStatus", data.maritalStatus);
+    set("cp-spouseName", data.spouseName);
+    set("cp-languages", data.languages);
 
-    // Format Contact Date
-    let contactDate = data.contactDate;
-    if (contactDate) {
-      const d = new Date(contactDate);
-      if (!isNaN(d.getTime())) {
-        contactDate = d.toLocaleDateString();
-      }
-    }
-    set("cp-dob", `Contact Date: ${contactDate || "--"}`);
+    // 3. Contact Info
+    set("cp-clientPhone", data.clientPhone);
+    set("cp-email", data.email);
+    set(
+      "cp-clientAddressFull",
+      fmtAddr(
+        data.clientAddress,
+        data.clientApt,
+        data.clientCity,
+        data.clientState,
+        data.clientZip
+      )
+    );
+    set(
+      "cp-billingAddressFull",
+      fmtAddr(
+        data.billingAddress,
+        data.billingApt,
+        data.billingCity,
+        data.billingState,
+        data.billingZip
+      )
+    );
 
-    // Format Assessment Date/Time
-    let assessmentDateTime = data.assessmentDateTime;
-    if (assessmentDateTime) {
-      const d = new Date(assessmentDateTime);
-      if (!isNaN(d.getTime())) {
-        assessmentDateTime = d.toLocaleString();
-      }
-    }
+    // 4. Representative
+    set("cp-repName", data.repName);
+    set("cp-repRelationship", data.repRelationship);
+    set("cp-repPhone", data.repPhone);
 
-    set("cp-gender", `Assessment: ${assessmentDateTime || "--"}`);
-    set("cp-type", "Lead");
-    set("cp-living", `Coordinator: ${data.coordinator || "--"}`);
-    set("cp-languages", `Care Needs: ${data.careNeeds || "--"}`);
+    // 5. Medical Status
+    set("cp-height", data.height);
+    set("cp-weight", data.weight);
+    set("cp-diagnosis", data.diagnosis);
+    set(
+      "cp-allergies",
+      data.allergies +
+        (data.allergiesDetail ? ` (${data.allergiesDetail})` : "")
+    );
+    set(
+      "cp-covidVaccine",
+      data.covidVaccine +
+        (data.covidVaccineDetail ? ` (${data.covidVaccineDetail})` : "")
+    );
+    set(
+      "cp-fluVaccine",
+      data.fluVaccine +
+        (data.fluVaccineDetail ? ` (${data.fluVaccineDetail})` : "")
+    );
 
-    // Representative information in emergency contact section
-    set("cp-emName", data.repName);
-    set("cp-emRel", data.repRelationship);
-    set("cp-emPhone", data.repPhone);
-    set("cp-emEmail", `Referred by: ${data.referredBy || "--"}`);
-    set("cp-emAddress", "--");
+    // 6. Care Needs
+    set("cp-mobility", data.mobility);
+    set("cp-dailyLivingSkills", data.dailyLivingSkills);
+    set("cp-dietaryInfo", data.dietaryInfo);
+    set("cp-careNeeds", data.careNeeds);
+
+    // 7. Emergency Contact
+    set("cp-emergencyName", data.emergencyName);
+    set("cp-emergencyPhone", data.emergencyPhone);
+    set("cp-emergencyRelationship", data.emergencyRelationship);
+    set(
+      "cp-emergencyAddressFull",
+      fmtAddr(
+        data.emergencyAddress,
+        data.emergencyApt,
+        data.emergencyCity,
+        data.emergencyState,
+        data.emergencyZip
+      )
+    );
+
+    // 8. Service Plan
+    set("cp-levelOfCare", data.levelOfCare);
+    set("cp-projectHours", data.projectHours);
+    set("cp-hourlyRate", data.hourlyRate ? `$${data.hourlyRate}` : "");
+    set("cp-weeklyCost", data.weeklyCost ? `$${data.weeklyCost}` : "");
+    set("cp-serviceTypes", data.serviceTypes);
+
+    // 9. Schedule
+    set("cp-schMO", data.schMO);
+    set("cp-schT", data.schT);
+    set("cp-schW", data.schW);
+    set("cp-schTH", data.schTH);
+    set("cp-schFR", data.schFR);
+    set("cp-schSA", data.schSA);
+    set("cp-schSU", data.schSU);
+
+    // 10. Living Environment
+    set("cp-smoke", data.smoke);
+    set("cp-drink", data.drink);
+    set("cp-pets", data.pets);
+    set("cp-petsList", data.petsList);
+    set("cp-petsNote", data.petsNote);
+    set("cp-liveAlone", data.liveAlone);
+
+    // Living details logic
+    let livingDetails = [];
+    if (data.liveFamily === "Yes")
+      livingDetails.push(`Family: ${data.liveFamilyName}`);
+    if (data.liveSenior === "Yes")
+      livingDetails.push(`Senior Housing: ${data.liveSeniorName}`);
+    if (data.liveRehab === "Yes")
+      livingDetails.push(`Rehab: ${data.liveRehabName}`);
+    set("cp-liveDetails", livingDetails.join(" | "));
+
+    // 11. Footer / Metadata
+    // Clean date formatting
+    const fmtDate = (d) => {
+      if (!d) return "--";
+      const dt = new Date(d);
+      return !isNaN(dt.getTime()) ? dt.toLocaleDateString() : d;
+    };
+
+    set("cp-createdAt", fmtDate(data.createdAt));
+    set("cp-lastReviewed", fmtDate(data.lastReviewed));
+    set("cp-coordinator", data.coordinator);
 
     document.getElementById("clProfileLoading").classList.add("hidden");
     document.getElementById("clProfileContent").classList.remove("hidden");

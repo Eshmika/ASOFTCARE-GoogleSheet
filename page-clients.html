@@ -377,109 +377,374 @@
       <p class="text-gray-500 mt-2">Loading profile...</p>
     </div>
 
-    <div id="clProfileContent" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Main Info Card -->
-      <div class="md:col-span-1 space-y-6">
+    <div id="clProfileContent" class="space-y-6 hidden">
+      <!-- 1. Header: Basic Identity -->
+      <div
+        class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 items-center"
+      >
         <div
-          class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center"
+          class="w-24 h-24 bg-gray-100 rounded-full flex-shrink-0 flex items-center justify-center text-3xl text-gray-400 font-bold"
         >
-          <div
-            class="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl text-gray-400 font-bold"
-          >
-            <span id="cp-initials">--</span>
-          </div>
-          <h2 id="cp-name" class="text-xl font-bold text-gray-800">
+          <span id="cp-initials">--</span>
+        </div>
+        <div class="flex-1 text-center md:text-left">
+          <h2 id="cp-name" class="text-2xl font-bold text-gray-800">
             Loading...
           </h2>
-          <p id="cp-id" class="text-sm text-gray-500 mb-2">CL-XXXX</p>
-          <span
-            id="cp-status"
-            class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600"
+          <div
+            class="flex flex-wrap justify-center md:justify-start gap-4 mt-2 text-sm text-gray-500"
           >
-            Status
-          </span>
+            <span
+              class="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-bold"
+              id="cp-id"
+              >CL-XXXX</span
+            >
+            <span
+              class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold"
+              id="cp-status"
+              >Status</span
+            >
+            <span
+              class="bg-purple-50 text-purple-600 px-3 py-1 rounded-full font-bold"
+              id="cp-type"
+              >Type</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <!-- COL 1: Personal & Contacts -->
+        <div class="space-y-6">
+          <!-- Personal Info -->
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3
+              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+            >
+              <i class="ph ph-user"></i> Personal Information
+            </h3>
+            <div class="space-y-3 text-sm">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-gray-500 text-xs">DOB</label>
+                  <div id="cp-dob" class="font-medium">--</div>
+                </div>
+                <div>
+                  <label class="block text-gray-500 text-xs">Gender</label>
+                  <div id="cp-gender" class="font-medium">--</div>
+                </div>
+                <div>
+                  <label class="block text-gray-500 text-xs">SSN</label>
+                  <div id="cp-ssn" class="font-medium">--</div>
+                </div>
+                <div>
+                  <label class="block text-gray-500 text-xs"
+                    >Marital Status</label
+                  >
+                  <div id="cp-maritalStatus" class="font-medium">--</div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Languages</label>
+                <div id="cp-languages" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Spouse Name</label>
+                <div id="cp-spouseName" class="font-medium">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Info -->
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3
+              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+            >
+              <i class="ph ph-address-book"></i> Contact Details
+            </h3>
+            <div class="space-y-3 text-sm">
+              <div>
+                <label class="block text-gray-500 text-xs">Phone</label>
+                <div id="cp-clientPhone" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Email</label>
+                <div id="cp-email" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Home Address</label>
+                <div id="cp-clientAddressFull" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs"
+                  >Billing Address</label
+                >
+                <div id="cp-billingAddressFull" class="font-medium">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Representative -->
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3
+              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+            >
+              <i class="ph ph-users"></i> Representative
+            </h3>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div class="col-span-2">
+                <label class="block text-gray-500 text-xs">Name</label>
+                <div id="cp-repName" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Relation</label>
+                <div id="cp-repRelationship" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Phone</label>
+                <div id="cp-repPhone" class="font-medium">--</div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">
-            Contact Info
-          </h3>
-          <div class="space-y-3 text-sm">
-            <div>
-              <label class="block text-gray-500 text-xs">Email</label>
-              <div id="cp-email" class="font-medium text-gray-700">--</div>
+        <!-- COL 2: Medical & Care -->
+        <div class="space-y-6">
+          <!-- Medical Status -->
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3
+              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+            >
+              <i class="ph ph-heartbeat"></i> Medical Status
+            </h3>
+            <div class="space-y-3 text-sm">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-gray-500 text-xs">Height</label>
+                  <div id="cp-height" class="font-medium">--</div>
+                </div>
+                <div>
+                  <label class="block text-gray-500 text-xs">Weight</label>
+                  <div id="cp-weight" class="font-medium">--</div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Diagnosis</label>
+                <div id="cp-diagnosis" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Allergies</label>
+                <div id="cp-allergies" class="font-medium text-red-600">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Vaccinations</label>
+                <div class="font-medium">
+                  Covid: <span id="cp-covidVaccine">--</span>, Flu:
+                  <span id="cp-fluVaccine">--</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <label class="block text-gray-500 text-xs">Phone</label>
-              <div id="cp-phone" class="font-medium text-gray-700">--</div>
+          </div>
+
+          <!-- Care Needs -->
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3
+              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+            >
+              <i class="ph ph-hand-heart"></i> Care Needs
+            </h3>
+            <div class="space-y-3 text-sm">
+              <div>
+                <label class="block text-gray-500 text-xs">Mobility</label>
+                <div id="cp-mobility" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Familiarity</label>
+                <div id="cp-dailyLivingSkills" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Dietary</label>
+                <div id="cp-dietaryInfo" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs"
+                  >Needs Description</label
+                >
+                <div id="cp-careNeeds" class="font-medium italic text-gray-600">
+                  --
+                </div>
+              </div>
             </div>
-            <div>
-              <label class="block text-gray-500 text-xs">Address</label>
-              <div id="cp-address" class="font-medium text-gray-700">--</div>
+          </div>
+
+          <!-- Emergency Contact -->
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3
+              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+            >
+              <i class="ph ph-warning-circle"></i> Emergency Contact
+            </h3>
+            <div class="space-y-2 text-sm">
+              <div>
+                <label class="block text-gray-500 text-xs">Name</label>
+                <div id="cp-emergencyName" class="font-medium">--</div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-gray-500 text-xs">Phone</label>
+                  <div id="cp-emergencyPhone" class="font-medium">--</div>
+                </div>
+                <div>
+                  <label class="block text-gray-500 text-xs">Relation</label>
+                  <div id="cp-emergencyRelationship" class="font-medium">
+                    --
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Address</label>
+                <div id="cp-emergencyAddressFull" class="font-medium">--</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COL 3: Service & Logistics -->
+        <div class="space-y-6">
+          <!-- Service Plan -->
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3
+              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+            >
+              <i class="ph ph-file-text"></i> Service Plan
+            </h3>
+            <div class="space-y-3 text-sm">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-gray-500 text-xs"
+                    >Level of Care</label
+                  >
+                  <div id="cp-levelOfCare" class="font-medium">--</div>
+                </div>
+                <div>
+                  <label class="block text-gray-500 text-xs"
+                    >Project Hours</label
+                  >
+                  <div id="cp-projectHours" class="font-medium">--</div>
+                </div>
+                <div>
+                  <label class="block text-gray-500 text-xs">Hourly Rate</label>
+                  <div id="cp-hourlyRate" class="font-medium text-green-600">
+                    --
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-gray-500 text-xs">Weekly Cost</label>
+                  <div id="cp-weeklyCost" class="font-medium text-green-600">
+                    --
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Service Types</label>
+                <div id="cp-serviceTypes" class="font-medium">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Schedule -->
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3
+              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+            >
+              <i class="ph ph-calendar"></i> Weekly Schedule
+            </h3>
+            <div class="grid grid-cols-7 gap-1 text-center text-xs">
+              <div class="bg-gray-50 p-1 rounded">
+                MO
+                <div id="cp-schMO" class="font-bold text-green-600 mt-1">
+                  --
+                </div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                TU
+                <div id="cp-schT" class="font-bold text-green-600 mt-1">--</div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                WE
+                <div id="cp-schW" class="font-bold text-green-600 mt-1">--</div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                TH
+                <div id="cp-schTH" class="font-bold text-green-600 mt-1">
+                  --
+                </div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                FR
+                <div id="cp-schFR" class="font-bold text-green-600 mt-1">
+                  --
+                </div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                SA
+                <div id="cp-schSA" class="font-bold text-green-600 mt-1">
+                  --
+                </div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                SU
+                <div id="cp-schSU" class="font-bold text-green-600 mt-1">
+                  --
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Living Environment -->
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3
+              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+            >
+              <i class="ph ph-house"></i> Living Environment
+            </h3>
+            <div class="space-y-3 text-sm">
+              <div>
+                <label class="block text-gray-500 text-xs">General</label>
+                <div class="font-medium">
+                  Smoke: <span id="cp-smoke">--</span>, Drink:
+                  <span id="cp-drink">--</span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Pets</label>
+                <div class="font-medium">
+                  <span id="cp-pets">--</span> (<span id="cp-petsList">--</span
+                  >)
+                </div>
+                <div id="cp-petsNote" class="text-xs text-gray-500 italic">
+                  --
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Live With</label>
+                <div class="font-medium">
+                  Alone: <span id="cp-liveAlone">--</span>
+                </div>
+                <div id="cp-liveDetails" class="text-xs text-gray-500 mt-1">
+                  --
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Details Column -->
-      <div class="md:col-span-2 space-y-6">
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">
-            Personal Details
-          </h3>
-          <div class="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <label class="block text-gray-500 text-xs">Date of Birth</label>
-              <div id="cp-dob" class="font-medium text-gray-700">--</div>
-            </div>
-            <div>
-              <label class="block text-gray-500 text-xs">Gender</label>
-              <div id="cp-gender" class="font-medium text-gray-700">--</div>
-            </div>
-            <div>
-              <label class="block text-gray-500 text-xs">Client Type</label>
-              <div id="cp-type" class="font-medium text-gray-700">--</div>
-            </div>
-            <div>
-              <label class="block text-gray-500 text-xs"
-                >Living Arrangement</label
-              >
-              <div id="cp-living" class="font-medium text-gray-700">--</div>
-            </div>
-            <div class="col-span-2">
-              <label class="block text-gray-500 text-xs">Languages</label>
-              <div id="cp-languages" class="font-medium text-gray-700">--</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">
-            Emergency Contact
-          </h3>
-          <div class="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <label class="block text-gray-500 text-xs">Name</label>
-              <div id="cp-emName" class="font-medium text-gray-700">--</div>
-            </div>
-            <div>
-              <label class="block text-gray-500 text-xs">Relationship</label>
-              <div id="cp-emRel" class="font-medium text-gray-700">--</div>
-            </div>
-            <div>
-              <label class="block text-gray-500 text-xs">Phone</label>
-              <div id="cp-emPhone" class="font-medium text-gray-700">--</div>
-            </div>
-            <div>
-              <label class="block text-gray-500 text-xs">Email</label>
-              <div id="cp-emEmail" class="font-medium text-gray-700">--</div>
-            </div>
-            <div class="col-span-2">
-              <label class="block text-gray-500 text-xs">Address</label>
-              <div id="cp-emAddress" class="font-medium text-gray-700">--</div>
-            </div>
-          </div>
-        </div>
+      <!-- Footer: Log Info -->
+      <div class="text-center text-xs text-gray-400 mt-8">
+        Created: <span id="cp-createdAt">--</span> | Last Reviewed:
+        <span id="cp-lastReviewed">--</span> | Coordinator:
+        <span id="cp-coordinator">--</span>
       </div>
     </div>
   </div>
