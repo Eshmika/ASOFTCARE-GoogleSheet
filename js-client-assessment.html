@@ -735,47 +735,6 @@
           cb.checked = skillItems.includes(cb.value);
         });
 
-        // Care Languages
-        const careLangItems = (data.careLanguages || "")
-          .split(",")
-          .map((s) => s.trim());
-        const careKnownLangs = [
-          "English",
-          "French",
-          "Spanish",
-          "Arabic",
-          "Mandrin",
-          "Hindi",
-          "Portuguese",
-          "Russian",
-          "Japanese",
-          "German",
-          "Turkish",
-          "Swahili",
-          "Somali",
-          "Chinese",
-          "Bengali",
-        ];
-        document.getElementsByName("careLanguages").forEach((cb) => {
-          if (cb.value !== "Other") {
-            cb.checked = careLangItems.includes(cb.value);
-          }
-        });
-        const otherCareLangVal = careLangItems
-          .filter((l) => !careKnownLangs.includes(l) && l !== "")
-          .join(", ");
-        if (otherCareLangVal) {
-          const careOtherCb = document.getElementById("as-careLang-other-cb");
-          if (careOtherCb) careOtherCb.checked = true;
-          document
-            .getElementById("as-careLang-other-container")
-            .classList.remove("hidden");
-          document.getElementById("as-careLang-other").value = otherCareLangVal;
-        }
-
-        // Care Covid
-        setVal("as-careCovidVaccine", data.careCovidVaccine);
-
         // Care Live-in
         if (data.careLiveIn) {
           const r = document.querySelector(
@@ -1025,25 +984,6 @@
       .filter((cb) => cb.checked)
       .map((cb) => cb.value)
       .join(", ");
-
-    // Handle Care Languages
-    let selectedCareLangs = Array.from(
-      document.getElementsByName("careLanguages")
-    )
-      .filter((cb) => cb.checked && cb.value !== "Other")
-      .map((cb) => cb.value);
-    if (
-      document.getElementById("as-careLang-other-cb") &&
-      document.getElementById("as-careLang-other-cb").checked
-    ) {
-      const oVal = document.getElementById("as-careLang-other").value;
-      if (oVal) selectedCareLangs.push(oVal);
-    }
-    data.careLanguages = selectedCareLangs.join(", ");
-
-    // Handle Care Covid
-    const careCovidEl = document.getElementById("as-careCovidVaccine");
-    data.careCovidVaccine = careCovidEl ? careCovidEl.value : "";
 
     // Handle Care Live-in
     const dl = document.querySelector('input[name="careLiveIn"]:checked');

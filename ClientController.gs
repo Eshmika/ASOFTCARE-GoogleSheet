@@ -56,8 +56,6 @@ function getOrCreateClientSheet() {
     "Care Skills",
     "Care Live In",
     "Care Accommodation",
-    "Care Languages",
-    "Care Covid Vaccine",
   ];
 
   if (!sheet) {
@@ -325,8 +323,6 @@ function handleClientSubmission(data) {
     data.careSkills || "",
     data.careLiveIn || "",
     data.careAccommodation || "",
-    data.careLanguages || "",
-    data.careCovidVaccine || "",
   ];
 
   sheet.appendRow(rowData);
@@ -595,8 +591,6 @@ function getClientDetails(id) {
     careSkills: row[133] || "",
     careLiveIn: row[134] || "",
     careAccommodation: row[135] || "",
-    careLanguages: row[136] || "",
-    careCovidVaccine: row[137] || "",
   };
 }
 
@@ -767,8 +761,6 @@ function updateClient(data) {
     data.careSkills || "",
     data.careLiveIn || "",
     data.careAccommodation || "",
-    data.careLanguages || "",
-    data.careCovidVaccine || "",
   ];
 
   sheet
