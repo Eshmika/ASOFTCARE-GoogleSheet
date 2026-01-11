@@ -87,6 +87,9 @@ function getOrCreateClientSheet() {
       "Medical Aids",
       "Medical History",
       "Stage",
+      "Pets",
+      "Pets List",
+      "Pets Note",
       "Created At",
       "Last Reviewed",
     ];
@@ -204,6 +207,9 @@ function handleClientSubmission(data) {
     data.medicalAids || "",
     data.medicalHistory || "",
     "New leads", // Initial Stage
+    data.pets || "",
+    data.petsList || "",
+    data.petsNote || "",
     new Date(),
     new Date(), // Initial Last Reviewed
   ];
@@ -409,8 +415,11 @@ function getClientDetails(id) {
     medicalAids: row[77],
     medicalHistory: row[78],
     stage: row[79],
-    createdAt: row[80],
-    lastReviewed: row[81],
+    pets: row[80],
+    petsList: row[81],
+    petsNote: row[82],
+    createdAt: row[83],
+    lastReviewed: row[84],
   };
 }
 
@@ -512,6 +521,10 @@ function updateClient(data) {
     data.incontinentInfo || "",
     data.medicalAids || "",
     data.medicalHistory || "",
+    data.stage || "",
+    data.pets || "",
+    data.petsList || "",
+    data.petsNote || "",
   ];
 
   sheet.getRange(rowNum, 2, 1, rowData.length).setValues([rowData]);

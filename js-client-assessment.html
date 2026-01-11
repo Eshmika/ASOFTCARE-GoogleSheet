@@ -872,6 +872,7 @@
           "dietaryInfo",
           "careCertifications",
           "carePetsList",
+          "petsList",
         ].includes(key)
       ) {
         data[key] = value;
@@ -1004,6 +1005,13 @@
       .filter((cb) => cb.checked)
       .map((cb) => cb.value);
     data.careCertifications = selectedCerts.join(", ");
+
+    // Handle Pets List (Living Arrangement)
+    const petsListChecks = document.getElementsByName("petsList");
+    const selectedPetsList = Array.from(petsListChecks)
+      .filter((cb) => cb.checked)
+      .map((cb) => cb.value);
+    data.petsList = selectedPetsList.join(", ");
 
     // Handle Care Pets List
     const petChecks = document.getElementsByName("carePetsList");
