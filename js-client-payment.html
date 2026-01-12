@@ -76,6 +76,22 @@
         document.getElementById("pay-digitalValue").value =
           data.payDigitalValue || "";
 
+        // Fill Insurance Details
+        document.getElementById("pay-insuranceCompany").value =
+          data.insuranceCompany || "";
+        document.getElementById("pay-insuranceAddress").value =
+          data.insuranceAddress || "";
+        document.getElementById("pay-insurancePolicy").value =
+          data.insurancePolicy || "";
+        document.getElementById("pay-insuranceMemberId").value =
+          data.insuranceMemberId || "";
+        document.getElementById("pay-insuranceContactName").value =
+          data.insuranceContactName || "";
+        document.getElementById("pay-insuranceContactPhone").value =
+          data.insuranceContactPhone || "";
+        document.getElementById("pay-insuranceCase").value =
+          data.insuranceCase || "";
+
         togglePaymentDetailFields();
         togglePayDigitalInputs();
       })
@@ -138,6 +154,13 @@
       payDigitalFullName: formData.get("payDigitalFullName"),
       payDigitalType: formData.get("payDigitalType"),
       payDigitalValue: formData.get("payDigitalValue"),
+      insuranceCompany: formData.get("insuranceCompany"),
+      insuranceAddress: formData.get("insuranceAddress"),
+      insurancePolicy: formData.get("insurancePolicy"),
+      insuranceMemberId: formData.get("insuranceMemberId"),
+      insuranceContactName: formData.get("insuranceContactName"),
+      insuranceContactPhone: formData.get("insuranceContactPhone"),
+      insuranceCase: formData.get("insuranceCase"),
     };
 
     google.script.run

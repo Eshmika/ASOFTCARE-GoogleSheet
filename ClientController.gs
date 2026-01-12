@@ -63,6 +63,13 @@ function getOrCreateClientSheet() {
     "Pay Digital Full Name",
     "Pay Digital Type",
     "Pay Digital Value",
+    "Insurance Company",
+    "Insurance Address",
+    "Insurance Policy",
+    "Insurance Contact Name",
+    "Insurance Member Id",
+    "Insurance Contact Phone",
+    "Insurance Case",
   ];
 
   if (!sheet) {
@@ -337,6 +344,13 @@ function handleClientSubmission(data) {
     data.payDigitalFullName || "",
     data.payDigitalType || "",
     data.payDigitalValue || "",
+    data.insuranceCompany || "",
+    data.insuranceAddress || "",
+    data.insurancePolicy || "",
+    data.insuranceContactName || "",
+    data.insuranceMemberId || "",
+    data.insuranceContactPhone || "",
+    data.insuranceCase || "",
   ];
 
   sheet.appendRow(rowData);
@@ -618,6 +632,13 @@ function getClientDetails(id) {
     payDigitalFullName: row[140] || "",
     payDigitalType: row[141] || "",
     payDigitalValue: row[142] || "",
+    insuranceCompany: row[143] || "",
+    insuranceAddress: row[144] || "",
+    insurancePolicy: row[145] || "",
+    insuranceContactName: row[146] || "",
+    insuranceMemberId: row[147] || "",
+    insuranceContactPhone: row[148] || "",
+    insuranceCase: row[149] || "",
   };
 }
 
@@ -795,6 +816,13 @@ function updateClient(data) {
     data.payDigitalFullName || "",
     data.payDigitalType || "",
     data.payDigitalValue || "",
+    data.insuranceCompany || "",
+    data.insuranceAddress || "",
+    data.insurancePolicy || "",
+    data.insuranceContactName || "",
+    data.insuranceMemberId || "",
+    data.insuranceContactPhone || "",
+    data.insuranceCase || "",
   ];
 
   sheet
