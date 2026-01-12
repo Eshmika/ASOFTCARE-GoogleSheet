@@ -361,6 +361,9 @@ function getClientList() {
         stage: headers.includes("Stage")
           ? row[headers.indexOf("Stage")]
           : "New leads",
+        assessmentFilled: headers.includes("Project Hours")
+          ? row[headers.indexOf("Project Hours")].trim() !== ""
+          : false,
         lastReviewed: reviewIdx > -1 ? row[reviewIdx] : "--",
       };
     })
@@ -573,7 +576,7 @@ function getClientDetails(id) {
     pharmacyPhone: row[123] || "",
     pharmacyAddress: row[124] || "",
     careCertifications: row[125] || "",
-    careGender: row[126] || "",    
+    careGender: row[126] || "",
     careSmokePremises: row[127] || "",
     careSmokeNote: row[128] || "",
     careSkills: row[129] || "",
