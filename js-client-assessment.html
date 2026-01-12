@@ -1,14 +1,19 @@
 <script>
   function toggleClientStageView(view) {
     const main = document.getElementById("client-stages-main");
-    const form = document.getElementById("client-assessment-view");
+    const assessmentForm = document.getElementById("client-assessment-view");
+    const paymentForm = document.getElementById("client-payment-view");
+
+    main.classList.add("hidden");
+    assessmentForm.classList.add("hidden");
+    paymentForm.classList.add("hidden");
 
     if (view === "form") {
-      main.classList.add("hidden");
-      form.classList.remove("hidden");
+      assessmentForm.classList.remove("hidden");
+    } else if (view === "payment-form") {
+      paymentForm.classList.remove("hidden");
     } else {
       main.classList.remove("hidden");
-      form.classList.add("hidden");
     }
   }
 

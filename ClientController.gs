@@ -52,6 +52,8 @@ function getOrCreateClientSheet() {
     "Care Skills",
     "Care Live In",
     "Care Accommodation",
+    "Payment Type",
+    "Payment Options",
   ];
 
   if (!sheet) {
@@ -315,6 +317,8 @@ function handleClientSubmission(data) {
     data.careSkills || "",
     data.careLiveIn || "",
     data.careAccommodation || "",
+    data.paymentType || "",
+    data.paymentOptions || "",
   ];
 
   sheet.appendRow(rowData);
@@ -363,6 +367,9 @@ function getClientList() {
           : "New leads",
         assessmentFilled: headers.includes("Project Hours")
           ? row[headers.indexOf("Project Hours")].trim() !== ""
+          : false,
+        paymentFilled: headers.includes("Payment Type")
+          ? row[headers.indexOf("Payment Type")].trim() !== ""
           : false,
         lastReviewed: reviewIdx > -1 ? row[reviewIdx] : "--",
       };
@@ -582,6 +589,8 @@ function getClientDetails(id) {
     careSkills: row[129] || "",
     careLiveIn: row[130] || "",
     careAccommodation: row[131] || "",
+    paymentType: row[132] || "",
+    paymentOptions: row[133] || "",
   };
 }
 
@@ -748,6 +757,8 @@ function updateClient(data) {
     data.careSkills || "",
     data.careLiveIn || "",
     data.careAccommodation || "",
+    data.paymentType || "",
+    data.paymentOptions || "",
   ];
 
   sheet

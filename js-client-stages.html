@@ -95,6 +95,33 @@
                     </div>
                 `;
           }
+        } else if (stage === "Insurance Verification") {
+          if (client.status === "Cancelled service") {
+            actionHtml = `
+                        <div class="flex items-center justify-end gap-2">
+                            <span class="text-xs text-red-600 font-bold mr-2">Failed</span>
+                            <button onclick="undoFailClient('${client.id}')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1">
+                                <i class="ph ph-arrow-u-up-left"></i> Undo
+                            </button>
+                        </div>
+                    `;
+          } else if (client.paymentFilled) {
+            actionHtml = `
+                    <div class="flex items-center justify-end gap-2">
+                        <button onclick="passInsurance('${client.id}')" class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold hover:bg-green-200">Pass</button>
+                        <button onclick="failInsurance('${client.id}')" class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold hover:bg-red-200">Fail</button>
+                        <button onclick="openPaymentForm('${client.id}')" class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-bold hover:bg-gray-200">Edit</button>
+                    </div>
+                `;
+          } else {
+            actionHtml = `
+                    <div class="flex items-center justify-end gap-2">
+                        <button onclick="openPaymentForm('${client.id}')" class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-bold hover:bg-blue-200 flex items-center gap-1">
+                            <i class="ph ph-credit-card"></i> Add Payment
+                        </button>                        
+                    </div>
+                `;
+          }
         }
 
         row.innerHTML = `
@@ -228,6 +255,58 @@
               Swal.fire(
                 "Failed",
                 "Assessment has been marked as failed.",
+                "success"
+              );
+              loadClientStages();
+            } else {
+              Swal.fire("Error", res.message, "error");
+            }
+          })
+          .updateClientStatus(clientId, "Cancelled service");
+      }
+    });
+  }
+
+  function passInsurance(clientId) {
+    Swal.fire({
+      title: "Pass Insurance Verification?",
+      text: "Move this client to the Client Agreements stage?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#65c027",
+      confirmButtonText: "Yes, Pass",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (res.success) {
+              Swal.fire("Passed!", res.message, "success");
+              loadClientStages();
+            } else {
+              Swal.fire("Error", res.message, "error");
+            }
+          })
+          .updateClientStage(clientId, "Client Agreements");
+      }
+    });
+  }
+
+  function failInsurance(clientId) {
+    Swal.fire({
+      title: "Fail Insurance Verification?",
+      text: "Mark this verification as failed? (Status will be set to Cancelled)",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      confirmButtonText: "Yes, Fail",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (res.success) {
+              Swal.fire(
+                "Failed",
+                "Insurance verification has been marked as failed.",
                 "success"
               );
               loadClientStages();

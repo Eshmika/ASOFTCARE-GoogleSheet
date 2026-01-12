@@ -1,0 +1,71 @@
+<script>
+  function openPaymentForm(clientId) {
+    toggleClientStageView("payment-form");
+    document.getElementById("paymentDetailsForm").reset();
+    document.getElementById("pay-id").value = clientId;
+
+    google.script.run
+      .withSuccessHandler((data) => {
+        if (!data) return;
+
+        // Select payment type
+        const typeSelect = document.getElementById("pay-paymentType");
+        if (data.paymentType) {
+          typeSelect.value = data.paymentType;
+        }
+
+        // Check payment options
+        const options = (data.paymentOptions || "")
+          .split(",")
+          .map((s) => s.trim().toLowerCase());
+        const checks = document.getElementsByName("payOption");
+        checks.forEach((cb) => {
+          cb.checked = options.includes(cb.value.toLowerCase());
+        });
+      })
+      .getClientDetails(clientId);
+  }
+
+  function submitPaymentForm(e) {
+    e.preventDefault();
+    const btn = document.getElementById("savePaymentBtn");
+    btn.disabled = true;
+    btn.textContent = "Saving...";
+
+    const form = document.getElementById("paymentDetailsForm");
+    const formData = new FormData(form);
+
+    const paymentType = formData.get("paymentType");
+    const paymentOptions = Array.from(document.getElementsByName("payOption"))
+      .filter((cb) => cb.checked)
+      .map((cb) => cb.value)
+      .join(", ");
+
+    const clientId = document.getElementById("pay-id").value;
+
+    const data = {
+      id: clientId,
+      paymentType: paymentType,
+      paymentOptions: paymentOptions,
+    };
+
+    google.script.run
+      .withSuccessHandler((existing) => {
+        const merged = { ...existing, ...data };
+        google.script.run
+          .withSuccessHandler((res) => {
+            btn.disabled = false;
+            btn.textContent = "Save Payment Details";
+            if (res.success) {
+              Swal.fire("Success", "Payment details saved!", "success");
+              toggleClientStageView("stages");
+              loadClientStages();
+            } else {
+              Swal.fire("Error", res.message, "error");
+            }
+          })
+          .updateClient(merged);
+      })
+      .getClientDetails(clientId);
+  }
+</script>
