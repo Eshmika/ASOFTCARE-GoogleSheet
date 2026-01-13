@@ -77,10 +77,26 @@
           data.payDigitalValue || "";
 
         // Fill Insurance Details
+        document.getElementById("pay-insuranceFirstName").value =
+          data.firstName || "";
+        document.getElementById("pay-insuranceMiddleName").value =
+          data.middleName || "";
+        document.getElementById("pay-insuranceLastName").value =
+          data.lastName || "";
+        document.getElementById("pay-insuranceDOB").value = data.dob || "";
+
         document.getElementById("pay-insuranceCompany").value =
           data.insuranceCompany || "";
         document.getElementById("pay-insuranceAddress").value =
           data.insuranceAddress || "";
+        document.getElementById("pay-insuranceApt").value =
+          data.insuranceApt || "";
+        document.getElementById("pay-insuranceCity").value =
+          data.insuranceCity || "";
+        document.getElementById("pay-insuranceState").value =
+          data.insuranceState || "";
+        document.getElementById("pay-insuranceZip").value =
+          data.insuranceZip || "";
         document.getElementById("pay-insurancePolicy").value =
           data.insurancePolicy || "";
         document.getElementById("pay-insuranceMemberId").value =
@@ -156,6 +172,10 @@
       payDigitalValue: formData.get("payDigitalValue"),
       insuranceCompany: formData.get("insuranceCompany"),
       insuranceAddress: formData.get("insuranceAddress"),
+      insuranceApt: formData.get("insuranceApt"),
+      insuranceCity: formData.get("insuranceCity"),
+      insuranceState: formData.get("insuranceState"),
+      insuranceZip: formData.get("insuranceZip"),
       insurancePolicy: formData.get("insurancePolicy"),
       insuranceMemberId: formData.get("insuranceMemberId"),
       insuranceContactName: formData.get("insuranceContactName"),
