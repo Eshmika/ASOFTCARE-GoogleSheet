@@ -107,6 +107,12 @@
           data.insuranceContactPhone || "";
         document.getElementById("pay-insuranceCase").value =
           data.insuranceCase || "";
+        document.getElementById("pay-insuranceGroupNumber").value =
+          data.insuranceGroupNumber || "";
+        document.getElementById("pay-relationshipToPolicyholder").value =
+          data.relationshipToPolicyholder || "";
+        document.getElementById("pay-insuranceNote").value =
+          data.insuranceNote || "";
 
         togglePaymentDetailFields();
         togglePayDigitalInputs();
@@ -181,6 +187,9 @@
       insuranceContactName: formData.get("insuranceContactName"),
       insuranceContactPhone: formData.get("insuranceContactPhone"),
       insuranceCase: formData.get("insuranceCase"),
+      insuranceGroupNumber: formData.get("insuranceGroupNumber"),
+      relationshipToPolicyholder: formData.get("relationshipToPolicyholder"),
+      insuranceNote: formData.get("insuranceNote"),
     };
 
     google.script.run

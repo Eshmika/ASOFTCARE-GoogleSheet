@@ -74,6 +74,9 @@ function getOrCreateClientSheet() {
     "Insurance Member Id",
     "Insurance Contact Phone",
     "Insurance Case",
+    "Insurance Group Number",
+    "Relationship to Policyholder",
+    "Insurance Note",
   ];
 
   if (!sheet) {
@@ -359,6 +362,9 @@ function handleClientSubmission(data) {
     data.insuranceMemberId || "",
     data.insuranceContactPhone || "",
     data.insuranceCase || "",
+    data.insuranceGroupNumber || "",
+    data.relationshipToPolicyholder || "",
+    data.insuranceNote || "",
   ];
 
   sheet.appendRow(rowData);
@@ -651,6 +657,9 @@ function getClientDetails(id) {
     insuranceMemberId: row[151] || "",
     insuranceContactPhone: row[152] || "",
     insuranceCase: row[153] || "",
+    insuranceGroupNumber: row[154] || "",
+    relationshipToPolicyholder: row[155] || "",
+    insuranceNote: row[156] || "",
   };
 }
 
@@ -839,6 +848,9 @@ function updateClient(data) {
     data.insuranceMemberId || "",
     data.insuranceContactPhone || "",
     data.insuranceCase || "",
+    data.insuranceGroupNumber || "",
+    data.relationshipToPolicyholder || "",
+    data.insuranceNote || "",
   ];
 
   sheet
