@@ -1,4 +1,31 @@
 <script>
+  // Format phone number as (XXX) XXX-XXXX
+  function formatPhone(input) {
+    const selectionStart = input.selectionStart;
+    const oldLength = input.value.length;
+    let value = input.value.replace(/\D/g, "");
+
+    if (value.length > 10) {
+      value = value.substring(0, 10);
+    }
+
+    let formattedValue = "";
+    if (value.length > 0) {
+      formattedValue = "(" + value.substring(0, 3);
+      if (value.length > 3) {
+        formattedValue += ") " + value.substring(3, 6);
+      }
+      if (value.length > 6) {
+        formattedValue += "-" + value.substring(6, 10);
+      }
+    }
+
+    input.value = formattedValue;
+    const newLength = formattedValue.length;
+    let newCursorPos = selectionStart + (newLength - oldLength);
+    if (newCursorPos < 0) newCursorPos = 0;
+    input.setSelectionRange(newCursorPos, newCursorPos);
+  }
   function togglePaymentDetailFields() {
     const checks = document.getElementsByName("payOption");
     const options = Array.from(checks)
@@ -157,6 +184,14 @@
         btn.textContent = "Save Payment Details";
         return;
       }
+    }
+
+    const insurancePhone = formData.get("insuranceContactPhone");
+    if (insurancePhone && insurancePhone.replace(/\D/g, "").length !== 10) {
+      Swal.fire("Error", "Insurance Contact Phone must be 10 digits.", "error");
+      btn.disabled = false;
+      btn.textContent = "Save Payment Details";
+      return;
     }
 
     const data = {
