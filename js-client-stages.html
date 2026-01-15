@@ -96,21 +96,30 @@
                 `;
           }
         } else if (stage === "Insurance Verification") {
-          if (client.status === "Cancelled service") {
+          if (client.status === "Archived") {
             actionHtml = `
                         <div class="flex items-center justify-end gap-2">
-                            <span class="text-xs text-red-600 font-bold mr-2">Failed</span>
-                            <button onclick="undoFailClient('${client.id}')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1">
+                            <span class="text-xs text-gray-600 font-bold mr-2">Archived</span>
+                            <button onclick="undoArchiveClient('${client.id}')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1">
                                 <i class="ph ph-arrow-u-up-left"></i> Undo
                             </button>
                         </div>
                     `;
           } else if (client.paymentFilled) {
             actionHtml = `
-                    <div class="flex items-center justify-end gap-2">
-                        <button onclick="passInsurance('${client.id}')" class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold hover:bg-green-200">Pass</button>
-                        <button onclick="failInsurance('${client.id}')" class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold hover:bg-red-200">Fail</button>
-                        <button onclick="openPaymentForm('${client.id}')" class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-bold hover:bg-gray-200">Edit</button>
+                    <div class="flex flex-wrap items-center justify-end gap-2">
+                        <button onclick="openInsurancePendingDialog('${client.id}')" class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-bold hover:bg-yellow-200 flex items-center gap-1">
+                            <i class="ph ph-clock"></i> Pending
+                        </button>
+                        <button onclick="openInsuranceDeniedDialog('${client.id}')" class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold hover:bg-red-200 flex items-center gap-1">
+                            <i class="ph ph-x-circle"></i> Denied
+                        </button>
+                        <button onclick="approveInsurance('${client.id}')" class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold hover:bg-green-200 flex items-center gap-1">
+                            <i class="ph ph-check-circle"></i> Approval
+                        </button>
+                        <button onclick="openPaymentForm('${client.id}')" class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-bold hover:bg-gray-200 flex items-center gap-1">
+                            <i class="ph ph-pencil"></i> Edit
+                        </button>
                     </div>
                 `;
           } else {
@@ -291,22 +300,58 @@
     });
   }
 
-  function failInsurance(clientId) {
+  function openInsurancePendingDialog(clientId) {
     Swal.fire({
-      title: "Fail Insurance Verification?",
-      text: "Mark this verification as failed? (Status will be set to Cancelled)",
-      icon: "warning",
+      title: "Mark as Pending",
+      html: `
+        <div class="text-left space-y-4">
+          <p class="text-gray-700 text-sm font-semibold mb-3">What is the pending reason?</p>
+          <div class="space-y-2">
+            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 transition">
+              <input type="radio" name="pendingReason" value="Verify Coverage" class="w-4 h-4 text-blue-600" />
+              <span class="text-sm text-gray-700">Verify Coverage</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 transition">
+              <input type="radio" name="pendingReason" value="Eligibility" class="w-4 h-4 text-blue-600" />
+              <span class="text-sm text-gray-700">Eligibility</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 transition">
+              <input type="radio" name="pendingReason" value="Financial Approval" class="w-4 h-4 text-blue-600" />
+              <span class="text-sm text-gray-700">Financial Approval</span>
+            </label>
+          </div>
+          <div class="mt-4">
+            <label class="text-sm font-semibold text-gray-700 block mb-2">Add Note (Optional):</label>
+            <textarea id="pendingNote" class="w-full p-3 border border-gray-300 rounded-lg text-sm" placeholder="Add any additional details..." rows="3" style="font-family: inherit;"></textarea>
+          </div>
+        </div>
+      `,
       showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      confirmButtonText: "Yes, Fail",
+      confirmButtonColor: "#f59e0b",
+      confirmButtonText: "Mark Pending",
+      cancelButtonText: "Cancel",
+      didOpen: () => {
+        // Set the first option as selected by default
+        document.querySelector('input[name="pendingReason"]').checked = true;
+      },
     }).then((result) => {
       if (result.isConfirmed) {
+        const reason = document.querySelector(
+          'input[name="pendingReason"]:checked'
+        )?.value;
+        const note = document.getElementById("pendingNote").value;
+
+        if (!reason) {
+          Swal.fire("Error", "Please select a reason", "error");
+          return;
+        }
+
         google.script.run
           .withSuccessHandler((res) => {
             if (res.success) {
               Swal.fire(
-                "Failed",
-                "Insurance verification has been marked as failed.",
+                "Pending",
+                `Status updated to Pending - ${reason}`,
                 "success"
               );
               loadClientStages();
@@ -314,7 +359,149 @@
               Swal.fire("Error", res.message, "error");
             }
           })
-          .updateClientStatus(clientId, "Cancelled service");
+          .updateClientInsurancePending(clientId, reason, note);
+      }
+    });
+  }
+
+  function openInsuranceDeniedDialog(clientId) {
+    Swal.fire({
+      title: "Mark as Denied",
+      html: `
+        <div class="text-left space-y-4">
+          <p class="text-gray-700 text-sm font-semibold mb-3">What is the reason for denial?</p>
+          <div class="space-y-2">
+            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-red-50 transition">
+              <input type="radio" name="denialReason" value="Insurance Declined" class="w-4 h-4 text-red-600" />
+              <span class="text-sm text-gray-700">Insurance Declined</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-red-50 transition">
+              <input type="radio" name="denialReason" value="Financial Ineligibility" class="w-4 h-4 text-red-600" />
+              <span class="text-sm text-gray-700">Financial Ineligibility</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-red-50 transition">
+              <input type="radio" name="denialReason" value="Cancel Service" class="w-4 h-4 text-red-600" />
+              <span class="text-sm text-gray-700">Cancel Service</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-red-50 transition">
+              <input type="radio" name="denialReason" value="Other" class="w-4 h-4 text-red-600" />
+              <span class="text-sm text-gray-700">Other</span>
+            </label>
+          </div>
+          <div class="mt-4">
+            <label class="text-sm font-semibold text-gray-700 block mb-2">Add Note (Required):</label>
+            <textarea id="denialNote" class="w-full p-3 border border-gray-300 rounded-lg text-sm" placeholder="Explain the reason for denial..." rows="3" style="font-family: inherit;"></textarea>
+          </div>
+          <div class="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+            <p class="text-xs text-orange-800"><strong>Note:</strong> This client will be moved to Archive.</p>
+          </div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      confirmButtonText: "Mark Denied & Archive",
+      cancelButtonText: "Cancel",
+      didOpen: () => {
+        document.querySelector('input[name="denialReason"]').checked = true;
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const reason = document.querySelector(
+          'input[name="denialReason"]:checked'
+        )?.value;
+        const note = document.getElementById("denialNote").value;
+
+        if (!reason) {
+          Swal.fire("Error", "Please select a reason", "error");
+          return;
+        }
+
+        if (!note.trim()) {
+          Swal.fire(
+            "Error",
+            "Please add a note explaining the denial",
+            "error"
+          );
+          return;
+        }
+
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (res.success) {
+              Swal.fire(
+                "Denied",
+                "Client has been marked as Denied and archived.",
+                "success"
+              );
+              loadClientStages();
+            } else {
+              Swal.fire("Error", res.message, "error");
+            }
+          })
+          .updateClientInsuranceDenied(clientId, reason, note);
+      }
+    });
+  }
+
+  function approveInsurance(clientId) {
+    Swal.fire({
+      title: "Approve Insurance Verification?",
+      html: `
+        <div class="space-y-4">
+          <p class="text-gray-700">Move this client to the Client Agreements stage?</p>
+          <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p class="text-sm text-green-800"><i class="ph ph-check-circle"></i> <strong>Insurance verification approved.</strong> Client is ready for next stage.</p>
+          </div>
+        </div>
+      `,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#65c027",
+      confirmButtonText: "Yes, Approve",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (res.success) {
+              Swal.fire(
+                "Approved!",
+                "Client moved to Client Agreements stage.",
+                "success"
+              );
+              loadClientStages();
+            } else {
+              Swal.fire("Error", res.message, "error");
+            }
+          })
+          .updateClientStage(clientId, "Client Agreements");
+      }
+    });
+  }
+
+  function undoArchiveClient(clientId) {
+    Swal.fire({
+      title: "Undo Archive?",
+      text: "Restore this client back to Insurance Verification stage?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3b82f6",
+      confirmButtonText: "Yes, Restore",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (res.success) {
+              Swal.fire(
+                "Restored",
+                "Client has been restored to Insurance Verification.",
+                "success"
+              );
+              loadClientStages();
+            } else {
+              Swal.fire("Error", res.message, "error");
+            }
+          })
+          .restoreClientFromArchive(clientId);
       }
     });
   }
