@@ -26,6 +26,18 @@
     if (newCursorPos < 0) newCursorPos = 0;
     input.setSelectionRange(newCursorPos, newCursorPos);
   }
+  function toggleBusinessName() {
+    const holderType = document.getElementById("pay-holderType").value;
+    const businessNameContainer = document.getElementById(
+      "pay-businessNameContainer"
+    );
+    if (holderType === "Business") {
+      businessNameContainer.classList.remove("hidden");
+    } else {
+      businessNameContainer.classList.add("hidden");
+    }
+  }
+
   function togglePaymentDetailFields() {
     const checks = document.getElementsByName("payOption");
     const options = Array.from(checks)
@@ -141,7 +153,8 @@
         document.getElementById("pay-insuranceAddNote").value =
           data.insuranceAddNote || "";
 
-        togglePaymentDetailFields();              
+        toggleBusinessName();
+        togglePaymentDetailFields();
       })
       .getClientDetails(clientId);
   }
