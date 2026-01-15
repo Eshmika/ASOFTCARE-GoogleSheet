@@ -417,6 +417,9 @@ function getClientList() {
         paymentFilled: headers.includes("Payment Type")
           ? row[headers.indexOf("Payment Type")].trim() !== ""
           : false,
+        insuranceNote: headers.includes("Insurance Add Note")
+          ? row[headers.indexOf("Insurance Add Note")]
+          : "",
         lastReviewed: reviewIdx > -1 ? row[reviewIdx] : "--",
       };
     })
