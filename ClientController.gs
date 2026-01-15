@@ -76,6 +76,7 @@ function getOrCreateClientSheet() {
     "Insurance Case",
     "Insurance Claim",
     "Insurance Add Note",
+    "Pay Business Name",
   ];
 
   if (!sheet) {
@@ -363,6 +364,7 @@ function handleClientSubmission(data) {
     data.insuranceCase || "",
     data.insuranceClaim || "",
     data.insuranceAddNote || "",
+    data.payBusinessName || "",
   ];
 
   sheet.appendRow(rowData);
@@ -657,6 +659,7 @@ function getClientDetails(id) {
     insuranceCase: row[153] || "",
     insuranceClaim: row[154] || "",
     insuranceAddNote: row[155] || "",
+    payBusinessName: row[156] || "",
   };
 }
 
@@ -847,6 +850,7 @@ function updateClient(data) {
     data.insuranceCase || "",
     data.insuranceClaim || "",
     data.insuranceAddNote || "",
+    data.payBusinessName || "",
   ];
 
   sheet

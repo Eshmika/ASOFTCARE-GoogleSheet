@@ -56,6 +56,12 @@
       digitalType === "phone" ? "Phone Number" : "Email Address";
   }
 
+  function toggleBusinessNameField() {
+    const holderType = document.getElementById("pay-holderType").value;
+    const container = document.getElementById("pay-businessNameContainer");
+    container.classList.toggle("hidden", holderType !== "Business");
+  }
+
   function openPaymentForm(clientId) {
     toggleClientStageView("payment-form");
     document.getElementById("paymentDetailsForm").reset();
@@ -86,6 +92,8 @@
           data.payAccountType || "Checking";
         document.getElementById("pay-holderType").value =
           data.payHolderType || "Personal";
+        document.getElementById("pay-businessName").value =
+          data.payBusinessName || "";
         document.getElementById("pay-accountNum").value =
           data.payAccountNum || "";
         document.getElementById("pay-routingNum").value =
@@ -141,6 +149,7 @@
 
         togglePaymentDetailFields();
         togglePayDigitalInputs();
+        toggleBusinessNameField();
       })
       .getClientDetails(clientId);
   }
@@ -204,6 +213,7 @@
       payHolderName: formData.get("payHolderName"),
       payAccountType: formData.get("payAccountType"),
       payHolderType: formData.get("payHolderType"),
+      payBusinessName: formData.get("payBusinessName"),
       payAccountNum: formData.get("payAccountNum"),
       payRoutingNum: formData.get("payRoutingNum"),
       payDigitalFullName: formData.get("payDigitalFullName"),
