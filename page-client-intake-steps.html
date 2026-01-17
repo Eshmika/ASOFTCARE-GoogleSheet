@@ -1,0 +1,562 @@
+<!doctype html>
+<html>
+  <head>
+    <base target="_top" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 py-12">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-3xl font-bold text-gray-900">Allevia Senior Care</h1>
+        <p class="text-green-600 font-medium mt-2">Client Intake Packet</p>
+        <p class="text-gray-600 mt-4 max-w-2xl mx-auto">
+          Welcome, <?= clientData.firstName ?>! Please review and sign the
+          following documents to begin services.
+        </p>
+      </div>
+
+      <!-- Progress Indicator -->
+      <div class="mb-8">
+        <div class="flex items-center justify-center space-x-2">
+          <div class="text-sm text-gray-600">
+            <span class="font-bold text-green-600"><?= completedCount ?></span>
+            of 6 documents completed
+          </div>
+        </div>
+        <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
+          <div
+            class="bg-green-600 h-2 rounded-full transition-all"
+            style="width: <?= (completedCount / 6) * 100 ?>%"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Document Steps Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <!-- Step 1: Client Service Agreement -->
+        <div
+          class="relative bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all hover:shadow-md"
+        >
+          <div class="flex flex-col">
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-4 <?= status.agreement ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-200 bg-gray-50 text-gray-400' ?>"
+              >
+                <? if (status.agreement) { ?>
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                <? } else { ?> 1 <? } ?>
+              </div>
+              <? if (status.agreement) { ?>
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+              >
+                Signed
+              </span>
+              <? } ?>
+            </div>
+
+            <h3 class="text-lg font-bold text-gray-900 mb-2">
+              Client Service Agreement
+            </h3>
+            <p class="text-sm text-gray-500 mb-6 flex-grow">
+              Main agreement outlining the terms of service and care.
+            </p>
+
+            <? if (!status.agreement) { ?>
+            <a
+              href="<?= scriptUrl ?>?page=client-sign-agreement&id=<?= clientId ?>"
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 transition-colors"
+            >
+              Review & Sign
+              <svg
+                class="ml-2 -mr-1 w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                ></path>
+              </svg>
+            </a>
+            <? } else { ?>
+            <button
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            >
+              View Document
+            </button>
+            <? } ?>
+          </div>
+        </div>
+
+        <!-- Step 2: Exhibit A - Cost of Services -->
+        <div
+          class="relative bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all hover:shadow-md"
+        >
+          <div class="flex flex-col">
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-4 <?= status.exhibitA ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-200 bg-gray-50 text-gray-400' ?>"
+              >
+                <? if (status.exhibitA) { ?>
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                <? } else { ?> 2 <? } ?>
+              </div>
+              <? if (status.exhibitA) { ?>
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+              >
+                Signed
+              </span>
+              <? } ?>
+            </div>
+
+            <h3 class="text-lg font-bold text-gray-900 mb-2">
+              Exhibit A – Cost of Services
+            </h3>
+            <p class="text-sm text-gray-500 mb-6 flex-grow">
+              Detailed breakdown of service costs and payment terms.
+            </p>
+
+            <? if (!status.exhibitA) { ?>
+            <a
+              href="<?= scriptUrl ?>?page=client-sign-exhibit-a&id=<?= clientId ?>"
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 transition-colors"
+            >
+              Review & Sign
+              <svg
+                class="ml-2 -mr-1 w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                ></path>
+              </svg>
+            </a>
+            <? } else { ?>
+            <button
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            >
+              View Document
+            </button>
+            <? } ?>
+          </div>
+        </div>
+
+        <!-- Step 3: Exhibit B - Plan of Care -->
+        <div
+          class="relative bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all hover:shadow-md"
+        >
+          <div class="flex flex-col">
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-4 <?= status.exhibitB ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-200 bg-gray-50 text-gray-400' ?>"
+              >
+                <? if (status.exhibitB) { ?>
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                <? } else { ?> 3 <? } ?>
+              </div>
+              <? if (status.exhibitB) { ?>
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+              >
+                Signed
+              </span>
+              <? } ?>
+            </div>
+
+            <h3 class="text-lg font-bold text-gray-900 mb-2">
+              Exhibit B – Plan of Care
+            </h3>
+            <p class="text-sm text-gray-500 mb-6 flex-grow">
+              Personalized care plan tailored to your needs.
+            </p>
+
+            <? if (!status.exhibitB) { ?>
+            <a
+              href="<?= scriptUrl ?>?page=client-sign-exhibit-b&id=<?= clientId ?>"
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 transition-colors"
+            >
+              Review & Sign
+              <svg
+                class="ml-2 -mr-1 w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                ></path>
+              </svg>
+            </a>
+            <? } else { ?>
+            <button
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            >
+              View Document
+            </button>
+            <? } ?>
+          </div>
+        </div>
+
+        <!-- Step 4: Bill of Rights -->
+        <div
+          class="relative bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all hover:shadow-md"
+        >
+          <div class="flex flex-col">
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-4 <?= status.billOfRights ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-200 bg-gray-50 text-gray-400' ?>"
+              >
+                <? if (status.billOfRights) { ?>
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                <? } else { ?> 4 <? } ?>
+              </div>
+              <? if (status.billOfRights) { ?>
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+              >
+                Signed
+              </span>
+              <? } ?>
+            </div>
+
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Bill of Rights</h3>
+            <p class="text-sm text-gray-500 mb-6 flex-grow">
+              Your rights and responsibilities as a client.
+            </p>
+
+            <? if (!status.billOfRights) { ?>
+            <a
+              href="<?= scriptUrl ?>?page=client-sign-bill-of-rights&id=<?= clientId ?>"
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 transition-colors"
+            >
+              Review & Sign
+              <svg
+                class="ml-2 -mr-1 w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                ></path>
+              </svg>
+            </a>
+            <? } else { ?>
+            <button
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            >
+              View Document
+            </button>
+            <? } ?>
+          </div>
+        </div>
+
+        <!-- Step 5: HIPAA Release -->
+        <div
+          class="relative bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all hover:shadow-md"
+        >
+          <div class="flex flex-col">
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-4 <?= status.hipaa ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-200 bg-gray-50 text-gray-400' ?>"
+              >
+                <? if (status.hipaa) { ?>
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                <? } else { ?> 5 <? } ?>
+              </div>
+              <? if (status.hipaa) { ?>
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+              >
+                Signed
+              </span>
+              <? } ?>
+            </div>
+
+            <h3 class="text-lg font-bold text-gray-900 mb-2">HIPAA Release</h3>
+            <p class="text-sm text-gray-500 mb-6 flex-grow">
+              Authorization to release health information.
+            </p>
+
+            <? if (!status.hipaa) { ?>
+            <a
+              href="<?= scriptUrl ?>?page=client-sign-hipaa&id=<?= clientId ?>"
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 transition-colors"
+            >
+              Review & Sign
+              <svg
+                class="ml-2 -mr-1 w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                ></path>
+              </svg>
+            </a>
+            <? } else { ?>
+            <button
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            >
+              View Document
+            </button>
+            <? } ?>
+          </div>
+        </div>
+
+        <!-- Step 6: Notice of Privacy Practices -->
+        <div
+          class="relative bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all hover:shadow-md"
+        >
+          <div class="flex flex-col">
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-4 <?= status.privacy ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-200 bg-gray-50 text-gray-400' ?>"
+              >
+                <? if (status.privacy) { ?>
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                <? } else { ?> 6 <? } ?>
+              </div>
+              <? if (status.privacy) { ?>
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+              >
+                Signed
+              </span>
+              <? } ?>
+            </div>
+
+            <h3 class="text-lg font-bold text-gray-900 mb-2">
+              Notice of Privacy Practices
+            </h3>
+            <p class="text-sm text-gray-500 mb-6 flex-grow">
+              Acknowledgment of privacy practices and policies.
+            </p>
+
+            <? if (!status.privacy) { ?>
+            <a
+              href="<?= scriptUrl ?>?page=client-sign-privacy&id=<?= clientId ?>"
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 transition-colors"
+            >
+              Review & Sign
+              <svg
+                class="ml-2 -mr-1 w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                ></path>
+              </svg>
+            </a>
+            <? } else { ?>
+            <button
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            >
+              View Document
+            </button>
+            <? } ?>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Section -->
+      <? if (completedCount === 6) { ?>
+      <div
+        class="bg-green-50 border border-green-200 rounded-xl p-6 text-center"
+      >
+        <div class="flex items-center justify-center mb-4">
+          <svg
+            class="w-12 h-12 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">
+          All Documents Signed!
+        </h3>
+        <p class="text-gray-600 mb-6">
+          Thank you for completing all required documents. Click below to submit
+          your intake packet.
+        </p>
+        <button
+          onclick="submitIntakePacket()"
+          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
+        >
+          Submit Intake Packet
+          <svg
+            class="ml-2 -mr-1 w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M14 5l7 7m0 0l-7 7m7-7H3"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <? } else { ?>
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+        <p class="text-gray-700">
+          <span class="font-bold"
+            ><?= 6 - completedCount ?>
+            document(s)</span
+          >
+          remaining. Please complete all documents before submitting.
+        </p>
+      </div>
+      <? } ?>
+
+      <!-- Footer -->
+      <div class="mt-12 text-center text-sm text-gray-500">
+        <p>&copy; 2025 Allevia Senior Care. All rights reserved.</p>
+        <p class="mt-2">
+          Need help? Contact us at
+          <a
+            href="mailto:info@alleviaseniorcare.com"
+            class="text-green-600 hover:underline"
+            >info@alleviaseniorcare.com</a
+          >
+          or call 440-9079599
+        </p>
+      </div>
+    </div>
+
+    <script>
+      function submitIntakePacket() {
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (res.success) {
+              alert(
+                "Thank you! Your intake packet has been submitted successfully.",
+              );
+              window.location.reload();
+            } else {
+              alert("Error: " + res.message);
+            }
+          })
+          .submitClientIntakePacket("<?= clientId ?>");
+      }
+    </script>
+  </body>
+</html>

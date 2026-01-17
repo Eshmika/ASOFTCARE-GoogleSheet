@@ -318,8 +318,8 @@ function sendIntakePacketEmail(clientId) {
 
     const subject = `Your Allevia Senior Care Intake Packet`;
     const webAppUrl = ScriptApp.getService().getUrl();
-    // Assuming a page for signing documents exists or will be created
-    const signLink = `${webAppUrl}?page=client-intake-sign&id=${clientId}`;
+    // Link to the step-by-step signing page
+    const signLink = `${webAppUrl}?page=client-intake-steps&id=${clientId}`;
     // Assuming a page/link for downloading records exists
     const downloadLink = `${webAppUrl}?page=client-intake-records&id=${clientId}`;
 
@@ -361,11 +361,11 @@ function sendIntakePacketEmail(clientId) {
           <div style="margin-top: 20px; margin-bottom: 20px;">
             <p style="font-weight: bold; color: #2563eb; margin-bottom: 10px;">📘 For Your Records:</p>
             <ul style="color: #555; font-size: 14px; line-height: 1.6;">
-              <li>Policies and Procedures</li>
+              <li><a href="https://drive.google.com/file/d/1ImB8W3OQ9AsZMJZL5cfe1fgB3zj2jO7Y/view?usp=sharing" style="color: #2563eb; text-decoration: none;">Policies and Procedures</a></li>
               <li>Health Information Sheet for Emergency</li>
             </ul>
              <div style="text-align: center; margin-top: 15px;">
-              <a href="${downloadLink}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block;">
+              <a href="" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block;">
                   Download For Your Records
               </a>
             </div>
