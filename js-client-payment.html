@@ -29,7 +29,7 @@
   function toggleBusinessName() {
     const holderType = document.getElementById("pay-holderType").value;
     const businessNameContainer = document.getElementById(
-      "pay-businessNameContainer"
+      "pay-businessNameContainer",
     );
     if (holderType === "Business") {
       businessNameContainer.classList.remove("hidden");
@@ -46,16 +46,19 @@
 
     const bankSection = document.getElementById("pay-bankDetails");
     const digitalSection = document.getElementById("pay-digitalDetails");
+    const cardSection = document.getElementById("pay-cardDetails");
     const checkSection = document.getElementById("pay-checkDetails");
 
     const hasBank =
       options.includes("direct deposit") || options.includes("bank deposit");
     const hasDigital =
       options.includes("zelle") || options.includes("apple pay");
+    const hasCard = options.includes("credit/debit card");
     const hasCheck = options.includes("check");
 
     bankSection.classList.toggle("hidden", !hasBank);
     digitalSection.classList.toggle("hidden", !hasDigital);
+    cardSection.classList.toggle("hidden", !hasCard);
     checkSection.classList.toggle("hidden", !hasCheck);
   }
 
@@ -117,6 +120,14 @@
         document.getElementById("pay-digitalValue").value =
           data.payDigitalValue || "";
 
+        // Fill Card Details
+        document.getElementById("pay-cardName").value = data.payCardName || "";
+        document.getElementById("pay-cardNumber").value =
+          data.payCardNumber || "";
+        document.getElementById("pay-cardExpiry").value =
+          data.payCardExpiry || "";
+        document.getElementById("pay-cardCVV").value = data.payCardCVV || "";
+
         // Fill Insurance Details
         document.getElementById("pay-insuranceFirstName").value =
           data.firstName || "";
@@ -170,7 +181,7 @@
 
     const paymentType = formData.get("paymentType");
     const selectedRadio = Array.from(
-      document.getElementsByName("payOption")
+      document.getElementsByName("payOption"),
     ).find((rb) => rb.checked);
     const paymentOptions = selectedRadio ? selectedRadio.value : "";
 
@@ -224,6 +235,10 @@
       payDigitalFullName: formData.get("payDigitalFullName"),
       payDigitalType: formData.get("payDigitalType"),
       payDigitalValue: formData.get("payDigitalValue"),
+      payCardName: formData.get("payCardName"),
+      payCardNumber: formData.get("payCardNumber"),
+      payCardExpiry: formData.get("payCardExpiry"),
+      payCardCVV: formData.get("payCardCVV"),
       insuranceCompany: formData.get("insuranceCompany"),
       insuranceAddress: formData.get("insuranceAddress"),
       insuranceApt: formData.get("insuranceApt"),

@@ -77,6 +77,10 @@ function getOrCreateClientSheet() {
     "Insurance Claim",
     "Insurance Add Note",
     "Pay Business Name",
+    "Pay Card Name",
+    "Pay Card Number",
+    "Pay Card Expiry",
+    "Pay Card CVV",
   ];
 
   if (!sheet) {
@@ -182,17 +186,25 @@ function getOrCreateClientSheet() {
       .getRange(1, 1, 1, sheet.getLastColumn())
       .getValues()[0];
 
-    // If "Mobility" is missing, we append the additional headers to the end
-    if (!currentHeaders.includes("Mobility")) {
-      const startCol = currentHeaders.length + 1;
-      sheet
-        .getRange(1, startCol, 1, additionalHeaders.length)
-        .setValues([additionalHeaders]);
-      sheet
-        .getRange(1, startCol, 1, additionalHeaders.length)
-        .setBackground("#65c027")
-        .setFontColor("white")
-        .setFontWeight("bold");
+    // If "Mobility" or "Pay Card Name" is missing, we check and append missing headers
+    if (
+      !currentHeaders.includes("Mobility") ||
+      !currentHeaders.includes("Pay Card Name")
+    ) {
+      const missingHeaders = additionalHeaders.filter(
+        (h) => !currentHeaders.includes(h),
+      );
+      if (missingHeaders.length > 0) {
+        const startCol = currentHeaders.length + 1;
+        sheet
+          .getRange(1, startCol, 1, missingHeaders.length)
+          .setValues([missingHeaders]);
+        sheet
+          .getRange(1, startCol, 1, missingHeaders.length)
+          .setBackground("#65c027")
+          .setFontColor("white")
+          .setFontWeight("bold");
+      }
     }
   }
   return sheet;
@@ -365,6 +377,10 @@ function handleClientSubmission(data) {
     data.insuranceClaim || "",
     data.insuranceAddNote || "",
     data.payBusinessName || "",
+    data.payCardName || "",
+    data.payCardNumber || "",
+    data.payCardExpiry || "",
+    data.payCardCVV || "",
   ];
 
   sheet.appendRow(rowData);
@@ -663,6 +679,10 @@ function getClientDetails(id) {
     insuranceClaim: row[154] || "",
     insuranceAddNote: row[155] || "",
     payBusinessName: row[156] || "",
+    payCardName: row[157] || "",
+    payCardNumber: row[158] || "",
+    payCardExpiry: row[159] || "",
+    payCardCVV: row[160] || "",
   };
 }
 
@@ -854,6 +874,10 @@ function updateClient(data) {
     data.insuranceClaim || "",
     data.insuranceAddNote || "",
     data.payBusinessName || "",
+    data.payCardName || "",
+    data.payCardNumber || "",
+    data.payCardExpiry || "",
+    data.payCardCVV || "",
   ];
 
   sheet
