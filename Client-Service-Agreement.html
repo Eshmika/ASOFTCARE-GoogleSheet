@@ -477,6 +477,13 @@
           btn.innerText = "Signing & Uploading...";
           btn.disabled = true;
 
+          const formData = {
+            clientId: document.querySelector('input[name="clientId"]').value,
+            fullName: document.querySelector('input[name="fullName"]').value,
+            signature: signature,
+            signDate: document.querySelector('input[name="signDate"]').value,
+          };
+
           google.script.run
             .withSuccessHandler(function (response) {
               if (response.success) {
@@ -508,9 +515,7 @@
               btn.innerText = originalText;
               btn.disabled = false;
             })
-            .submitClientAgreement(
-              document.getElementById("clientAgreementForm")
-            );
+            .submitClientAgreement(formData);
         });
     </script>
   </body>

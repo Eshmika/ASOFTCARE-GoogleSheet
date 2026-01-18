@@ -81,6 +81,12 @@ function getOrCreateClientSheet() {
     "Pay Card Number",
     "Pay Card Expiry",
     "Pay Card CVV",
+    "Agreement Link",
+    "Exhibit A Link",
+    "Exhibit B Link",
+    "Bill of Rights Link",
+    "HIPAA Link",
+    "Privacy Link",
   ];
 
   if (!sheet) {
@@ -192,7 +198,7 @@ function getOrCreateClientSheet() {
       !currentHeaders.includes("Pay Card Name")
     ) {
       const missingHeaders = additionalHeaders.filter(
-        (h) => !currentHeaders.includes(h),
+        (h) => !currentHeaders.includes(h)
       );
       if (missingHeaders.length > 0) {
         const startCol = currentHeaders.length + 1;
@@ -683,6 +689,12 @@ function getClientDetails(id) {
     payCardNumber: row[158] || "",
     payCardExpiry: row[159] || "",
     payCardCVV: row[160] || "",
+    agreementLink: row[161] || "",
+    exhibitALink: row[162] || "",
+    exhibitBLink: row[163] || "",
+    billOfRightsLink: row[164] || "",
+    hipaaLink: row[165] || "",
+    privacyLink: row[166] || "",
   };
 }
 
