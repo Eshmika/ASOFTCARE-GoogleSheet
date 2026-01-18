@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <base target="_top" />
@@ -22,8 +22,9 @@
         <h1 class="text-3xl font-bold text-gray-900">Allevia Senior Care</h1>
         <p class="text-green-600 font-medium mt-2">Client Intake Packet</p>
         <p class="text-gray-600 mt-4 max-w-2xl mx-auto">
-          Welcome, <?= clientData.firstName ?>! Please review and sign the
-          following documents to begin services.
+          Welcome,
+          <?= clientData.firstName ?>! Please review and sign the following
+          documents to begin services.
         </p>
       </div>
 
@@ -68,7 +69,9 @@
                     d="M5 13l4 4L19 7"
                   ></path>
                 </svg>
-                <? } else { ?> 1 <? } ?>
+                <? } else { ?>
+                1
+                <? } ?>
               </div>
               <? if (status.agreement) { ?>
               <span
@@ -106,12 +109,6 @@
                 ></path>
               </svg>
             </a>
-            <? } else { ?>
-            <button
-              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-            >
-              View Document
-            </button>
             <? } ?>
           </div>
         </div>
@@ -139,7 +136,9 @@
                     d="M5 13l4 4L19 7"
                   ></path>
                 </svg>
-                <? } else { ?> 2 <? } ?>
+                <? } else { ?>
+                2
+                <? } ?>
               </div>
               <? if (status.exhibitA) { ?>
               <span
@@ -177,12 +176,6 @@
                 ></path>
               </svg>
             </a>
-            <? } else { ?>
-            <button
-              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-            >
-              View Document
-            </button>
             <? } ?>
           </div>
         </div>
@@ -210,7 +203,9 @@
                     d="M5 13l4 4L19 7"
                   ></path>
                 </svg>
-                <? } else { ?> 3 <? } ?>
+                <? } else { ?>
+                3
+                <? } ?>
               </div>
               <? if (status.exhibitB) { ?>
               <span
@@ -248,12 +243,6 @@
                 ></path>
               </svg>
             </a>
-            <? } else { ?>
-            <button
-              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-            >
-              View Document
-            </button>
             <? } ?>
           </div>
         </div>
@@ -281,7 +270,9 @@
                     d="M5 13l4 4L19 7"
                   ></path>
                 </svg>
-                <? } else { ?> 4 <? } ?>
+                <? } else { ?>
+                4
+                <? } ?>
               </div>
               <? if (status.billOfRights) { ?>
               <span
@@ -317,12 +308,6 @@
                 ></path>
               </svg>
             </a>
-            <? } else { ?>
-            <button
-              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-            >
-              View Document
-            </button>
             <? } ?>
           </div>
         </div>
@@ -350,7 +335,9 @@
                     d="M5 13l4 4L19 7"
                   ></path>
                 </svg>
-                <? } else { ?> 5 <? } ?>
+                <? } else { ?>
+                5
+                <? } ?>
               </div>
               <? if (status.hipaa) { ?>
               <span
@@ -386,12 +373,6 @@
                 ></path>
               </svg>
             </a>
-            <? } else { ?>
-            <button
-              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-            >
-              View Document
-            </button>
             <? } ?>
           </div>
         </div>
@@ -419,7 +400,9 @@
                     d="M5 13l4 4L19 7"
                   ></path>
                 </svg>
-                <? } else { ?> 6 <? } ?>
+                <? } else { ?>
+                6
+                <? } ?>
               </div>
               <? if (status.privacy) { ?>
               <span
@@ -457,12 +440,6 @@
                 ></path>
               </svg>
             </a>
-            <? } else { ?>
-            <button
-              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-            >
-              View Document
-            </button>
             <? } ?>
           </div>
         </div>
@@ -548,7 +525,7 @@
           .withSuccessHandler((res) => {
             if (res.success) {
               alert(
-                "Thank you! Your intake packet has been submitted successfully.",
+                "Thank you! Your intake packet has been submitted successfully."
               );
               window.location.reload();
             } else {

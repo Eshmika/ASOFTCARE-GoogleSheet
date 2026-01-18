@@ -410,6 +410,7 @@ function getClientList() {
 
   const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   const reviewIdx = headers.indexOf("Last Reviewed");
+  const agreementLinkIdx = headers.indexOf("Agreement Link");
 
   return data
     .filter((row) => row[0] !== "")
@@ -444,6 +445,7 @@ function getClientList() {
           ? row[headers.indexOf("Insurance Add Note")]
           : "",
         lastReviewed: reviewIdx > -1 ? row[reviewIdx] : "--",
+        agreementLink: agreementLinkIdx > -1 ? row[agreementLinkIdx] : "",
       };
     })
     .reverse();

@@ -159,8 +159,17 @@
                 `;
         }
       } else if (stage === "Client Agreements") {
+        let viewPdfBtn = "";
+        if (client.agreementLink) {
+          viewPdfBtn = `
+                        <a href="${client.agreementLink}" target="_blank" class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-bold hover:bg-blue-200 flex items-center gap-1 no-underline">
+                            <i class="ph ph-file-pdf"></i> View PDF
+                        </a>
+                    `;
+        }
         actionHtml = `
                     <div class="flex items-center justify-end gap-2 px-4">
+                        ${viewPdfBtn}
                         <button onclick="resendIntakeEmail('${client.id}')" class="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-bold hover:bg-orange-200 flex items-center gap-1">
                             <i class="ph ph-envelope-simple"></i> Re-send Email
                         </button>
@@ -280,7 +289,7 @@
               Swal.fire(
                 "Archived",
                 "Lead has been moved to archives.",
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
@@ -345,7 +354,7 @@
               Swal.fire(
                 "Archived",
                 "Assessment has been moved to archives.",
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
@@ -418,7 +427,7 @@
     }).then((result) => {
       if (result.isConfirmed) {
         const reason = document.querySelector(
-          'input[name="pendingReason"]:checked',
+          'input[name="pendingReason"]:checked'
         )?.value;
         const note = document.getElementById("pendingNote").value;
 
@@ -433,7 +442,7 @@
               Swal.fire(
                 "Pending",
                 `Status updated to Pending - ${reason}`,
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
@@ -488,7 +497,7 @@
     }).then((result) => {
       if (result.isConfirmed) {
         const reason = document.querySelector(
-          'input[name="denialReason"]:checked',
+          'input[name="denialReason"]:checked'
         )?.value;
         const note = document.getElementById("denialNote").value;
 
@@ -501,7 +510,7 @@
           Swal.fire(
             "Error",
             "Please add a note explaining the denial",
-            "error",
+            "error"
           );
           return;
         }
@@ -512,7 +521,7 @@
               Swal.fire(
                 "Denied",
                 "Client has been marked as Denied and archived.",
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
@@ -563,7 +572,7 @@
                       (emailRes.success
                         ? "Email sent!"
                         : "Warning: Email failed to send."),
-                    "success",
+                    "success"
                   );
                   loadClientStages();
                 })
@@ -593,7 +602,7 @@
           Swal.fire(
             "Sent!",
             "Intake packet email has been re-sent.",
-            "success",
+            "success"
           );
         } else {
           Swal.fire("Error", res.message, "error");
@@ -618,7 +627,7 @@
               Swal.fire(
                 "Restored",
                 "Client moved back to Insurance Verification.",
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
@@ -655,7 +664,7 @@
               Swal.fire(
                 "Restored",
                 `Client has been restored to ${targetStage}.`,
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
