@@ -323,33 +323,13 @@
             <? if (isPdf) { ?>
             <div class="flex gap-3 items-start">
               <span style="font-size: 18px; line-height: 1">☑</span>
-              <span
-                >By executing this Agreement, the parties intend it to be
-                applicable as of the Effective Date.</span
-              >
-            </div>
-            <? } else { ?>
-            <label class="flex gap-3 items-start cursor-pointer">
-              <input
-                type="checkbox"
-                name="agree"
-                required
-                class="mt-0.5 accent-[#65c027] w-4 h-4 shrink-0"
-              />
-              By executing this Agreement, the parties intend it to be
-              applicable as of the Effective Date.
-            </label>
-            <? } ?>
-          </div>
-
-          <div class="space-y-2 mt-2 pt-4">
-            <? if (isPdf) { ?>
-            <div class="flex gap-3 items-start">
-              <span style="font-size: 18px; line-height: 1">☑</span>
               <span class="italic"
                 >By electronically typing or signing my name below, I
                 acknowledge and agree that this electronic representation of my
-                name constitutes my legal signature under applicable law.</span
+                name constitutes my legal signature. This electronic signature
+                has the same validity, force, and effect as a handwritten
+                signature under applicable state and federal law, including the
+                ESIGN Act and the Uniform Electronic Transactions Act.</span
               >
             </div>
             <? } else { ?>
@@ -363,7 +343,10 @@
               <span class="italic"
                 >By electronically typing or signing my name below, I
                 acknowledge and agree that this electronic representation of my
-                name constitutes my legal signature under applicable law.</span
+                name constitutes my legal signature. This electronic signature
+                has the same validity, force, and effect as a handwritten
+                signature under applicable state and federal law, including the
+                ESIGN Act and the Uniform Electronic Transactions Act.</span
               >
             </label>
             <? } ?>
@@ -456,18 +439,18 @@
         .addEventListener("submit", function (e) {
           e.preventDefault();
 
-          const fullName = document
+          const fullNameLower = document
             .querySelector('input[name="fullName"]')
             .value.trim()
             .replace(/\s+/g, " ")
             .toLowerCase();
-          const signature = document
-            .querySelector('input[name="signature"]')
-            .value.trim()
-            .replace(/\s+/g, " ")
-            .toLowerCase();
+          const signatureInput = document.querySelector(
+            'input[name="signature"]'
+          );
+          const signatureRaw = signatureInput.value.trim().replace(/\s+/g, " "); // Keep original case
+          const signatureLower = signatureRaw.toLowerCase();
 
-          if (fullName !== signature) {
+          if (fullNameLower !== signatureLower) {
             alert("Digital Signature must match the Full Name exactly.");
             return;
           }
@@ -480,7 +463,7 @@
           const formData = {
             clientId: document.querySelector('input[name="clientId"]').value,
             fullName: document.querySelector('input[name="fullName"]').value,
-            signature: signature,
+            signature: signatureRaw, // Send original case
             signDate: document.querySelector('input[name="signDate"]').value,
           };
 

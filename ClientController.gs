@@ -192,10 +192,11 @@ function getOrCreateClientSheet() {
       .getRange(1, 1, 1, sheet.getLastColumn())
       .getValues()[0];
 
-    // If "Mobility" or "Pay Card Name" is missing, we check and append missing headers
+    // If "Mobility" or "Pay Card Name" or "Agreement Link" is missing, we check and append missing headers
     if (
       !currentHeaders.includes("Mobility") ||
-      !currentHeaders.includes("Pay Card Name")
+      !currentHeaders.includes("Pay Card Name") ||
+      !currentHeaders.includes("Agreement Link")
     ) {
       const missingHeaders = additionalHeaders.filter(
         (h) => !currentHeaders.includes(h)

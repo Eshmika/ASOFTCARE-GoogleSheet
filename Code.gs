@@ -257,125 +257,120 @@ function doGet(e) {
       );
     }
   }
-
-  // Handler for client agreement submission: generates PDF, uploads to Drive, saves link
-  function submitClientAgreement(form) {
-    try {
-      var id = form.clientId;
-      var signature = form.signature;
-      var signDate = form.signDate;
-      if (!id) return { success: false, message: "Missing Client ID" };
-
-      // 1. Get Client Details
-      var details = getClientDetails(id);
-      if (!details) return { success: false, message: "Client not found" };
-
-      // 2. Prepare Data for PDF
-      details["Signature"] = signature;
-      details["SignDate"] = signDate;
-
-      // 3. Generate PDF
-      var template = HtmlService.createTemplateFromFile(
-        "Client-Service-Agreement"
-      );
-      template.clientId = id;
-      template.clientData = details;
-      template.isPdf = true;
-      template.scriptUrl = ScriptApp.getService().getUrl();
-
-      var pdfBlob = template
-        .evaluate()
-        .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-        .addMetaTag("viewport", "width=device-width, initial-scale=1")
-        .getAs(MimeType.PDF)
-        .setName(
-          `${details.firstName} ${details.lastName} - Client Services Agreement.pdf`
-        );
-
-      // 4. Get/Create Drive Folder
-      const parentFolderId = "1VKJ2B4LtUmysr6bAEQqRsMwsMEySU_0f";
-      let folder;
-      try {
-        folder = getClientFolder(parentFolderId, details);
-      } catch (err) {
-        return {
-          success: false,
-          message: "Error accessing/creating Drive folder: " + err,
-        };
-      }
-
-      // 5. Upload to Drive
-      var file = folder.createFile(pdfBlob);
-      file.setSharing(
-        DriveApp.Access.ANYONE_WITH_LINK,
-        DriveApp.Permission.VIEW
-      );
-
-      // 6. Save Link to Sheet
-      var fileUrl = file.getUrl();
-      var saved = saveClientDocumentLink(id, "agreement", fileUrl);
-
-      if (!saved)
-        return { success: false, message: "Failed to save link to database" };
-
-      return { success: true, url: fileUrl };
-    } catch (e) {
-      return { success: false, message: e.toString() };
-    }
-  }
-
-  // Helper: Get or create client folder in Drive
-  function getClientFolder(parentFolderId, details) {
-    var parentFolder = DriveApp.getFolderById(parentFolderId);
-    var folderName = `${details.firstName} ${details.lastName}`.trim();
-
-    var folders = parentFolder.getFoldersByName(folderName);
-    if (folders.hasNext()) {
-      return folders.next();
-    } else {
-      return parentFolder.createFolder(folderName);
-    }
-  }
-
-  // Helper: Save client document link to sheet
-  function saveClientDocumentLink(clientId, docType, fileUrl) {
-    try {
-      var sheet = getOrCreateClientSheet();
-      var lastRow = sheet.getLastRow();
-      if (lastRow <= 1) return false;
-
-      var ids = sheet
-        .getRange(2, 1, lastRow - 1, 1)
-        .getValues()
-        .flat();
-      var rowIndex = ids.indexOf(clientId);
-      if (rowIndex === -1) return false;
-
-      // Determine which column to save to
-      var headers = sheet
-        .getRange(1, 1, 1, sheet.getLastColumn())
-        .getValues()[0];
-      var colName = docType === "agreement" ? "Agreement Link" : null;
-
-      if (!colName) return false;
-
-      var colIndex = headers.indexOf(colName);
-      if (colIndex === -1) return false;
-
-      var rowNum = rowIndex + 2; // +2 for header and 0-based index
-      sheet.getRange(rowNum, colIndex + 1).setValue(fileUrl);
-
-      return true;
-    } catch (e) {
-      console.error("Error saving document link: " + e.toString());
-      return false;
-    }
-  }
   return HtmlService.createTemplateFromFile("index")
     .evaluate()
     .setTitle("Senior Care Admin Panel")
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag("viewport", "width=device-width, initial-scale=1");
+}
+
+// Handler for client agreement submission: generates PDF, uploads to Drive, saves link
+function submitClientAgreement(form) {
+  try {
+    var id = form.clientId;
+    var signature = form.signature;
+    var signDate = form.signDate;
+    if (!id) return { success: false, message: "Missing Client ID" };
+
+    // 1. Get Client Details
+    var details = getClientDetails(id);
+    if (!details) return { success: false, message: "Client not found" };
+
+    // 2. Prepare Data for PDF
+    details["Signature"] = signature;
+    details["SignDate"] = signDate;
+
+    // 3. Generate PDF
+    var template = HtmlService.createTemplateFromFile(
+      "Client-Service-Agreement"
+    );
+    template.clientId = id;
+    template.clientData = details;
+    template.isPdf = true;
+    template.scriptUrl = ScriptApp.getService().getUrl();
+
+    var pdfBlob = template
+      .evaluate()
+      .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+      .addMetaTag("viewport", "width=device-width, initial-scale=1")
+      .getAs(MimeType.PDF)
+      .setName(
+        `${details.firstName} ${details.lastName} - Client Services Agreement.pdf`
+      );
+
+    // 4. Get/Create Drive Folder
+    const parentFolderId = "1VKJ2B4LtUmysr6bAEQqRsMwsMEySU_0f";
+    let folder;
+    try {
+      folder = getClientFolder(parentFolderId, details);
+    } catch (err) {
+      return {
+        success: false,
+        message: "Error accessing/creating Drive folder: " + err,
+      };
+    }
+
+    // 5. Upload to Drive
+    var file = folder.createFile(pdfBlob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+    // 6. Save Link to Sheet
+    var fileUrl = file.getUrl();
+    var saved = saveClientDocumentLink(id, "agreement", fileUrl);
+
+    if (!saved)
+      return { success: false, message: "Failed to save link to database" };
+
+    return { success: true, url: fileUrl };
+  } catch (e) {
+    return { success: false, message: e.toString() };
+  }
+}
+
+// Helper: Get or create client folder in Drive
+function getClientFolder(parentFolderId, details) {
+  var parentFolder = DriveApp.getFolderById(parentFolderId);
+  var folderName = `${details.firstName} ${details.lastName}`.trim();
+
+  var folders = parentFolder.getFoldersByName(folderName);
+  if (folders.hasNext()) {
+    return folders.next();
+  } else {
+    return parentFolder.createFolder(folderName);
+  }
+}
+
+// Helper: Save client document link to sheet
+function saveClientDocumentLink(clientId, docType, fileUrl) {
+  try {
+    var sheet = getOrCreateClientSheet();
+    var lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return false;
+
+    var ids = sheet
+      .getRange(2, 1, lastRow - 1, 1)
+      .getValues()
+      .flat();
+    var rowIndex = ids.indexOf(clientId);
+    if (rowIndex === -1) return false;
+
+    // Determine which column to save to
+    var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    var colName = docType === "agreement" ? "Agreement Link" : null;
+
+    if (!colName) return false;
+
+    var colIndex = headers.indexOf(colName);
+    if (colIndex === -1) return false;
+
+    var rowNum = rowIndex + 2; // +2 for header and 0-based index
+    sheet.getRange(rowNum, colIndex + 1).setValue(fileUrl);
+
+    return true;
+  } catch (e) {
+    console.error("Error saving document link: " + e.toString());
+    return false;
+  }
 }
 
 function include(filename) {
