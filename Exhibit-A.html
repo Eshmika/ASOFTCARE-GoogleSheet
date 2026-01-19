@@ -237,38 +237,78 @@
         </div>
 
         <!-- Insurance -->
-        <div class="mt-6 border-t pt-4">
-          <div class="flex items-center mb-4">
-            <span class="checkbox"></span>
-            <span class="ml-2 font-semibold">Insurance Payment</span>
-          </div>
+        <div class="mt-8">
+          <h3 class="font-semibold underline mb-4">
+            Insurance Payment Information
+          </h3>
 
-          <div style="padding-left: 1.5rem" class="space-y-4">
-            <div class="flex gap-4">
-              <div style="flex: 1">
-                <span>Insurance Company Name:</span>
-                <div class="field"></div>
-              </div>
-              <div style="flex: 1">
-                <span>Policy Number:</span>
-                <div class="field"></div>
-              </div>
-            </div>
+          <div
+            class="border border-gray-300 rounded-lg overflow-hidden shadow-sm"
+          >
+            <div class="p-0">
+              <table class="w-full m-0" style="margin-bottom: 0">
+                <!-- Row 1: Company & Policy -->
+                <tr>
+                  <td
+                    class="w-1/2 p-3 border-r border-b border-gray-300 align-top"
+                  >
+                    <span
+                      class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1"
+                      >Insurance Company Name</span
+                    >
+                    <div class="text-base font-semibold text-gray-900">
+                      <?= clientData.insuranceCompany || '-' ?>
+                    </div>
+                  </td>
+                  <td class="w-1/2 p-3 border-b border-gray-300 align-top">
+                    <span
+                      class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1"
+                      >Policy Number</span
+                    >
+                    <div class="text-base font-semibold text-gray-900">
+                      <?= clientData.insurancePolicy || '-' ?>
+                    </div>
+                  </td>
+                </tr>
 
-            <div>
-              <span>Insurance Company Address:</span>
-              <div class="field"></div>
-            </div>
+                <!-- Row 2: Address -->
+                <tr>
+                  <td
+                    colspan="2"
+                    class="p-3 border-b border-gray-300 align-top bg-gray-50"
+                  >
+                    <span
+                      class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1"
+                      >Insurance Company Address</span
+                    >
+                    <div class="text-base text-gray-800">
+                      <?= [clientData.insuranceAddress, clientData.insuranceApt, clientData.insuranceCity, clientData.insuranceState, clientData.insuranceZip].filter(Boolean).join(', ') || '-' ?>
+                    </div>
+                  </td>
+                </tr>
 
-            <div class="flex gap-4">
-              <div style="flex: 1">
-                <span>Contact Name:</span>
-                <div class="field"></div>
-              </div>
-              <div style="flex: 1">
-                <span>Contact Phone #:</span>
-                <div class="field"></div>
-              </div>
+                <!-- Row 3: Contact Info -->
+                <tr>
+                  <td class="w-1/2 p-3 border-r border-gray-300 align-top">
+                    <span
+                      class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1"
+                      >Contact Name</span
+                    >
+                    <div class="text-base font-medium text-gray-900">
+                      <?= clientData.insuranceContactName || '-' ?>
+                    </div>
+                  </td>
+                  <td class="w-1/2 p-3 align-top">
+                    <span
+                      class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1"
+                      >Contact Phone #</span
+                    >
+                    <div class="text-base font-medium text-gray-900">
+                      <?= clientData.insuranceContactPhone || '-' ?>
+                    </div>
+                  </td>
+                </tr>
+              </table>
             </div>
           </div>
         </div>
