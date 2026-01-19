@@ -426,13 +426,38 @@
               <label class="input-label block font-semibold mb-2"
                 >SIGNATURE:</label
               >
-              <div class="w-48">
+              <? if (isPdf) { ?>
+              <div
+                style="
+                  width: 150px;
+                  height: 60px;
+                  border-bottom: 1px solid #000;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
                 <img
-                  src="https://drive.google.com/uc?export=view&id=11Oxbip4bK0lI_uZMtuKj3_pa7f3YZknW"
+                  src="https://lh3.googleusercontent.com/d/11Oxbip4bK0lI_uZMtuKj3_pa7f3YZknW"
                   alt="Allevia Senior Care Signature"
-                  class="w-full h-auto"
+                  style="
+                    max-width: 150px;
+                    max-height: 60px;
+                    width: auto;
+                    height: auto;
+                  "
                 />
               </div>
+              <? } else { ?>
+              <div style="width: 150px">
+                <img
+                  src="https://drive.google.com/uc?export=download&id=11Oxbip4bK0lI_uZMtuKj3_pa7f3YZknW"
+                  alt="Allevia Senior Care Signature"
+                  class="w-full h-auto"
+                  onerror="this.src='https://lh3.googleusercontent.com/d/11Oxbip4bK0lI_uZMtuKj3_pa7f3YZknW'"
+                />
+              </div>
+              <? } ?>
             </div>
           </div>
 
