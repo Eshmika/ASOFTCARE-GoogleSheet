@@ -510,12 +510,22 @@
           google.script.run
             .withSuccessHandler(function (response) {
               if (response.success) {
-                alert(
-                  "Agreement signed successfully! You may now close this tab."
-                );
-                if (response.url) {
-                  window.location.href = response.url;
-                }
+                const clientId = document.querySelector(
+                  'input[name="clientId"]'
+                ).value;
+                const targetUrl =
+                  "<?= scriptUrl ?>?page=client-intake-steps&id=" + clientId;
+
+                const container = document.querySelector(".max-w-3xl");
+                container.innerHTML = `
+                <div class="p-10 text-center">
+                  <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                  </div>
+                  <h2 class="text-xl font-bold mb-2">Notice Signed</h2>
+                  <p class="text-gray-600 mb-6">Thank you for signing the Notice of Privacy Practices.</p>
+                  <a href="${targetUrl}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700">Return to Intake Steps</a>
+                </div>`;
                 window.scrollTo(0, 0);
               } else {
                 alert("Error: " + response.message);
