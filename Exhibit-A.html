@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
+    <base target="_top" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -8,7 +9,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <title>Client Bill of Rights - Allevia Senior Care</title>
+    <title>Exhibit A - Cost of Services</title>
     <style>
       body { font-family: "Inter", sans-serif; }
 
@@ -18,20 +19,15 @@
       .font-bold { font-weight: 700; }
       .font-semibold { font-weight: 600; }
       .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-      .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
       .underline { text-decoration: underline; }
       .italic { font-style: italic; }
       .mb-6 { margin-bottom: 1.5rem; }
       .mb-4 { margin-bottom: 1rem; }
-      .mb-2 { margin-bottom: 0.5rem; }
       .mt-2 { margin-top: 0.5rem; }
       .mt-4 { margin-top: 1rem; }
-      .mt-6 { margin-top: 1.5rem; }
       .p-8 { padding: 2rem; }
       .px-8 { padding-left: 2rem; padding-right: 2rem; }
       .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
-      .space-y-2 > * + * { margin-top: 0.5rem; }
-      .list-none { list-style: none; padding: 0; margin: 0; }
       .w-full { width: 100%; }
       .border { border-width: 1px; border-style: solid; }
       .border-gray-300 { border-color: #d1d5db; }
@@ -43,24 +39,12 @@
       .gap-3 { gap: 0.75rem; }
       .items-start { align-items: flex-start; }
       .text-red-500 { color: #ef4444; }
-      .rounded-xl { border-radius: 0.75rem; }
-      .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-      .min-h-screen { min-height: 100vh; }
-      .bg-gray-50 { background-color: #f9fafb; }
-      .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
-      .px-4 { padding-left: 1rem; padding-right: 1rem; }
-      .mx-auto { margin-left: auto; margin-right: auto; }
-      .max-w-3xl { max-width: 48rem; }
-      .bg-white { background-color: #ffffff; }
-      .overflow-hidden { overflow: hidden; }
-      .ml-4 { margin-left: 1rem; }
-      .ml-6 { margin-left: 1.5rem; }
-      .space-y-1 > * + * { margin-top: 0.25rem; }
-      .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-      .pt-6 { padding-top: 1.5rem; }
-      .border-t-2 { border-top-width: 2px; }
-      .shrink-0 { flex-shrink: 0; }
-      .mt-8 { margin-top: 2rem; }
+
+      /* Custom styles for Exhibit A Elements */
+      table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+      td { border: 1px solid #d1d5db; padding: 0.75rem; vertical-align: top; }
+      .field { border-bottom: 1px solid #000; min-height: 1.5em; margin-top: 5px; }
+      .checkbox { display: inline-block; width: 1rem; height: 1rem; border: 1px solid #000; margin-right: 0.25rem; vertical-align: middle; }
 
       /* PDF Specific Overrides */
       <? if (isPdf) { ?>
@@ -68,168 +52,159 @@
         .shadow-lg { box-shadow: none !important; }
         .rounded-xl { border-radius: 0 !important; }
         .no-pdf { display: none !important; }
-        .pdf-value {
-            border: none;
-            border-bottom: 1px solid #000;
-            padding: 4px 0;
-            width: 100%;
-            display: block;
-            font-family: 'Courier New', Courier, monospace;
-        }
+        .container-box { border: none !important; max-width: 100% !important; box-shadow: none !important; }
       <? } ?>
     </style>
   </head>
   <body class="bg-gray-50 min-h-screen py-10 px-4">
-    <div
-      class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden"
-    >
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden container-box">
       <div class="px-8 py-6">
-        <h1 class="text-2xl font-bold text-center">CLIENT BILL OF RIGHTS</h1>
+        <h1 class="text-2xl font-bold text-center">            
+            EXHIBIT A - COST OF SERVICES
+        </h1>
       </div>
 
       <div class="p-8">
-        <!-- Page 1 -->
-        <div id="page-1" class="mb-6">
-          <section>
-            <p class="text-justify mb-4">
-              As a Client of Allevia llc dba Allevia Senior Care "Allevia" you
-              have the right to:
-            </p>
+        <p class="text-justify mb-6">
+          <b>THIS</b> Exhibit A - Cost of Services, shall be incorporated into and
+          considered part of the Client Services Agreement ("<b>Agreement</b>") by and
+          between Allevia Senior Care and the CLIENT and/or Financially
+          Responsible Party by this reference.
+        </p>
 
-            <ol class="space-y-2 text-justify">
-              <li>
-                1. Obtain the name of the person supervising your care, and
-                clear instructions on how that person may be contacted.
-              </li>
-              <li>
-                2. Request that communications of protected health information
-                be received by alternative means or at alternative locations.
-              </li>
-              <li>3. Inspect a copy of your protected health information.</li>
-              <li>4. Amend your protected health information.</li>
-              <li>
-                5. Receive a list of the services offered by Allevia and those
-                being provided to you.
-              </li>
-              <li>
-                6. Be informed of the process of submitting and addressing
-                complaints to both Allevia and Department of Health. All
-                Complaints will be acted upon without retaliation to Client.
-                Allevia can be reached twenty-four (24) hours a day at the
-                numbers listed below:
-                <div class="contact-info mt-2 ml-4">
-                  <strong>Allevia (Northeast Ohio)</strong><br />
-                  440-907-9599<br /><br />
-                  <strong>Department of Health</strong><br />
-                  614-466-3543
+        <h3 class="font-semibold underline mt-6 mb-4">Projected Service Hours and Costs</h3>
+        <table class="w-full mb-6">
+            <tr>
+                <td style="width: 25%;">
+                    Projected Hours Per Week:<br>
+                    <div class="field"></div>
+                </td>
+                <td style="width: 25%;">
+                    Level of Care Needed:<br>
+                    <div class="field"></div>
+                </td>
+                <td style="width: 25%;">
+                    Rate Per Hour:<br>
+                    <div class="field"></div>
+                </td>
+                <td style="width: 25%;">
+                    OVERTIME<br>
+                    <div class="mt-2">
+                        <span class="checkbox"></span> YES &nbsp; <span class="checkbox"></span> NO
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Projected Weekly Cost:<br>
+                    <div class="field"></div>
+                </td>
+                <td colspan="2">
+                    Projected Monthly Cost:<br>
+                    <div class="field"></div>
+                </td>
+            </tr>
+        </table>
+
+         <div class="mb-4">
+            <span class="font-semibold">Billing Address:</span>
+            <div class="field w-full"></div>
+        </div>
+
+        <h3 class="font-semibold underline mt-6 mb-4">Initial Deposit</h3>
+        <div class="flex gap-4 mb-4">
+            <div style="flex: 1;">
+                <span>Initial Deposit Amount:</span>
+                <div class="field"></div>
+            </div>
+             <div style="flex: 1;">
+                <span>Date:</span>
+                <div class="field"></div>
+            </div>
+        </div>
+
+        <h3 class="font-semibold underline mt-6 mb-4">Payment Method:</h3>
+        
+        <!-- Visa -->
+        <div class="mb-4">
+            <div class="flex items-center mb-2">
+                 <span class="checkbox"></span> <span class="ml-2 font-semibold">VISA #:</span>
+            </div>
+            <div class="field w-full"></div>
+        </div>
+        
+        <div class="mb-4">
+            <span>Name as it Appears on Credit Card:</span>
+            <div class="field w-full"></div>
+        </div>
+        
+         <!-- Mastercard -->
+        <div class="mb-4 flex gap-4">
+            <div style="flex: 1;">
+                <div class="flex items-center mb-2">
+                    <span class="checkbox"></span> <span class="ml-2 font-semibold">MasterCard #:</span>
                 </div>
-              </li>
-              <li>7. Participate in the development of your own Care Plan.</li>
-              <li>
-                8. Receive information regarding access to the Ohio State
-                Department of Health's registry of Home Care providers.
-                (https://publicapps.odh.ohio.gov/eid/Provider_Search.aspx)
-              </li>
-              <li>
-                9. Have your property treated with courtesy, respect, privacy,
-                and be free from abuse, neglect, and discrimination.
-              </li>
-              <li>10. Refuse treatment or services.</li>
-              <li>
-                11. Have your personal information & records confidential as
-                well as accessible to you upon request.
-              </li>
-              <li>
-                12. Be informed about advanced directives and the agency's
-                responsibility to implement them.
-              </li>
-              <li>
-                13. Receive a fully itemized billing statement at least monthly.
-                Upon your request, this statement shall include the dates and
-                services provided.
-              </li>
-              <li>
-                14. Receive an evaluation of care being offered at periodic
-                intervals as scheduled below or as the need may arise:
-                <ul class="ml-6 mt-2 space-y-1">
-                  <li>
-                    a. Within seventy-two (72) hours of initiation of care.
-                  </li>
-                  <li>b. Second (2nd) or third (3rd) week of care.</li>
-                  <li>c. Monthly evaluations thereafter.</li>
-                </ul>
-              </li>
-              <li>
-                15. In the case of any emergency situation Allevia
-                employees/Contractor are instructed to call "911".
-              </li>
-            </ol>
-          </section>
+                <div class="field w-full"></div>
+            </div>
+             <div style="flex: 1;">
+                 <div class="mb-2">Credit Card Exp. Date:</div>
+                 <div class="field w-full"></div>
+             </div>
         </div>
 
-        <!-- Page 2 -->
-        <div id="page-2" class="mb-6 pt-6">
-          <div class="header mb-4">
-            <h2 class="font-semibold">Allevia Senior Care Duties</h2>
-          </div>
-
-          <section>
-            <h3 class="font-semibold mb-4">Allevia Required to:</h3>
-            <ol start="2" class="space-y-2 text-justify">
-              <li>
-                1. Maintain the privacy of your protected health information.
-              </li>
-              <li>
-                2. Provide you with notice of our legal duties and privacy
-                practices with respect to your protected health information.
-              </li>
-              <li>
-                3. Provide you with access to an electronic copy of your
-                protected health information, in the electronic form and format
-                requested by you, if it is readily producible, or, if not
-                readily producible, in an electronic form and format as agreed
-                to by us and you; if you decline to accept any of the electronic
-                formats readily producible by us, we must provide you a hard
-                copy to fulfill your request; we may impose a reasonable
-                cost-based fee to review the access request and to produce the
-                electronic copy.
-              </li>
-              <li>
-                4. Transmit a copy of protected health information, if requested
-                by you, directly to another person designated by you; such a
-                request must be in writing, be signed by you, and clearly
-                identify the designated person and where to send the copy of the
-                protected health information.
-              </li>
-              <li>
-                5. Notify you following a breach of your unsecured protected
-                health information; and
-              </li>
-              <li>
-                6. Abide by the terms of the Notice of Privacy Practices that is
-                in effect.
-              </li>
-            </ol>
-          </section>
-
-          <section class="mt-6 text-justify">
-            <p>
-              Allevia reserves the right to change the terms of this notice at
-              any time and to immediately make the new notice provisions
-              effective for all protected health information that it maintains.
-              If the terms of this notice are materially changed, Allevia will
-              promptly provide you with the revised notice by e-mail.
-            </p>
-          </section>
+        <!-- Check -->
+         <div class="mb-6">
+            <span>Check #:</span>
+            <div class="field w-full"></div>
         </div>
 
-        <!-- Signing Form -->
-        <form id="billOfRightsForm" class="space-y-6 mt-8 pt-6 border-t-2">
-          <div class="space-y-2">
+        <!-- Insurance -->
+        <div class="mt-6 border-t pt-4">
+            <div class="flex items-center mb-4">
+                 <span class="checkbox"></span> <span class="ml-2 font-semibold">Insurance Payment</span>
+            </div>
+            
+            <div style="padding-left: 1.5rem;" class="space-y-4">
+                <div class="flex gap-4">
+                     <div style="flex: 1;">
+                        <span>Insurance Company Name:</span>
+                        <div class="field"></div>
+                     </div>
+                      <div style="flex: 1;">
+                        <span>Policy Number:</span>
+                        <div class="field"></div>
+                     </div>
+                </div>
+                
+                 <div>
+                    <span>Insurance Company Address:</span>
+                    <div class="field"></div>
+                 </div>
+
+                 <div class="flex gap-4">
+                     <div style="flex: 1;">
+                        <span>Contact Name:</span>
+                        <div class="field"></div>
+                     </div>
+                      <div style="flex: 1;">
+                        <span>Contact Phone #:</span>
+                        <div class="field"></div>
+                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <p class="mt-8 italic">
+          Executed and applicable as of the Effective Date of the Agreement.
+        </p>
+
+        <!-- Signing Form Section (Same as Agreement) -->
+        <form id="clientAgreementForm" class="space-y-6 mt-8 border-t pt-6">
+           <div class="space-y-2 mt-2 pt-4">
             <? if (isPdf) { ?>
             <div class="flex gap-3 items-start">
               <span style="font-size: 18px; line-height: 1">☑</span>
-              <span class="italic text-sm"
+              <span class="italic"
                 >By electronically typing or signing my name below, I
                 acknowledge and agree that this electronic representation of my
                 name constitutes my legal signature. This electronic signature
@@ -246,7 +221,7 @@
                 required
                 class="mt-0.5 accent-[#65c027] w-4 h-4 shrink-0"
               />
-              <span class="italic text-sm"
+              <span class="italic"
                 >By electronically typing or signing my name below, I
                 acknowledge and agree that this electronic representation of my
                 name constitutes my legal signature. This electronic signature
@@ -323,6 +298,52 @@
             <? } ?>
           </div>
 
+          <!-- Allevia Senior Care Signature -->
+          <div class="mt-6 pt-6 border-t border-gray-200">
+            <div class="mb-4">
+              <p class="font-semibold text-lg">
+                ALLEVIA SENIOR CARE (Allevia llc)
+              </p>
+            </div>
+            <div>
+              <label class="input-label block font-semibold mb-2"
+                >SIGNATURE:</label
+              >
+              <? if (isPdf) { ?>
+              <div
+                style="
+                  width: 150px;
+                  height: 60px;
+                  border-bottom: 1px solid #000;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                <img
+                  src="https://lh3.googleusercontent.com/d/11Oxbip4bK0lI_uZMtuKj3_pa7f3YZknW"
+                  alt="Allevia Senior Care Signature"
+                  style="
+                    max-width: 150px;
+                    max-height: 60px;
+                    width: auto;
+                    height: auto;
+                  "
+                />
+              </div>
+              <? } else { ?>
+              <div style="width: 150px">
+                <img
+                  src="https://drive.google.com/uc?export=download&id=11Oxbip4bK0lI_uZMtuKj3_pa7f3YZknW"
+                  alt="Allevia Senior Care Signature"
+                  class="w-full h-auto"
+                  onerror="this.src='https://lh3.googleusercontent.com/d/11Oxbip4bK0lI_uZMtuKj3_pa7f3YZknW'"
+                />
+              </div>
+              <? } ?>
+            </div>
+          </div>
+
           <div class="pt-4 no-pdf">
             <button
               type="submit"
@@ -331,10 +352,10 @@
               Sign Agreement
             </button>
           </div>
-        </form>
+        </form>       
       </div>
     </div>
-
+    
     <script>
       // Set default local date-time to now (for user convenience)
       (function setDefaultDateTimeLocal() {
@@ -352,7 +373,7 @@
       })();
 
       document
-        .getElementById("billOfRightsForm")
+        .getElementById("clientAgreementForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
 
@@ -427,15 +448,15 @@
                 const targetUrl =
                   "<?= scriptUrl ?>?page=client-intake-steps&id=" + clientId;
 
-                const container = document.querySelector(".max-w-3xl");
+                const container = document.querySelector(".container-box");
                 container.innerHTML = `
                 <div class="p-10 text-center">
-                  <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
-                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                  <div style="width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background-color: #dcfce7; display: flex; align-items: center; justify-content: center;">
+                    <svg style="width: 32px; height: 32px; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                   </div>
-                  <h2 class="text-xl font-bold mb-2">Bill of Rights Signed</h2>
-                  <p class="text-gray-600 mb-6">Thank you for signing the Client Bill of Rights.</p>
-                  <a href="${targetUrl}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700">Return to Intake Steps</a>
+                  <h2 class="text-xl font-bold mb-2">Agreement Signed</h2>
+                  <p class="text-gray-600 mb-6">Thank you for signing Exhibit A.</p>
+                  <a href="${targetUrl}" style="display: inline-flex; align-items: center; padding: 12px 24px; border: none; border-radius: 6px; background-color: #16a34a; color: white; text-decoration: none; font-weight: 500;">Return to Intake Steps</a>
                 </div>`;
                 window.scrollTo(0, 0);
               } else {
@@ -449,7 +470,7 @@
               btn.innerText = originalText;
               btn.disabled = false;
             })
-            .submitBillOfRights(formData);
+            .submitClientExhibitA(formData);
         });
     </script>
   </body>
