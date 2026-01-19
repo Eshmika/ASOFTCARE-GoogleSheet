@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base target="_top" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Notice of Privacy Practices - Allevia Senior Care</title>
+    <style>
+      body { font-family: "Inter", sans-serif; }
+
+      /* Tailwind Polyfill for PDF Generation */
+      .text-center { text-align: center; }
+      .text-justify { text-align: justify; }
+      .font-bold { font-weight: 700; }
+      .font-semibold { font-weight: 600; }
+      .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+      .underline { text-decoration: underline; }
+      .italic { font-style: italic; }
+      .mb-6 { margin-bottom: 1.5rem; }
+      .mb-4 { margin-bottom: 1rem; }
+      .mt-2 { margin-top: 0.5rem; }
+      .mt-4 { margin-top: 1rem; }
+      .p-8 { padding: 2rem; }
+      .px-8 { padding-left: 2rem; padding-right: 2rem; }
+      .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+      .space-y-2 > * + * { margin-top: 0.5rem; }
+      .list-none { list-style: none; padding: 0; margin: 0; }
+      .w-full { width: 100%; }
+      .border { border-width: 1px; border-style: solid; }
+      .border-gray-300 { border-color: #d1d5db; }
+      .rounded-md { border-radius: 0.375rem; }
+      .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+      .p-2 { padding: 0.5rem; }
+      .block { display: block; }
+      .flex { display: flex; }
+      .gap-3 { gap: 0.75rem; }
+      .items-start { align-items: flex-start; }
+      .text-red-500 { color: #ef4444; }
+
+      /* PDF Specific Overrides */
+      <? if (isPdf) { ?>
+        body { background-color: white !important; padding: 0 !important; }
+        .shadow-lg { box-shadow: none !important; }
+        .rounded-xl { border-radius: 0 !important; }
+        .no-pdf { display: none !important; }
+        .pdf-value {
+            border: none;
+            border-bottom: 1px solid #000;
+            padding: 4px 0;
+            width: 100%;
+            display: block;
+            font-family: 'Courier New', Courier, monospace;
+        }
+      <? } ?>
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen py-10 px-4">
+    <div
+      class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden"
+    >
+      <div class="px-8 py-6">
+        <h1 class="text-2xl font-bold text-center">
+          NOTICE OF PRIVACY PRACTICES
+        </h1>
+      </div>
+
+      <div class="p-8">
+        <div id="page-1" class="mb-6">
+          <div class="section">
+            <p class="font-bold mb-4">
+              THIS NOTICE DESCRIBES HOW MEDICAL INFORMATION ABOUT YOU MAY BE
+              USED AND DISCLOSED AND HOW YOU CAN GET ACCESS TO THIS INFORMATION.
+              PLEASE REVIEW IT CAREFULLY.
+            </p>
+            <p class="text-justify mb-4">
+              Allevia llc dba Allevia Senior Care, a referral service,
+              (hereinafter referred to as "Allevia") is providing you with this
+              information in compliance with Federal laws governing the use of
+              private health information protected under the law. It is
+              Allevia's policy that all protected health information, including
+              demographic and contact data, that Allevia possesses only be used
+              and disclosed as necessary for treatment by health care
+              practitioners, payment, and operations purposes; to comply with
+              applicable law; as otherwise indicated in this notice; and as
+              authorized by you. Allevia will attempt to mitigate, to the extent
+              practicable, any harmful effects from its misuse or inappropriate
+              disclosure of your protected health information.
+            </p>
+            <p class="text-justify mb-4">
+              Pursuant to applicable federal and state laws, all client records
+              shall be maintained for the required number of years from the date
+              of last service. The Director of your Allevia Office shall be
+              responsible for maintaining custody and confidentiality of your
+              records.
+            </p>
+          </div>
+
+          <h3 class="font-semibold underline mt-6 mb-2">
+            Uses and Disclosure of Protected Health Information
+          </h3>
+          <div class="section">
+            <p class="text-justify mb-4">
+              Allevia may use and disclose your protected health information for
+              treatment by health care practitioners, payment, and healthcare
+              operations purposes, as follows:
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-justify">
+              <li>
+                <span class="font-bold">Treatment purposes:</span> to
+                appropriate parties to ensure you receive proper care. For
+                example, we may share your protected health information with
+                your primary care provider or other treating physician(s),
+                emergency transport, hospital emergency rooms, and referred
+                caregivers.
+              </li>
+              <li>
+                <span class="font-bold">Payment purposes:</span> to help
+                referred caregivers receive payment for their services. For
+                example, we may share information with your long-term care
+                insurance provider or other third-parties responsible for paying
+                your bills. If you pay out of pocket, in full, for care, you may
+                request that protected health information related to that care
+                be restricted from disclosure to health plans.
+              </li>
+              <li>
+                <span class="font-bold">Operations purposes:</span> to assess
+                and to improve our office's referral services. For example, we
+                may share information with an independent quality and client
+                satisfaction surveyor who may contact you to ask questions
+                regarding the quality of the referral services provided by us.
+                When we share your protected health information with a
+                third-party business associate, such as an independent quality
+                and client satisfaction surveyor, we will have a written
+                contract with the third party requiring it to protect the
+                privacy of your disclosed protected health information.
+              </li>
+            </ul>
+
+            <p class="text-justify mt-4 mb-2">
+              We may use or disclose protected health information, without your
+              written authorization or the opportunity for you to agree or
+              object, as follows:
+            </p>
+          </div>
+
+          <div class="section mt-4">
+            <ul class="list-disc pl-5 space-y-2 text-justify">
+              <li>
+                To the extent required by law, provided the use or disclosure
+                complies with and is limited to the law's relevant requirements.
+              </li>
+              <li>
+                For public health activities, including: to a public health
+                authority for preventing or controlling disease, injury, or
+                disability; for purposes school. to the quality, safety or
+                effectiveness of an FDA-regulated product or activity; to a
+                person who may have been exposed to a communicable disease or
+                may otherwise be at risk of contracting or spreading a disease
+                or condition; to an employer, about an individual who is a
+                member of the workforce of the employer; and to a school, about
+                an individual who is a student or prospective student of the
+                school.
+              </li>
+              <li>
+                About an individual whom we reasonably to be a victim of abuse,
+                neglect, or domestic violence to a public health authority or
+                government authority, including a social service or protective
+                services agency.
+              </li>
+              <li>
+                To a health oversight agency for oversight activities authorized
+                by law or necessary for appropriate oversight, including audits,
+                investigations, inspections, and other actions.
+              </li>
+              <li>
+                In the course of any judicial or administrative proceeding, if
+                expressly authorized by a court or administrative tribunal order
+                or in response to a subpoena, discovery request, or other lawful
+                process.
+              </li>
+              <li>
+                For a law enforcement purpose to a law enforcement official: if
+                pursuant to process or as otherwise required by law; to identify
+                or locate a suspect, fugitive, material witness, or missing
+                person; about an individual who is or is suspected to be a
+                victim of a crime; to alert law enforcement of a death, if we
+                suspect the death resulted from criminal conduct; if we believe
+                it constitutes evidence of criminal conduct on our premises; and
+                in response to a medical emergency, if necessary to alert law
+                enforcement to the commission and nature of a crime, the
+                location or victim(s) of such crime, and the identity,
+                description, and location of the perpetrator.
+              </li>
+              <li>
+                To a coroner or medical examiner for the purpose of identifying
+                a deceased person, determining a cause of death, or other
+                duties.
+              </li>
+              <li>
+                To organ procurement organizations or other entities engaged in
+                the procurement, banking, or transplantation of cadaveric
+                organs, eyes, or tissue for the purpose of facilitating
+                transplantation.
+              </li>
+              <li>
+                For research, under certain conditions, regardless of the source
+                of funding of the research.
+              </li>
+              <li>
+                To a person or person reasonably able to prevent or lessen a
+                serious and imminent threat to the health or safety of a person
+                or the public, including to the target of the threat, if we
+                believe, in good faith, the use or disclosure is necessary, or
+                to law enforcement authorities to identify or apprehend an
+                individual.
+              </li>
+              <li>
+                For specialized government functions, including: if you are
+                Armed Forces personnel, activities deemed necessary by
+                appropriate military command authorities to assure the proper
+                execution of the military mission; to federal officials for
+                lawful intelligence, counter-intelligence, and other national
+                security activities, the provision of protective services to the
+                President, foreign heads of state, or other authorized persons,
+                or for certain investigations; and about an inmate or individual
+                to a correctional institution or a law enforcement official
+                having lawful custody of such inmate or other individual; and
+              </li>
+              <li>
+                As authorized by, and to comply with, laws relating to workers'
+                compensation or other similar programs, established by law, that
+                provide benefits for work-related injuries or illness without
+                regard to fault.
+              </li>
+            </ul>
+          </div>
+
+          <div class="section mt-4">
+            <p class="text-justify mb-4">
+              We may use or disclose your protected health information for the
+              following purposes, provided that we inform you in advance of the
+              use or disclosure and give you the opportunity to agree to or
+              prohibit or restrict the use or disclosure. We may orally inform
+              you of and obtain your oral agreement or objection to these uses
+              and disclosures.
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-justify">
+              <li>
+                <span class="font-bold">Involvement with care or payment:</span>
+                we may disclose to a family member, other relative, close
+                personal friend, or any other person identified by you, the
+                protected health information directly relevant to such person's
+                involvement with your health care or payment related to your
+                health care.
+              </li>
+              <li>
+                <span class="font-bold">Notification:</span> we may use or
+                disclose your protected health information to notify or assist
+                in the notification of (including identifying or locating), a
+                family member, your personal representative, or another person
+                responsible for your care, of your location, general condition,
+                or death.
+              </li>
+              <li>
+                <span class="font-bold">Disaster Relief:</span> we may use or
+                disclose your protected health information to entities
+                authorized by law to assist in disaster relief efforts, for the
+                purpose of coordinating notification as described above.
+              </li>
+            </ul>
+            <p class="text-justify mt-4 mb-2">
+              If you are present for, or available prior to, the uses and
+              disclosures in the immediately preceding paragraph, we may only
+              use or disclose your protected health information if:
+            </p>
+            <ol class="list-decimal pl-5 space-y-2 text-justify">
+              <li>we obtain your agreement,</li>
+              <li>
+                we provide you the opportunity to object and you do not object,
+                or
+              </li>
+              <li>
+                we reasonably infer in our professional judgment that you do not
+                object. If you are not present, or if the opportunity to agree
+                or object cannot be provided because of your incapacity or an
+                emergency, we will exercise our professional judgment to
+                determine whether the disclosure is in your best interests and
+                will disclose only the information directly relevant to the
+                person's involvement or needed for notification purposes. If you
+                are deceased, we may disclose protected health information
+                relevant to a family member or other person who was involved in
+                your care or payment for health care prior to your death, unless
+                doing so is inconsistent with your prior expressed preference
+                known to us.
+              </li>
+            </ol>
+          </div>
+
+          <div class="section mt-4">
+            <p class="text-justify">
+              Any uses or disclosures of your protected health information not
+              listed above, or otherwise required by law, will be made only with
+              your written authorization, which you may revoke in writing at any
+              time. Upon receipt of your written revocation of an authorization,
+              Griswold will cease to use or disclose your protected health
+              information in the previously authorized manner. The written
+              authorization requirement includes most uses and disclosures of
+              psychotherapy notes, most uses and disclosures of protected health
+              information for marketing purposes, and the sale of protected
+              health information.
+            </p>
+          </div>
+        </div>
+
+        <!-- Signing Form -->
+        <form id="privacyHelperForm" class="space-y-6">
+          <div class="space-y-2 mt-2 pt-4">
+            <? if (isPdf) { ?>
+            <div class="flex gap-3 items-start">
+              <span style="font-size: 18px; line-height: 1">☑</span>
+              <span class="italic"
+                >I will able to acknowledge that I have received Allevia Senior
+                Care's Notice of Privacy Practices and consent to use electronic
+                signatures and records in accordance with the ESIGN Act and the
+                Uniform Electronic Transactions Act.</span
+              >
+            </div>
+            <? } else { ?>
+            <label class="flex gap-3 items-start cursor-pointer">
+              <input
+                type="checkbox"
+                required
+                class="mt-0.5 accent-[#65c027] w-4 h-4 shrink-0"
+              />
+              <span class="italic"
+                >I will able to acknowledge that I have received Allevia Senior
+                Care's Notice of Privacy Practices and consent to use electronic
+                signatures and records in accordance with the ESIGN Act and the
+                Uniform Electronic Transactions Act.</span
+              >
+            </label>
+            <? } ?>
+          </div>
+
+          <div>
+            <input type="hidden" name="clientId" value="<?= clientId ?>" />
+            <label class="input-label font-semibold block mb-1"
+              >Full Name <span class="text-red-500 no-pdf">*</span></label
+            >
+            <? if (isPdf) { ?>
+            <div class="w-full border-b border-gray-400 py-2 mb-4">
+              <?= [clientData.firstName, clientData.middleName, clientData.lastName].filter(Boolean).join(' ') ?>
+            </div>
+            <? } else { ?>
+            <input
+              type="text"
+              name="fullName"
+              class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border mb-4"
+              placeholder="Given Name"
+              value="<?= [clientData.firstName, clientData.middleName, clientData.lastName].filter(Boolean).join(' ') ?>"
+              readonly
+              required
+            />
+            <? } ?>
+
+            <label class="input-label font-semibold block mb-1"
+              >Digital Signature (Type Full Name)<span
+                class="text-red-500 no-pdf"
+                >*</span
+              ></label
+            >
+            <? if (isPdf) { ?>
+            <div
+              class="w-full border-b border-gray-400 py-2 mb-4"
+              style="font-family: 'Courier New', Courier, monospace"
+            >
+              <?= clientData.Signature || '' ?>
+            </div>
+            <? } else { ?>
+            <input
+              type="text"
+              name="signature"
+              required
+              placeholder="Type your full name"
+              value="<?= clientData.Signature || '' ?>"
+              class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border"
+            />
+            <? } ?>
+
+            <label class="input-label mt-4 block font-semibold mb-1"
+              >Date & Time <span class="text-red-500 no-pdf">*</span></label
+            >
+            <? if (isPdf) { ?>
+            <div class="w-full border-b border-gray-400 py-2 mb-1">
+              <?= clientData.SignDate || '' ?>
+            </div>
+            <? } else { ?>
+            <div class="mb-4">
+              <input
+                type="datetime-local"
+                name="signDateLocal"
+                required
+                class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 p-2 border"
+              />
+              <input type="hidden" name="signDate" />
+            </div>
+            <? } ?>
+          </div>
+
+          <div class="pt-4 no-pdf">
+            <button
+              type="submit"
+              class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            >
+              Sign Agreement
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Set default local date-time to now (for user convenience)
+      (function setDefaultDateTimeLocal() {
+        const dtInput = document.querySelector('input[name="signDateLocal"]');
+        if (dtInput && !dtInput.value) {
+          const d = new Date();
+          const pad = (n) => String(n).padStart(2, "0");
+          const y = d.getFullYear();
+          const m = pad(d.getMonth() + 1);
+          const day = pad(d.getDate());
+          const hh = pad(d.getHours());
+          const mm = pad(d.getMinutes());
+          dtInput.value = `${y}-${m}-${day}T${hh}:${mm}`;
+        }
+      })();
+
+      document
+        .getElementById("privacyHelperForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const fullNameLower = document
+            .querySelector('input[name="fullName"]')
+            .value.trim()
+            .replace(/\s+/g, " ")
+            .toLowerCase();
+          const signatureInput = document.querySelector(
+            'input[name="signature"]'
+          );
+          const signatureRaw = signatureInput.value.trim().replace(/\s+/g, " "); // Keep original case
+          const signatureLower = signatureRaw.toLowerCase();
+
+          if (fullNameLower !== signatureLower) {
+            alert("Digital Signature must match the Full Name exactly.");
+            return;
+          }
+
+          const btn = e.target.querySelector('button[type="submit"]');
+          const originalText = btn.innerText;
+          btn.innerText = "Signing & Uploading...";
+          btn.disabled = true;
+
+          // Build Sign Date string in Eastern Time (New York) for storage/display
+          const dtLocalInput = document.querySelector(
+            'input[name="signDateLocal"]'
+          );
+          let signDateEt = "";
+          if (dtLocalInput && dtLocalInput.value) {
+            const localDate = new Date(dtLocalInput.value);
+            const parts = new Intl.DateTimeFormat("en-US", {
+              timeZone: "America/New_York",
+              weekday: "long",
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            }).formatToParts(localDate);
+            const get = (t) => parts.find((p) => p.type === t)?.value || "";
+            const weekday = get("weekday");
+            const month = get("month");
+            const day = get("day");
+            const year = get("year");
+            const hour = get("hour");
+            const minute = get("minute");
+            const dayPeriod = get("dayPeriod").toLowerCase();
+            signDateEt = `${weekday} ${month} ${day}, ${year} ${hour}:${minute} ${dayPeriod}`;
+          }
+
+          // Store ET string in hidden field `signDate`
+          const hiddenSignDate = document.querySelector(
+            'input[name="signDate"]'
+          );
+          if (hiddenSignDate) hiddenSignDate.value = signDateEt;
+
+          const formData = {
+            clientId: document.querySelector('input[name="clientId"]').value,
+            fullName: document.querySelector('input[name="fullName"]').value,
+            signature: signatureRaw, // Send original case
+            signDate: document.querySelector('input[name="signDate"]').value,
+          };
+
+          google.script.run
+            .withSuccessHandler(function (response) {
+              if (response.success) {
+                alert(
+                  "Agreement signed successfully! You may now close this tab."
+                );
+                if (response.url) {
+                  window.location.href = response.url;
+                }
+                window.scrollTo(0, 0);
+              } else {
+                alert("Error: " + response.message);
+                btn.innerText = originalText;
+                btn.disabled = false;
+              }
+            })
+            .withFailureHandler(function (err) {
+              alert("Error: " + err);
+              btn.innerText = originalText;
+              btn.disabled = false;
+            })
+            .submitPrivacyPractices(formData);
+        });
+    </script>
+  </body>
+</html>

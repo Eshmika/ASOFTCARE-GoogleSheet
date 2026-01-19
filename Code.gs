@@ -299,6 +299,28 @@ function doGet(e) {
         "<h1 style='font-family:sans-serif; text-align:center; margin-top:50px;'>Error: Invalid or Expired Client Link.</h1>"
       );
     }
+  } else if (e.parameter.page === "client-sign-privacy" && e.parameter.id) {
+    // Serve Notice of Privacy Practices for clients
+    var clientDetails = getClientDetails(e.parameter.id);
+    if (clientDetails) {
+      var template = HtmlService.createTemplateFromFile(
+        "Notice-of-Privacy-Practices"
+      );
+      template.clientId = e.parameter.id;
+      template.clientData = clientDetails;
+      template.scriptUrl = ScriptApp.getService().getUrl();
+      template.isPdf = false;
+
+      return template
+        .evaluate()
+        .setTitle("Notice of Privacy Practices - Allevia Senior Care")
+        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+        .addMetaTag("viewport", "width=device-width, initial-scale=1");
+    } else {
+      return HtmlService.createHtmlOutput(
+        "<h1 style='font-family:sans-serif; text-align:center; margin-top:50px;'>Error: Invalid or Expired Client Link.</h1>"
+      );
+    }
   }
   return HtmlService.createTemplateFromFile("index")
     .evaluate()
@@ -488,6 +510,69 @@ function submitHipaaRelease(form) {
   }
 }
 
+// Handler for Privacy Practices submission: generates PDF, uploads to Drive, saves link
+function submitPrivacyPractices(form) {
+  try {
+    var id = form.clientId;
+    var signature = form.signature;
+    var signDate = form.signDate;
+    if (!id) return { success: false, message: "Missing Client ID" };
+
+    // 1. Get Client Details
+    var details = getClientDetails(id);
+    if (!details) return { success: false, message: "Client not found" };
+
+    // 2. Prepare Data for PDF
+    details["Signature"] = signature;
+    details["SignDate"] = signDate;
+
+    // 3. Generate PDF
+    var template = HtmlService.createTemplateFromFile(
+      "Notice-of-Privacy-Practices"
+    );
+    template.clientId = id;
+    template.clientData = details;
+    template.isPdf = true;
+    template.scriptUrl = ScriptApp.getService().getUrl();
+
+    var pdfBlob = template
+      .evaluate()
+      .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+      .addMetaTag("viewport", "width=device-width, initial-scale=1")
+      .getAs(MimeType.PDF)
+      .setName(
+        `${details.firstName} ${details.lastName} - Notice of Privacy Practices.pdf`
+      );
+
+    // 4. Get/Create Drive Folder
+    const parentFolderId = "1VKJ2B4LtUmysr6bAEQqRsMwsMEySU_0f";
+    let folder;
+    try {
+      folder = getClientFolder(parentFolderId, details);
+    } catch (err) {
+      return {
+        success: false,
+        message: "Error accessing/creating Drive folder: " + err,
+      };
+    }
+
+    // 5. Upload to Drive
+    var file = folder.createFile(pdfBlob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+    // 6. Save Link to Sheet
+    var fileUrl = file.getUrl();
+    var saved = saveClientDocumentLink(id, "privacyPractices", fileUrl);
+
+    if (!saved)
+      return { success: false, message: "Failed to save link to database" };
+
+    return { success: true, url: fileUrl };
+  } catch (e) {
+    return { success: false, message: e.toString() };
+  }
+}
+
 // Helper: Get or create client folder in Drive
 function getClientFolder(parentFolderId, details) {
   var parentFolder = DriveApp.getFolderById(parentFolderId);
@@ -524,6 +609,8 @@ function saveClientDocumentLink(clientId, docType, fileUrl) {
       colName = "Bill of Rights Link";
     } else if (docType === "hipaaRelease") {
       colName = "HIPAA Link";
+    } else if (docType === "privacyPractices") {
+      colName = "Privacy Link";
     } else {
       return false;
     }
