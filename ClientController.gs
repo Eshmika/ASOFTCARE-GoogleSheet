@@ -411,7 +411,11 @@ function getClientList() {
   const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   const reviewIdx = headers.indexOf("Last Reviewed");
   const agreementLinkIdx = headers.indexOf("Agreement Link");
+  const exhibitALinkIdx = headers.indexOf("Exhibit A Link");
+  const exhibitBLinkIdx = headers.indexOf("Exhibit B Link");
   const billOfRightsLinkIdx = headers.indexOf("Bill of Rights Link");
+  const hipaaLinkIdx = headers.indexOf("HIPAA Link");
+  const privacyLinkIdx = headers.indexOf("Privacy Link");
 
   return data
     .filter((row) => row[0] !== "")
@@ -447,8 +451,12 @@ function getClientList() {
           : "",
         lastReviewed: reviewIdx > -1 ? row[reviewIdx] : "--",
         agreementLink: agreementLinkIdx > -1 ? row[agreementLinkIdx] : "",
+        exhibitALink: exhibitALinkIdx > -1 ? row[exhibitALinkIdx] : "",
+        exhibitBLink: exhibitBLinkIdx > -1 ? row[exhibitBLinkIdx] : "",
         billOfRightsLink:
           billOfRightsLinkIdx > -1 ? row[billOfRightsLinkIdx] : "",
+        hipaaLink: hipaaLinkIdx > -1 ? row[hipaaLinkIdx] : "",
+        privacyLink: privacyLinkIdx > -1 ? row[privacyLinkIdx] : "",
       };
     })
     .reverse();

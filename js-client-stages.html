@@ -159,25 +159,75 @@
                 `;
         }
       } else if (stage === "Client Agreements") {
-        let viewPdfBtn = "";
-        if (client.agreementLink) {
-          viewPdfBtn = `
-                        <a href="${client.agreementLink}" target="_blank" class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-bold hover:bg-blue-200 flex items-center gap-1 no-underline">
-                            <i class="ph ph-file-pdf"></i> View PDF
-                        </a>
-                    `;
+        const docs = [
+          {
+            link: client.agreementLink,
+            name: "Agreement",
+            icon: "handshake",
+            color: "blue",
+          },
+          {
+            link: client.exhibitALink,
+            name: "Ex. A",
+            icon: "list-checks",
+            color: "purple",
+          },
+          {
+            link: client.exhibitBLink,
+            name: "Ex. B",
+            icon: "clipboard-text",
+            color: "purple",
+          },
+          {
+            link: client.billOfRightsLink,
+            name: "Rights",
+            icon: "scroll",
+            color: "indigo",
+          },
+          {
+            link: client.hipaaLink,
+            name: "HIPAA",
+            icon: "shield-check",
+            color: "rose",
+          },
+          {
+            link: client.privacyLink,
+            name: "Privacy",
+            icon: "lock-key",
+            color: "emerald",
+          },
+        ];
+
+        let docButtons = docs
+          .filter((doc) => doc.link)
+          .map(
+            (doc) => `
+            <a href="${doc.link}" target="_blank" title="View ${doc.name}" 
+               class="flex items-center justify-center w-8 h-8 rounded-lg bg-${doc.color}-50 text-${doc.color}-600 border border-${doc.color}-100 hover:bg-${doc.color}-100 hover:scale-105 transition-all shadow-sm">
+                <i class="ph-bold ph-${doc.icon}"></i>
+            </a>
+            `
+          )
+          .join("");
+
+        if (!docButtons) {
+          docButtons = `<span class="text-xs text-gray-400 italic">No docs signed</span>`;
         }
+
         actionHtml = `
-                    <div class="flex items-center justify-end gap-2 px-4">
-                        ${viewPdfBtn}
-                        <button onclick="resendIntakeEmail('${client.id}')" class="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-bold hover:bg-orange-200 flex items-center gap-1">
-                            <i class="ph ph-envelope-simple"></i> Re-send Email
-                        </button>
-                        <button onclick="undoClientAgreement('${client.id}')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1">
-                            <i class="ph ph-arrow-u-up-left"></i> Undo
-                        </button>
-                    </div>
-                `;
+            <div class="flex items-center justify-end gap-3 px-4">
+                <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-lg border border-gray-100">
+                    ${docButtons}
+                </div>
+                <div class="h-6 w-px bg-gray-300"></div>
+                <button onclick="resendIntakeEmail('${client.id}')" title="Resend Intake Email" class="w-8 h-8 flex items-center justify-center bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 border border-orange-100 transition-colors">
+                    <i class="ph-bold ph-envelope-simple"></i>
+                </button>
+                <button onclick="undoClientAgreement('${client.id}')" title="Return to Insurance Stage" class="w-8 h-8 flex items-center justify-center bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 border border-gray-200 transition-colors">
+                    <i class="ph-bold ph-arrow-u-up-left"></i>
+                </button>
+            </div>
+        `;
       } else if (stage === "Archived") {
         actionHtml = `
                     <div class="flex items-center justify-end gap-2 px-4">
