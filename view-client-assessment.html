@@ -68,9 +68,20 @@
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs text-gray-400 uppercase mb-1"
-                >E-mail</label
-              >
+              <div class="flex items-center justify-between">
+                <label class="block text-xs text-gray-400 uppercase mb-1"
+                  >E-mail</label
+                >
+                <select
+                  id="as-email-sync"
+                  class="text-[11px] px-2 py-1 border rounded"
+                  onchange="handleEmailSync(this.value)"
+                >
+                  <option value="custom">Custom (Type below)</option>
+                  <option value="ec">Same as Emergency Contact</option>
+                  <option value="auth">Same as Authorized Contact</option>
+                </select>
+              </div>
               <input
                 type="email"
                 name="email"
@@ -3722,6 +3733,59 @@
       </div>
     </div>
   </form>
+  <script>
+    function handleEmailSync(source) {
+      const emailInput = document.getElementById("as-email");
+      const ecEmailEl = document.getElementById("as-emergencyEmail");
+      const authEmailEl = document.getElementById("as-authEmail");
+      const ecEmail = ecEmailEl ? ecEmailEl.value : "";
+      const authEmail = authEmailEl ? authEmailEl.value : "";
+
+      if (source === "ec") {
+        emailInput.value = ecEmail;
+        emailInput.readOnly = true;
+        emailInput.classList.add(
+          "bg-gray-50",
+          "text-gray-500",
+          "cursor-not-allowed"
+        );
+      } else if (source === "auth") {
+        emailInput.value = authEmail;
+        emailInput.readOnly = true;
+        emailInput.classList.add(
+          "bg-gray-50",
+          "text-gray-500",
+          "cursor-not-allowed"
+        );
+      } else {
+        emailInput.readOnly = false;
+        emailInput.classList.remove(
+          "bg-gray-50",
+          "text-gray-500",
+          "cursor-not-allowed"
+        );
+      }
+    }
+
+    // Keep client email in sync when source fields change
+    (function initEmailSyncObservers() {
+      const ecEmailEl = document.getElementById("as-emergencyEmail");
+      const authEmailEl = document.getElementById("as-authEmail");
+      const syncSelect = document.getElementById("as-email-sync");
+
+      if (ecEmailEl) {
+        ecEmailEl.addEventListener("input", function () {
+          if (syncSelect && syncSelect.value === "ec") handleEmailSync("ec");
+        });
+      }
+      if (authEmailEl) {
+        authEmailEl.addEventListener("input", function () {
+          if (syncSelect && syncSelect.value === "auth")
+            handleEmailSync("auth");
+        });
+      }
+    })();
+  </script>
 </div>
 
 <script>
