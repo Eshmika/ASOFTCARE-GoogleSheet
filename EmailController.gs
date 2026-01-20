@@ -133,7 +133,7 @@ function sendCustomEmail(cgIds, clIds, subject, message) {
     if (cgIds && cgIds.length > 0) {
       const list = getCaregiverList();
       const selected = list.filter(
-        (c) => cgIds.includes(c.id) && c.email && c.email.includes("@"),
+        (c) => cgIds.includes(c.id) && c.email && c.email.includes("@")
       );
       recipients = recipients.concat(selected);
     }
@@ -142,7 +142,7 @@ function sendCustomEmail(cgIds, clIds, subject, message) {
     if (clIds && clIds.length > 0) {
       const list = getClientList();
       const selected = list.filter(
-        (c) => clIds.includes(c.id) && c.email && c.email.includes("@"),
+        (c) => clIds.includes(c.id) && c.email && c.email.includes("@")
       );
       recipients = recipients.concat(selected);
     }
@@ -378,7 +378,7 @@ function sendIntakePacketEmail(clientId) {
           <br>
           <p style="margin-bottom: 5px;">Warm regards,</p>
           <p style="margin: 0; font-weight: bold;">The Allevia Senior Care Team</p>
-          <p style="margin: 0; color: #666; font-size: 14px;"><a href="${webAppUrl}" style="color: #65c027; text-decoration: none;">www.alleviaseniorcare.com</a> | 440-9079599 | <a href="mailto:info@alleviaseniorcare.com" style="color: #65c027; text-decoration: none;">info@alleviaseniorcare.com</a></p>
+          <p style="margin: 0; color: #666; font-size: 14px;"><a href="${webAppUrl}" style="color: #65c027; text-decoration: none;">www.alleviaseniorcare.com</a> | 440-9079599 | <a href="mailto:contact@alleviaseniorcare.com" style="color: #65c027; text-decoration: none;">contact@alleviaseniorcare.com</a></p>
         </div>
 
         <!-- Footer -->
