@@ -378,7 +378,7 @@ function sendIntakePacketEmail(clientId) {
           <br>
           <p style="margin-bottom: 5px;">Warm regards,</p>
           <p style="margin: 0; font-weight: bold;">The Allevia Senior Care Team</p>
-          <p style="margin: 0; color: #666; font-size: 14px;"><a href="${webAppUrl}" style="color: #65c027; text-decoration: none;">www.alleviaseniorcare.com</a> | 440-9079599 | <a href="mailto:contact@alleviaseniorcare.com" style="color: #65c027; text-decoration: none;">contact@alleviaseniorcare.com</a></p>
+          <p style="margin: 0; color: #666; font-size: 14px;"><a href="${webAppUrl}" style="color: #65c027; text-decoration: none;">www.alleviaseniorcare.com</a> | 440-907-9599 | <a href="mailto:contact@alleviaseniorcare.com" style="color: #65c027; text-decoration: none;">contact@alleviaseniorcare.com</a></p>
         </div>
 
         <!-- Footer -->
