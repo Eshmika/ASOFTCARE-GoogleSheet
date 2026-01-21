@@ -24,9 +24,11 @@
     google.script.run
       .withSuccessHandler((data) => {
         let html = '<option value="">Select Caregiver...</option>';
-        data.forEach((item) => {
-          html += `<option value="${item.id}">${item.name}</option>`;
-        });
+        data
+          .filter((item) => item.status === "Active")
+          .forEach((item) => {
+            html += `<option value="${item.id}">${item.name}</option>`;
+          });
         cgSelect.innerHTML = html;
       })
       .getCaregiverList();
