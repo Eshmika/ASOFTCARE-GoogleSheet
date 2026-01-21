@@ -199,7 +199,7 @@ function getOrCreateClientSheet() {
       !currentHeaders.includes("Agreement Link")
     ) {
       const missingHeaders = additionalHeaders.filter(
-        (h) => !currentHeaders.includes(h)
+        (h) => !currentHeaders.includes(h),
       );
       if (missingHeaders.length > 0) {
         const startCol = currentHeaders.length + 1;
@@ -237,7 +237,7 @@ function handleClientSubmission(data) {
     data.middleName || "",
     data.lastName,
     data.clientPhone,
-    data.status,
+    "In progress", // Default status for Stage 1 (New leads)
     data.clientAddress,
     data.clientApt || "",
     data.clientCity,
@@ -481,6 +481,28 @@ function updateClientStage(clientId, newStage) {
   if (rowIndex === -1) return { success: false, message: "Client not found." };
 
   sheet.getRange(rowIndex + 2, stageIdx + 1).setValue(newStage);
+
+  // Update status based on stage
+  const statusIdx = headers.indexOf("Status");
+  if (statusIdx > -1) {
+    let newStatus = "";
+    if (
+      [
+        "New leads",
+        "Assessment",
+        "Insurance Verification",
+        "Client Agreements",
+      ].includes(newStage)
+    ) {
+      newStatus = "In progress";
+    } else if (newStage === "Convert Clients") {
+      newStatus = "Active";
+    }
+
+    if (newStatus) {
+      sheet.getRange(rowIndex + 2, statusIdx + 1).setValue(newStatus);
+    }
+  }
 
   // Also update Last Reviewed
   const reviewIdx = headers.indexOf("Last Reviewed");
@@ -741,7 +763,16 @@ function updateClient(data) {
     data.middleName,
     data.lastName,
     data.clientPhone,
-    data.status,
+    [
+      "New leads",
+      "Assessment",
+      "Insurance Verification",
+      "Client Agreements",
+    ].includes(data.stage)
+      ? "In progress"
+      : data.stage === "Convert Clients"
+        ? "Active"
+        : data.status,
     data.clientAddress,
     data.clientApt,
     data.clientCity,
@@ -1018,11 +1049,15 @@ function restoreClientFromArchive(clientId, targetStage) {
 
   if (rowIndex === -1) return { success: false, message: "Client not found." };
 
-  // Restore status to Active
-  sheet.getRange(rowIndex + 2, statusIdx + 1).setValue("Active");
+  // Restore status based on target stage
+  const stageToSet = targetStage || "New leads";
+  let statusToSet = "In progress";
+  if (stageToSet === "Convert Clients") {
+    statusToSet = "Active";
+  }
+  sheet.getRange(rowIndex + 2, statusIdx + 1).setValue(statusToSet);
 
   // Restore stage to selected stage or default to "New leads"
-  const stageToSet = targetStage || "New leads";
   if (stageIdx > -1) {
     sheet.getRange(rowIndex + 2, stageIdx + 1).setValue(stageToSet);
   }

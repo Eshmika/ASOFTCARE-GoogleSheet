@@ -206,7 +206,7 @@
                class="flex items-center justify-center w-8 h-8 rounded-lg bg-${doc.color}-50 text-${doc.color}-600 border border-${doc.color}-100 hover:bg-${doc.color}-100 hover:scale-105 transition-all shadow-sm">
                 <i class="ph-bold ph-${doc.icon}"></i>
             </a>
-            `
+            `,
           )
           .join("");
 
@@ -216,7 +216,7 @@
 
         // Check if all documents are signed (have a link)
         const signedCount = docs.filter(
-          (doc) => doc.link && doc.link.trim() !== ""
+          (doc) => doc.link && doc.link.trim() !== "",
         ).length;
         const allSigned = signedCount === 6;
 
@@ -224,8 +224,8 @@
         if (allSigned) {
           passFailButtons = `
                 <div class="h-6 w-px bg-gray-300"></div>
-                <button onclick="passClientAgreement('${client.id}')" class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold hover:bg-green-200">Pass</button>
-                <button onclick="failClientAgreement('${client.id}')" class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold hover:bg-red-200">Fail</button>
+                <button onclick="passClientAgreement('${client.id}')" class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold hover:bg-green-200">Approve</button>
+                <button onclick="failClientAgreement('${client.id}')" class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold hover:bg-red-200">Deny</button>
             `;
         }
 
@@ -363,7 +363,7 @@
               Swal.fire(
                 "Archived",
                 "Lead has been moved to archives.",
-                "success"
+                "success",
               );
               loadClientStages();
             } else {
@@ -385,7 +385,7 @@
           Swal.fire("Error", res.message, "error");
         }
       })
-      .updateClientStatus(clientId, "Active");
+      .updateClientStatus(clientId, "In progress");
   }
 
   function passAssessment(clientId) {
@@ -428,7 +428,7 @@
               Swal.fire(
                 "Archived",
                 "Assessment has been moved to archives.",
-                "success"
+                "success",
               );
               loadClientStages();
             } else {
@@ -501,7 +501,7 @@
     }).then((result) => {
       if (result.isConfirmed) {
         const reason = document.querySelector(
-          'input[name="pendingReason"]:checked'
+          'input[name="pendingReason"]:checked',
         )?.value;
         const note = document.getElementById("pendingNote").value;
 
@@ -516,7 +516,7 @@
               Swal.fire(
                 "Pending",
                 `Status updated to Pending - ${reason}`,
-                "success"
+                "success",
               );
               loadClientStages();
             } else {
@@ -571,7 +571,7 @@
     }).then((result) => {
       if (result.isConfirmed) {
         const reason = document.querySelector(
-          'input[name="denialReason"]:checked'
+          'input[name="denialReason"]:checked',
         )?.value;
         const note = document.getElementById("denialNote").value;
 
@@ -584,7 +584,7 @@
           Swal.fire(
             "Error",
             "Please add a note explaining the denial",
-            "error"
+            "error",
           );
           return;
         }
@@ -595,7 +595,7 @@
               Swal.fire(
                 "Denied",
                 "Client has been marked as Denied and archived.",
-                "success"
+                "success",
               );
               loadClientStages();
             } else {
@@ -646,7 +646,7 @@
                       (emailRes.success
                         ? "Email sent!"
                         : "Warning: Email failed to send."),
-                    "success"
+                    "success",
                   );
                   loadClientStages();
                 })
@@ -676,7 +676,7 @@
           Swal.fire(
             "Sent!",
             "Intake packet email has been re-sent.",
-            "success"
+            "success",
           );
         } else {
           Swal.fire("Error", res.message, "error");
@@ -701,7 +701,7 @@
               Swal.fire(
                 "Restored",
                 "Client moved back to Insurance Verification.",
-                "success"
+                "success",
               );
               loadClientStages();
             } else {
@@ -738,7 +738,7 @@
               Swal.fire(
                 "Restored",
                 `Client has been restored to ${targetStage}.`,
-                "success"
+                "success",
               );
               loadClientStages();
             } else {
@@ -827,7 +827,7 @@
               Swal.fire(
                 "Archived",
                 "Client failed agreements and archived.",
-                "info"
+                "info",
               );
               loadClientStages();
             } else {
