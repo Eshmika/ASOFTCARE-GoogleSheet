@@ -5,61 +5,128 @@
     <p class="text-gray-500">Send emails to Caregivers or Clients.</p>
   </div>
 
-  <div class="max-w-3xl bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+  <div
+    class="max-w-3xl bg-white rounded-xl shadow-sm border border-gray-100 p-8"
+  >
     <form id="commForm" onsubmit="sendCommunication(event)">
-      
       <!-- Recipients Selection -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        
         <!-- Caregivers List -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2 flex justify-between">
+          <label
+            class="block text-sm font-medium text-gray-700 mb-2 flex justify-between"
+          >
             <span>Select Caregivers</span>
-            <button type="button" onclick="toggleAll('comm-cg-list')" class="text-xs text-[#65c027] hover:underline">Select All</button>
+            <button
+              type="button"
+              onclick="toggleAll('comm-cg-list')"
+              class="text-xs text-[#65c027] hover:underline"
+            >
+              Select All
+            </button>
           </label>
           <div class="relative">
-            <input type="text" onkeyup="filterCommList(this, 'comm-cg-list')" placeholder="Search caregivers..." class="w-full mb-2 p-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]">
-            <div id="comm-cg-list" class="h-48 overflow-y-auto border border-gray-200 rounded-lg p-2 bg-gray-50 space-y-1">
-              <div class="text-xs text-gray-400 text-center py-4">Loading...</div>
+            <input
+              type="text"
+              onkeyup="filterCommList(this, 'comm-cg-list')"
+              placeholder="Search caregivers..."
+              class="w-full mb-2 p-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]"
+            />
+            <div
+              id="comm-cg-list"
+              class="h-48 overflow-y-auto border border-gray-200 rounded-lg p-2 bg-gray-50 space-y-1"
+            >
+              <div class="text-xs text-gray-400 text-center py-4">
+                Loading...
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Clients List -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2 flex justify-between">
+          <label
+            class="block text-sm font-medium text-gray-700 mb-2 flex justify-between"
+          >
             <span>Select Clients</span>
-            <button type="button" onclick="toggleAll('comm-cl-list')" class="text-xs text-[#65c027] hover:underline">Select All</button>
+            <button
+              type="button"
+              onclick="toggleAll('comm-cl-list')"
+              class="text-xs text-[#65c027] hover:underline"
+            >
+              Select All
+            </button>
           </label>
           <div class="relative">
-            <input type="text" onkeyup="filterCommList(this, 'comm-cl-list')" placeholder="Search clients..." class="w-full mb-2 p-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]">
-            <div id="comm-cl-list" class="h-48 overflow-y-auto border border-gray-200 rounded-lg p-2 bg-gray-50 space-y-1">
-              <div class="text-xs text-gray-400 text-center py-4">Loading...</div>
+            <input
+              type="text"
+              onkeyup="filterCommList(this, 'comm-cl-list')"
+              placeholder="Search clients..."
+              class="w-full mb-2 p-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]"
+            />
+            <div
+              id="comm-cl-list"
+              class="h-48 overflow-y-auto border border-gray-200 rounded-lg p-2 bg-gray-50 space-y-1"
+            >
+              <div class="text-xs text-gray-400 text-center py-4">
+                Loading...
+              </div>
             </div>
           </div>
         </div>
-
       </div>
 
       <!-- Subject -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-        <input type="text" name="subject" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]" placeholder="Email Subject" required>
+        <label class="block text-sm font-medium text-gray-700 mb-2"
+          >Subject</label
+        >
+        <input
+          type="text"
+          name="subject"
+          class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]"
+          placeholder="Email Subject"
+          required
+        />
       </div>
 
       <!-- Message -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-        <textarea name="message" rows="6" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]" placeholder="Type your message here..." required></textarea>
+        <label class="block text-sm font-medium text-gray-700 mb-2"
+          >Message</label
+        >
+        <textarea
+          name="message"
+          rows="6"
+          class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]"
+          placeholder="Type your message here..."
+          required
+        ></textarea>
+      </div>
+
+      <!-- Attachment -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2"
+          >Attachment (Optional)</label
+        >
+        <input
+          type="file"
+          name="attachment"
+          id="commAttachment"
+          class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#65c027] file:text-white hover:file:bg-[#54a020]"
+        />
       </div>
 
       <!-- Submit -->
       <div class="flex justify-end">
-        <button type="submit" id="btnSendComm" class="btn-primary flex items-center gap-2">
+        <button
+          type="submit"
+          id="btnSendComm"
+          class="btn-primary flex items-center gap-2"
+        >
           <i class="ph ph-paper-plane-right"></i> Send Email
         </button>
       </div>
-
     </form>
   </div>
 </div>

@@ -125,7 +125,7 @@ function sendOnboardingEmail(caregiverId) {
   }
 }
 
-function sendCustomEmail(cgIds, clIds, subject, message) {
+function sendCustomEmail(cgIds, clIds, subject, message, attachmentData) {
   try {
     let recipients = [];
 
@@ -150,6 +150,17 @@ function sendCustomEmail(cgIds, clIds, subject, message) {
     if (recipients.length === 0)
       return { success: false, message: "No valid recipients found." };
 
+    // Process Attachment
+    let attachments = [];
+    if (attachmentData) {
+      const blob = Utilities.newBlob(
+        Utilities.base64Decode(attachmentData.content),
+        attachmentData.mimeType,
+        attachmentData.name
+      );
+      attachments.push(blob);
+    }
+
     // 2. Send Emails
     // Note: For "All", this might hit quotas. For production, consider batching or BCC.
     // For now, we loop.
@@ -169,6 +180,7 @@ function sendCustomEmail(cgIds, clIds, subject, message) {
           to: r.email,
           subject: subject,
           htmlBody: htmlBody,
+          attachments: attachments,
         });
         count++;
       } catch (err) {
