@@ -131,8 +131,8 @@
           </td>
           <td class="p-4 text-xs text-gray-500">${row.lastReviewed || "--"}</td>
           <td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${
-            row.status
-          }</span></td>
+          row.status
+        }</span></td>
           <td class="p-4 text-right">
              <button onclick="loadClientProfile('${
                row.id
@@ -256,6 +256,31 @@
     set("cp-ein", data.ein);
     set("cp-maritalStatus", data.maritalStatus);
     set("cp-codeStatus", data.codeStatus);
+    // Apply code status color badge
+    const codeStatusEl = document.getElementById("cp-codeStatus");
+    if (codeStatusEl) {
+      const val = (data.codeStatus || "").trim();
+      codeStatusEl.style.padding = "4px 8px";
+      codeStatusEl.style.borderRadius = "999px";
+      codeStatusEl.style.fontWeight = "700";
+      codeStatusEl.style.display = "inline-block";
+
+      let bg = "#E5E7EB"; // gray-200
+      let fg = "#374151"; // gray-700
+      if (val === "Full code") {
+        bg = "#1E8449";
+        fg = "#FFFFFF";
+      } else if (val === "Comfort care") {
+        bg = "#AF7AC5";
+        fg = "#FFFFFF";
+      } else if (val === "DNR") {
+        bg = "#7B241C";
+        fg = "#FFFFFF";
+      }
+
+      codeStatusEl.style.backgroundColor = bg;
+      codeStatusEl.style.color = fg;
+    }
     set("cp-spouseName", data.spouseName);
     set("cp-languages", data.languages);
 
@@ -270,8 +295,8 @@
         data.clientApt,
         data.clientCity,
         data.clientState,
-        data.clientZip,
-      ),
+        data.clientZip
+      )
     );
     set(
       "cp-billingAddressFull",
@@ -280,8 +305,8 @@
         data.billingApt,
         data.billingCity,
         data.billingState,
-        data.billingZip,
-      ),
+        data.billingZip
+      )
     );
 
     // 4. Key Contacts
@@ -302,8 +327,8 @@
         data.emergencyApt,
         data.emergencyCity,
         data.emergencyState,
-        data.emergencyZip,
-      ),
+        data.emergencyZip
+      )
     );
 
     // Authorization
@@ -318,8 +343,8 @@
         data.authApt,
         data.authCity,
         data.authState,
-        data.authZip,
-      ),
+        data.authZip
+      )
     );
 
     // 5. Medical Status
@@ -330,17 +355,17 @@
     set(
       "cp-allergies",
       data.allergies +
-        (data.allergiesDetail ? ` (${data.allergiesDetail})` : ""),
+        (data.allergiesDetail ? ` (${data.allergiesDetail})` : "")
     );
     set(
       "cp-covidVaccine",
       data.covidVaccine +
-        (data.covidVaccineDetail ? ` (${data.covidVaccineDetail})` : ""),
+        (data.covidVaccineDetail ? ` (${data.covidVaccineDetail})` : "")
     );
     set(
       "cp-fluVaccine",
       data.fluVaccine +
-        (data.fluVaccineDetail ? ` (${data.fluVaccineDetail})` : ""),
+        (data.fluVaccineDetail ? ` (${data.fluVaccineDetail})` : "")
     );
 
     // Aids
@@ -370,7 +395,7 @@
       data.assistDirections +
         (data.assistDirectionsDetail
           ? `\nDetails: ${data.assistDirectionsDetail}`
-          : ""),
+          : "")
     );
 
     // Healthcare Providers
@@ -399,15 +424,16 @@
 
     // Caregiver Prefs
     set("cp-careGender", data.careGender);
+    set("cp-careCertifications", data.careCertifications);
     set(
       "cp-careSmokePremises",
       data.careSmokePremises +
-        (data.careSmokeNote ? ` (${data.careSmokeNote})` : ""),
+        (data.careSmokeNote ? ` (${data.careSmokeNote})` : "")
     );
     set(
       "cp-careLiveIn",
       data.careLiveIn +
-        (data.careAccommodation ? ` - Accom: ${data.careAccommodation}` : ""),
+        (data.careAccommodation ? ` - Accom: ${data.careAccommodation}` : "")
     );
     set("cp-careSkills", data.careSkills);
 
@@ -443,11 +469,11 @@
       livingDetails.push(`Family: ${data.liveFamilyName}`);
     if (data.liveSenior === "Yes")
       livingDetails.push(
-        `Senior Housing: ${data.liveSeniorName} - ${data.liveSeniorAddress}`,
+        `Senior Housing: ${data.liveSeniorName} - ${data.liveSeniorAddress}`
       );
     if (data.liveRehab === "Yes")
       livingDetails.push(
-        `Rehab: ${data.liveRehabName} - ${data.liveRehabAddress}`,
+        `Rehab: ${data.liveRehabName} - ${data.liveRehabAddress}`
       );
     set("cp-liveDetails", livingDetails.join(" | "));
 
@@ -455,26 +481,125 @@
     set("cp-paymentType", data.paymentType);
     set("cp-paymentOptions", data.paymentOptions);
 
-    let payDetails = "";
-    if (["Direct Deposit", "Bank Deposit"].includes(data.paymentOptions)) {
-      payDetails = `Bank: ${data.payBankName}\nHolder: ${data.payHolderName}\nAcct: ${data.payAccountNum}\nRouting: ${data.payRoutingNum}\nType: ${data.payAccountType} (${data.payHolderType})`;
-    } else if (data.paymentOptions === "Check") {
-      payDetails = "Check payments.";
-    } else if (data.paymentOptions === "Credit Card") {
-      payDetails = `Card: ${data.payCardName}\nNum: **** ${data.payCardNumber ? data.payCardNumber.slice(-4) : "****"}\nExp: ${data.payCardExpiry}`;
-    } else if (data.paymentOptions === "Digital Wallet") {
-      payDetails = `${data.payDigitalType}: ${data.payDigitalFullName} (${data.payDigitalValue})`;
-    }
-    const payDetailsEl = document.getElementById("cp-paymentDetails");
-    if (payDetailsEl) payDetailsEl.innerText = payDetails || "--";
+    // Show/hide payment details based on payment option
+    const bankDetails = document.getElementById("cp-paymentBankDetails");
+    const digitalDetails = document.getElementById("cp-paymentDigitalDetails");
+    const cardDetails = document.getElementById("cp-paymentCardDetails");
+    const cashCheck = document.getElementById("cp-paymentCashCheck");
+    const emptyPayment = document.getElementById("cp-paymentEmpty");
 
+    // Hide all sections first
+    if (bankDetails) bankDetails.classList.add("hidden");
+    if (digitalDetails) digitalDetails.classList.add("hidden");
+    if (cardDetails) cardDetails.classList.add("hidden");
+    if (cashCheck) cashCheck.classList.add("hidden");
+    if (emptyPayment) emptyPayment.classList.add("hidden");
+
+    // Show relevant section based on payment option
+    const payOpt = data.paymentOptions?.toLowerCase() || "";
+    if (payOpt.includes("direct deposit") || payOpt.includes("bank deposit")) {
+      if (bankDetails) bankDetails.classList.remove("hidden");
+      set("cp-payBankName", data.payBankName);
+      set("cp-payHolderName", data.payHolderName);
+      set("cp-payAccountType", data.payAccountType);
+      set("cp-payHolderType", data.payHolderType);
+      set("cp-payBusinessName", data.payBusinessName);
+      set(
+        "cp-payAccountNum",
+        data.payAccountNum ? `****${data.payAccountNum.slice(-4)}` : "****"
+      );
+      set(
+        "cp-payRoutingNum",
+        data.payRoutingNum ? `****${data.payRoutingNum.slice(-4)}` : "****"
+      );
+
+      // Show business name row if holder type is Business
+      const businessRow = document.getElementById("cp-payBusinessNameRow");
+      if (businessRow && data.payHolderType === "Business") {
+        businessRow.classList.remove("hidden");
+      } else if (businessRow) {
+        businessRow.classList.add("hidden");
+      }
+    } else if (payOpt.includes("zelle") || payOpt.includes("apple pay")) {
+      if (digitalDetails) digitalDetails.classList.remove("hidden");
+      set("cp-payDigitalFullName", data.payDigitalFullName);
+      set("cp-payDigitalType", data.payDigitalType);
+      set("cp-payDigitalValue", data.payDigitalValue);
+    } else if (
+      payOpt.includes("credit") ||
+      payOpt.includes("debit") ||
+      payOpt.includes("card")
+    ) {
+      if (cardDetails) cardDetails.classList.remove("hidden");
+      set("cp-payCardName", data.payCardName);
+      set(
+        "cp-payCardNumber",
+        data.payCardNumber
+          ? `**** **** **** ${data.payCardNumber.slice(-4)}`
+          : "****"
+      );
+      set("cp-payCardExpiry", data.payCardExpiry);
+    } else if (payOpt.includes("cash") || payOpt.includes("check")) {
+      if (cashCheck) cashCheck.classList.remove("hidden");
+      const cashCheckType = document.getElementById("cp-cashCheckType");
+      if (cashCheckType) cashCheckType.textContent = data.paymentOptions;
+    } else {
+      if (emptyPayment) emptyPayment.classList.remove("hidden");
+    }
+
+    // Insurance Details
     set("cp-insuranceCompany", data.insuranceCompany);
+    set(
+      "cp-insuranceAddressFull",
+      fmtAddr(
+        data.insuranceAddress,
+        data.insuranceApt,
+        data.insuranceCity,
+        data.insuranceState,
+        data.insuranceZip
+      )
+    );
     set("cp-insurancePolicy", data.insurancePolicy);
     set("cp-insuranceMemberId", data.insuranceMemberId);
     set("cp-insuranceClaim", data.insuranceClaim);
     set("cp-insuranceCase", data.insuranceCase);
     set("cp-insuranceContactName", data.insuranceContactName);
     set("cp-insuranceContactPhone", data.insuranceContactPhone);
+    set("cp-insuranceNote", data.insuranceAddNote);
+
+    // Document Links
+    const docLinks = [
+      { id: "cp-agreementLink", url: data.agreementLink },
+      { id: "cp-exhibitALink", url: data.exhibitALink },
+      { id: "cp-exhibitBLink", url: data.exhibitBLink },
+      { id: "cp-billOfRightsLink", url: data.billOfRightsLink },
+      { id: "cp-hipaaLink", url: data.hipaaLink },
+      { id: "cp-privacyLink", url: data.privacyLink },
+    ];
+
+    let hasDocuments = false;
+    docLinks.forEach((doc) => {
+      const linkEl = document.getElementById(doc.id);
+      if (linkEl) {
+        if (doc.url && doc.url.trim() !== "") {
+          linkEl.href = doc.url;
+          linkEl.classList.remove("hidden");
+          hasDocuments = true;
+        } else {
+          linkEl.classList.add("hidden");
+        }
+      }
+    });
+
+    // Show/hide "no documents" message
+    const noDocsEl = document.getElementById("cp-noDocuments");
+    if (noDocsEl) {
+      if (hasDocuments) {
+        noDocsEl.classList.add("hidden");
+      } else {
+        noDocsEl.classList.remove("hidden");
+      }
+    }
 
     // 11. Footer / Metadata
     // Clean date formatting

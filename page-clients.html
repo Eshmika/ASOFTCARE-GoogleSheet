@@ -381,11 +381,6 @@
               id="cp-status"
               >Status</span
             >
-            <span
-              class="bg-purple-50 text-purple-600 px-3 py-1 rounded-full font-bold"
-              id="cp-type"
-              >Type</span
-            >
             <span class="text-gray-400 flex items-center gap-1"
               ><i class="ph ph-user"></i> <span id="cp-username">--</span></span
             >
@@ -393,159 +388,150 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <!-- COL 1: Personal, Contacts, Key People -->
-        <div class="space-y-6">
-          <!-- Personal Info -->
-          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <h3
-              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
-            >
-              <i class="ph ph-user"></i> Personal Information
-            </h3>
-            <div class="space-y-3 text-sm">
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-gray-500 text-xs">DOB</label>
-                  <div id="cp-dob" class="font-medium">--</div>
-                </div>
-                <div>
-                  <label class="block text-gray-500 text-xs">Gender</label>
-                  <div id="cp-gender" class="font-medium">--</div>
-                </div>
-                <div>
-                  <label class="block text-gray-500 text-xs">SSN</label>
-                  <div id="cp-ssn" class="font-medium">--</div>
-                </div>
-                <div>
-                  <label class="block text-gray-500 text-xs">EIN</label>
-                  <div id="cp-ein" class="font-medium">--</div>
-                </div>
-                <div>
-                  <label class="block text-gray-500 text-xs"
-                    >Marital Status</label
-                  >
-                  <div id="cp-maritalStatus" class="font-medium">--</div>
-                </div>
-                <div>
-                  <label class="block text-gray-500 text-xs">Code Status</label>
-                  <div id="cp-codeStatus" class="font-medium">--</div>
-                </div>
+      <!-- Personal Info Section -->
+      <div class="grid grid-cols-1 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <h3
+            class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+          >
+            <i class="ph ph-user"></i> Personal Information
+          </h3>
+          <div class="space-y-3 text-sm">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-gray-500 text-xs">DOB</label>
+                <div id="cp-dob" class="font-medium">--</div>
               </div>
               <div>
-                <label class="block text-gray-500 text-xs">Languages</label>
-                <div id="cp-languages" class="font-medium">--</div>
+                <label class="block text-gray-500 text-xs">Gender</label>
+                <div id="cp-gender" class="font-medium">--</div>
               </div>
               <div>
-                <label class="block text-gray-500 text-xs">Spouse Name</label>
-                <div id="cp-spouseName" class="font-medium">--</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Contact Info -->
-          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <h3
-              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
-            >
-              <i class="ph ph-address-book"></i> Contact Details
-            </h3>
-            <div class="space-y-3 text-sm">
-              <div>
-                <label class="block text-gray-500 text-xs">Phone</label>
-                <div id="cp-clientPhone" class="font-medium">--</div>
+                <label class="block text-gray-500 text-xs">SSN</label>
+                <div id="cp-ssn" class="font-medium">--</div>
               </div>
               <div>
-                <label class="block text-gray-500 text-xs">Email</label>
-                <div id="cp-email" class="font-medium">--</div>
-              </div>
-              <div>
-                <label class="block text-gray-500 text-xs">Home Address</label>
-                <div id="cp-clientAddressFull" class="font-medium">--</div>
+                <label class="block text-gray-500 text-xs">EIN</label>
+                <div id="cp-ein" class="font-medium">--</div>
               </div>
               <div>
                 <label class="block text-gray-500 text-xs"
-                  >Billing Address</label
+                  >Marital Status</label
                 >
-                <div id="cp-billingAddressFull" class="font-medium">--</div>
+                <div id="cp-maritalStatus" class="font-medium">--</div>
               </div>
               <div>
-                <label class="block text-gray-500 text-xs"
-                  >Referral Source</label
-                >
-                <div id="cp-referredBy" class="font-medium text-blue-600">
-                  --
-                </div>
+                <label class="block text-gray-500 text-xs">Code Status</label>
+                <div id="cp-codeStatus" class="font-medium">--</div>
               </div>
             </div>
+            <div>
+              <label class="block text-gray-500 text-xs">Languages</label>
+              <div id="cp-languages" class="font-medium">--</div>
+            </div>
+            <div>
+              <label class="block text-gray-500 text-xs">Spouse Name</label>
+              <div id="cp-spouseName" class="font-medium">--</div>
+            </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Key Contacts (Tabbed visually or just stacked) -->
-          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <h3
-              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+      <!-- Contact Info Section -->
+      <div
+        class="bg-gradient-to-r from-blue-50 to-white p-6 rounded-xl shadow-sm border border-blue-100"
+      >
+        <h3
+          class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+        >
+          <i class="ph ph-address-book"></i> Contact Details
+        </h3>
+        <div class="space-y-3 text-sm">
+          <div>
+            <label class="block text-gray-500 text-xs">Phone</label>
+            <div id="cp-clientPhone" class="font-medium">--</div>
+          </div>
+          <div>
+            <label class="block text-gray-500 text-xs">Email</label>
+            <div id="cp-email" class="font-medium">--</div>
+          </div>
+          <div>
+            <label class="block text-gray-500 text-xs">Home Address</label>
+            <div id="cp-clientAddressFull" class="font-medium">--</div>
+          </div>
+          <div>
+            <label class="block text-gray-500 text-xs">Billing Address</label>
+            <div id="cp-billingAddressFull" class="font-medium">--</div>
+          </div>
+          <div>
+            <label class="block text-gray-500 text-xs">Referral Source</label>
+            <div id="cp-referredBy" class="font-medium text-blue-600">--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Contacts Section -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <h3
+          class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+        >
+          <i class="ph ph-users"></i> Key Contacts
+        </h3>
+        <div class="space-y-4 text-sm">
+          <!-- Representative -->
+          <div class="bg-gray-50 p-3 rounded">
+            <p class="text-xs font-bold text-gray-500 uppercase mb-1">
+              Representative
+            </p>
+            <div id="cp-repName" class="font-bold text-gray-800">--</div>
+            <div class="flex justify-between mt-1">
+              <span id="cp-repRelationship">--</span>
+              <span id="cp-repPhone">--</span>
+            </div>
+          </div>
+          <!-- Emergency -->
+          <div class="bg-red-50 p-3 rounded">
+            <p class="text-xs font-bold text-red-500 uppercase mb-1">
+              Emergency Contact
+            </p>
+            <div id="cp-emergencyName" class="font-bold text-gray-800">--</div>
+            <div class="flex justify-between mt-1">
+              <span id="cp-emergencyRelationship">--</span>
+              <span id="cp-emergencyPhone">--</span>
+            </div>
+            <div id="cp-emergencyEmail" class="text-xs mt-1 text-gray-500">
+              --
+            </div>
+            <div
+              id="cp-emergencyAddressFull"
+              class="text-xs mt-1 text-gray-500"
             >
-              <i class="ph ph-users"></i> Key Contacts
-            </h3>
-            <div class="space-y-4 text-sm">
-              <!-- Representative -->
-              <div class="bg-gray-50 p-3 rounded">
-                <p class="text-xs font-bold text-gray-500 uppercase mb-1">
-                  Representative
-                </p>
-                <div id="cp-repName" class="font-bold text-gray-800">--</div>
-                <div class="flex justify-between mt-1">
-                  <span id="cp-repRelationship">--</span>
-                  <span id="cp-repPhone">--</span>
-                </div>
-              </div>
-              <!-- Emergency -->
-              <div class="bg-red-50 p-3 rounded">
-                <p class="text-xs font-bold text-red-500 uppercase mb-1">
-                  Emergency Contact
-                </p>
-                <div id="cp-emergencyName" class="font-bold text-gray-800">
-                  --
-                </div>
-                <div class="flex justify-between mt-1">
-                  <span id="cp-emergencyRelationship">--</span>
-                  <span id="cp-emergencyPhone">--</span>
-                </div>
-                <div id="cp-emergencyEmail" class="text-xs mt-1 text-gray-500">
-                  --
-                </div>
-                <div
-                  id="cp-emergencyAddressFull"
-                  class="text-xs mt-1 text-gray-500"
-                >
-                  --
-                </div>
-              </div>
-              <!-- Authorization -->
-              <div class="bg-purple-50 p-3 rounded">
-                <p class="text-xs font-bold text-purple-500 uppercase mb-1">
-                  Authorization Contact
-                </p>
-                <div id="cp-authName" class="font-bold text-gray-800">--</div>
-                <div class="flex justify-between mt-1">
-                  <span id="cp-authRelationship">--</span>
-                  <span id="cp-authPhone">--</span>
-                </div>
-                <div id="cp-authEmail" class="text-xs mt-1 text-gray-500">
-                  --
-                </div>
-                <div id="cp-authAddressFull" class="text-xs mt-1 text-gray-500">
-                  --
-                </div>
-              </div>
+              --
+            </div>
+          </div>
+          <!-- Authorization -->
+          <div class="bg-purple-50 p-3 rounded">
+            <p class="text-xs font-bold text-purple-500 uppercase mb-1">
+              Authorization Contact
+            </p>
+            <div id="cp-authName" class="font-bold text-gray-800">--</div>
+            <div class="flex justify-between mt-1">
+              <span id="cp-authRelationship">--</span>
+              <span id="cp-authPhone">--</span>
+            </div>
+            <div id="cp-authEmail" class="text-xs mt-1 text-gray-500">--</div>
+            <div id="cp-authAddressFull" class="text-xs mt-1 text-gray-500">
+              --
             </div>
           </div>
         </div>
 
-        <!-- COL 2: Medical, Healthcare, Meds -->
-        <div class="space-y-6">
-          <!-- Medical Status -->
-          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <!-- Medical & Healthcare Section -->
+        <div class="grid grid-cols-1 gap-6">
+          <!-- Medical Status Section -->
+          <div
+            class="bg-gradient-to-r from-red-50 to-white p-6 rounded-xl shadow-sm border border-red-100"
+          >
             <h3
               class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
             >
@@ -606,7 +592,7 @@
             </div>
           </div>
 
-          <!-- Medications -->
+          <!-- Medications Section -->
           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h3
               class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
@@ -652,8 +638,10 @@
             </div>
           </div>
 
-          <!-- Healthcare Providers -->
-          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <!-- Healthcare Providers Section -->
+          <div
+            class="bg-gradient-to-r from-green-50 to-white p-6 rounded-xl shadow-sm border border-green-100"
+          >
             <h3
               class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
             >
@@ -699,9 +687,9 @@
           </div>
         </div>
 
-        <!-- COL 3: Care, Logistics, Payment -->
-        <div class="space-y-6">
-          <!-- Care Needs & Preferences -->
+        <!-- Care, Service & Preferences Section -->
+        <div class="grid grid-cols-1 gap-6">
+          <!-- Care Needs & Preferences Section -->
           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h3
               class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
@@ -760,6 +748,12 @@
                 <p class="text-xs font-bold text-gray-500 uppercase mb-2">
                   Caregiver Preferences
                 </p>
+                <div class="mb-2">
+                  <label class="text-gray-400 text-xs">Certifications:</label>
+                  <div id="cp-careCertifications" class="font-medium text-xs">
+                    --
+                  </div>
+                </div>
                 <div class="grid grid-cols-2 gap-2 text-xs">
                   <div>
                     <label class="text-gray-400">Gender:</label>
@@ -783,460 +777,692 @@
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Service Plan -->
+        <!-- Service Plan Section -->
+        <div
+          class="bg-gradient-to-r from-purple-50 to-white p-6 rounded-xl shadow-sm border border-purple-100"
+        >
+          <h3
+            class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+          >
+            <i class="ph ph-briefcase"></i> Service Plan
+          </h3>
+          <div class="space-y-3 text-sm">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-gray-500 text-xs">Level of Care</label>
+                <div id="cp-levelOfCare" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Project Hours</label>
+                <div id="cp-projectHours" class="font-medium">--</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-gray-500 text-xs">Hourly Rate</label>
+                <div id="cp-hourlyRate" class="font-medium text-green-600">
+                  --
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Weekly Cost</label>
+                <div id="cp-weeklyCost" class="font-medium text-green-600">
+                  --
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Overtime</label>
+                <div id="cp-overtime" class="font-medium">--</div>
+              </div>
+              <div>
+                <label class="block text-gray-500 text-xs">Monthly Cost</label>
+                <div id="cp-monthlyCost" class="font-medium text-green-600">
+                  --
+                </div>
+              </div>
+            </div>
+            <div>
+              <label class="block text-gray-500 text-xs">Service Types</label>
+              <div id="cp-serviceTypes" class="font-medium text-xs">--</div>
+            </div>
+          </div>
+          <!-- Schedule -->
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <p class="text-xs font-bold text-gray-500 uppercase mb-2">
+              Weekly Schedule
+            </p>
+            <div class="grid grid-cols-7 gap-1 text-center text-[10px]">
+              <div class="bg-gray-50 p-1 rounded">
+                MO
+                <div id="cp-schMO" class="font-bold text-green-600">--</div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                TU
+                <div id="cp-schT" class="font-bold text-green-600">--</div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                WE
+                <div id="cp-schW" class="font-bold text-green-600">--</div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                TH
+                <div id="cp-schTH" class="font-bold text-green-600">--</div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                FR
+                <div id="cp-schFR" class="font-bold text-green-600">--</div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                SA
+                <div id="cp-schSA" class="font-bold text-green-600">--</div>
+              </div>
+              <div class="bg-gray-50 p-1 rounded">
+                SU
+                <div id="cp-schSU" class="font-bold text-green-600">--</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Living Environment & Payment/Insurance Section -->
+        <div class="grid grid-cols-1 gap-6">
+          <!-- Living Environment Section -->
           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h3
               class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
             >
-              <i class="ph ph-briefcase"></i> Service Plan
+              <i class="ph ph-house"></i> Living Environment
             </h3>
             <div class="space-y-3 text-sm">
-              <div class="grid grid-cols-2 gap-2">
+              <div class="flex gap-4">
                 <div>
-                  <label class="block text-gray-500 text-xs"
-                    >Level of Care</label
-                  >
-                  <div id="cp-levelOfCare" class="font-medium">--</div>
-                </div>
-                <div>
-                  <label class="block text-gray-500 text-xs"
-                    >Project Hours</label
-                  >
-                  <div id="cp-projectHours" class="font-medium">--</div>
-                </div>
-              </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-gray-500 text-xs">Hourly Rate</label>
-                  <div id="cp-hourlyRate" class="font-medium text-green-600">
-                    --
+                  <label class="text-gray-500 text-xs">Smoke/Drink</label>
+                  <div class="font-medium">
+                    <span id="cp-smoke">--</span> /
+                    <span id="cp-drink">--</span>
                   </div>
                 </div>
                 <div>
-                  <label class="block text-gray-500 text-xs">Weekly Cost</label>
-                  <div id="cp-weeklyCost" class="font-medium text-green-600">
-                    --
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-gray-500 text-xs">Overtime</label>
-                  <div id="cp-overtime" class="font-medium">--</div>
-                </div>
-                <div>
-                  <label class="block text-gray-500 text-xs"
-                    >Monthly Cost</label
-                  >
-                  <div id="cp-monthlyCost" class="font-medium text-green-600">
-                    --
-                  </div>
+                  <label class="text-gray-500 text-xs">Live Alone</label>
+                  <div id="cp-liveAlone" class="font-medium">--</div>
                 </div>
               </div>
               <div>
-                <label class="block text-gray-500 text-xs">Service Types</label>
-                <div id="cp-serviceTypes" class="font-medium text-xs">--</div>
+                <label class="text-gray-500 text-xs"
+                  >Living Arrangement Details</label
+                >
+                <div id="cp-liveDetails" class="text-xs text-gray-600">--</div>
+              </div>
+              <div class="bg-yellow-50 p-2 rounded">
+                <label class="text-yellow-700 text-xs font-bold">Pets</label>
+                <div class="font-medium text-xs">
+                  <span id="cp-pets">--</span> <span id="cp-petsList"></span>
+                </div>
+                <div id="cp-petsNote" class="text-xs italic text-gray-500">
+                  --
+                </div>
               </div>
             </div>
-            <!-- Schedule -->
-            <div class="mt-4 pt-4 border-t border-gray-100">
-              <p class="text-xs font-bold text-gray-500 uppercase mb-2">
-                Weekly Schedule
-              </p>
-              <div class="grid grid-cols-7 gap-1 text-center text-[10px]">
-                <div class="bg-gray-50 p-1 rounded">
-                  MO
-                  <div id="cp-schMO" class="font-bold text-green-600">--</div>
+          </div>
+
+          <!-- Payment & Insurance Section -->
+          <div
+            class="bg-gradient-to-r from-indigo-50 to-white p-6 rounded-xl shadow-sm border border-indigo-100"
+          >
+            <h3
+              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+            >
+              <i class="ph ph-currency-dollar"></i> Financials & Insurance
+            </h3>
+            <div class="space-y-4 text-sm">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-gray-500 text-xs">Payment Type</label>
+                  <div id="cp-paymentType" class="font-bold">--</div>
                 </div>
-                <div class="bg-gray-50 p-1 rounded">
-                  TU
-                  <div id="cp-schT" class="font-bold text-green-600">--</div>
+                <div>
+                  <label class="text-gray-500 text-xs">Options</label>
+                  <div id="cp-paymentOptions" class="font-medium">--</div>
                 </div>
-                <div class="bg-gray-50 p-1 rounded">
-                  WE
-                  <div id="cp-schW" class="font-bold text-green-600">--</div>
+              </div>
+              <!-- Payment Details Block -->
+              <div class="bg-gray-50 p-3 rounded text-xs space-y-2">
+                <p class="font-bold text-gray-500 uppercase mb-2">
+                  Payment Method Details
+                </p>
+
+                <!-- Bank/Direct Deposit Details -->
+                <div id="cp-paymentBankDetails" class="hidden space-y-1">
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Bank Name:</span>
+                    <span id="cp-payBankName" class="font-medium">--</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Account Holder:</span>
+                    <span id="cp-payHolderName" class="font-medium">--</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Account Type:</span>
+                    <span id="cp-payAccountType" class="font-medium">--</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Holder Type:</span>
+                    <span id="cp-payHolderType" class="font-medium">--</span>
+                  </div>
+                  <div
+                    id="cp-payBusinessNameRow"
+                    class="hidden flex justify-between"
+                  >
+                    <span class="text-gray-500">Business Name:</span>
+                    <span id="cp-payBusinessName" class="font-medium">--</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Account Number:</span>
+                    <span id="cp-payAccountNum" class="font-medium">****</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Routing Number:</span>
+                    <span id="cp-payRoutingNum" class="font-medium">****</span>
+                  </div>
                 </div>
-                <div class="bg-gray-50 p-1 rounded">
-                  TH
-                  <div id="cp-schTH" class="font-bold text-green-600">--</div>
+
+                <!-- Digital Payment Details (Zelle/Apple Pay) -->
+                <div id="cp-paymentDigitalDetails" class="hidden space-y-1">
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Full Name:</span>
+                    <span id="cp-payDigitalFullName" class="font-medium"
+                      >--</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Linked Via:</span>
+                    <span id="cp-payDigitalType" class="font-medium">--</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Value:</span>
+                    <span id="cp-payDigitalValue" class="font-medium">--</span>
+                  </div>
                 </div>
-                <div class="bg-gray-50 p-1 rounded">
-                  FR
-                  <div id="cp-schFR" class="font-bold text-green-600">--</div>
+
+                <!-- Card Details -->
+                <div id="cp-paymentCardDetails" class="hidden space-y-1">
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Name on Card:</span>
+                    <span id="cp-payCardName" class="font-medium">--</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Card Number:</span>
+                    <span id="cp-payCardNumber" class="font-medium">****</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Expiry:</span>
+                    <span id="cp-payCardExpiry" class="font-medium">--</span>
+                  </div>
                 </div>
-                <div class="bg-gray-50 p-1 rounded">
-                  SA
-                  <div id="cp-schSA" class="font-bold text-green-600">--</div>
+
+                <!-- Cash/Check -->
+                <div id="cp-paymentCashCheck" class="hidden">
+                  <span class="text-gray-600"
+                    >Payment via
+                    <span id="cp-cashCheckType">Cash/Check</span></span
+                  >
                 </div>
-                <div class="bg-gray-50 p-1 rounded">
-                  SU
-                  <div id="cp-schSU" class="font-bold text-green-600">--</div>
+
+                <!-- Empty State -->
+                <div id="cp-paymentEmpty" class="text-gray-400">
+                  No payment details available
+                </div>
+              </div>
+
+              <!-- Insurance Block -->
+              <div class="bg-blue-50 p-3 rounded text-xs space-y-2">
+                <p class="font-bold text-blue-500 uppercase">Insurance</p>
+                <div class="flex justify-between">
+                  <span class="font-bold">Company:</span>
+                  <span id="cp-insuranceCompany">--</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="font-bold">Address:</span>
+                  <span id="cp-insuranceAddressFull" class="text-right"
+                    >--</span
+                  >
+                </div>
+                <div class="flex justify-between">
+                  <span class="font-bold">Policy/Member ID:</span>
+                  <span
+                    ><span id="cp-insurancePolicy">--</span> /
+                    <span id="cp-insuranceMemberId">--</span></span
+                  >
+                </div>
+                <div class="flex justify-between">
+                  <span class="font-bold">Claim/Case:</span>
+                  <span
+                    ><span id="cp-insuranceClaim">--</span> /
+                    <span id="cp-insuranceCase">--</span></span
+                  >
+                </div>
+                <div class="mt-1 pt-1 border-t border-blue-100">
+                  <div id="cp-insuranceContactName">--</div>
+                  <div id="cp-insuranceContactPhone">--</div>
+                </div>
+                <div
+                  id="cp-insuranceNote"
+                  class="mt-2 pt-2 border-t border-blue-100 text-gray-600 italic"
+                >
+                  --
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- FULL WIDTH: Financial, Insurance, Living, Docs -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Living Environment -->
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h3
-            class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+        <!-- Client Documents Section -->
+        <div class="grid grid-cols-1 gap-6">
+          <div
+            class="bg-gradient-to-r from-amber-50 to-white p-6 rounded-xl shadow-sm border border-amber-100"
           >
-            <i class="ph ph-house"></i> Living Environment
-          </h3>
-          <div class="space-y-3 text-sm">
-            <div class="flex gap-4">
-              <div>
-                <label class="text-gray-500 text-xs">Smoke/Drink</label>
-                <div class="font-medium">
-                  <span id="cp-smoke">--</span> / <span id="cp-drink">--</span>
-                </div>
-              </div>
-              <div>
-                <label class="text-gray-500 text-xs">Live Alone</label>
-                <div id="cp-liveAlone" class="font-medium">--</div>
-              </div>
-            </div>
-            <div>
-              <label class="text-gray-500 text-xs"
-                >Living Arrangement Details</label
+            <h3
+              class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+            >
+              <i class="ph ph-files"></i> Client Agreement Documents
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <a
+                id="cp-agreementLink"
+                href="#"
+                target="_blank"
+                class="hidden flex items-center gap-3 p-3 bg-blue-50 border border-blue-100 rounded-lg hover:bg-blue-100 transition-colors"
               >
-              <div id="cp-liveDetails" class="text-xs text-gray-600">--</div>
+                <div
+                  class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="ph-bold ph-handshake text-white text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-bold text-blue-800">
+                    Service Agreement
+                  </p>
+                  <p class="text-[10px] text-blue-600">View Document</p>
+                </div>
+              </a>
+
+              <a
+                id="cp-exhibitALink"
+                href="#"
+                target="_blank"
+                class="hidden flex items-center gap-3 p-3 bg-purple-50 border border-purple-100 rounded-lg hover:bg-purple-100 transition-colors"
+              >
+                <div
+                  class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="ph-bold ph-list-checks text-white text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-bold text-purple-800">Exhibit A</p>
+                  <p class="text-[10px] text-purple-600">View Document</p>
+                </div>
+              </a>
+
+              <a
+                id="cp-exhibitBLink"
+                href="#"
+                target="_blank"
+                class="hidden flex items-center gap-3 p-3 bg-purple-50 border border-purple-100 rounded-lg hover:bg-purple-100 transition-colors"
+              >
+                <div
+                  class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="ph-bold ph-clipboard-text text-white text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-bold text-purple-800">Exhibit B</p>
+                  <p class="text-[10px] text-purple-600">View Document</p>
+                </div>
+              </a>
+
+              <a
+                id="cp-billOfRightsLink"
+                href="#"
+                target="_blank"
+                class="hidden flex items-center gap-3 p-3 bg-indigo-50 border border-indigo-100 rounded-lg hover:bg-indigo-100 transition-colors"
+              >
+                <div
+                  class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="ph-bold ph-scroll text-white text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-bold text-indigo-800">
+                    Bill of Rights
+                  </p>
+                  <p class="text-[10px] text-indigo-600">View Document</p>
+                </div>
+              </a>
+
+              <a
+                id="cp-hipaaLink"
+                href="#"
+                target="_blank"
+                class="hidden flex items-center gap-3 p-3 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors"
+              >
+                <div
+                  class="w-10 h-10 bg-rose-500 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="ph-bold ph-shield-check text-white text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-bold text-rose-800">HIPAA Release</p>
+                  <p class="text-[10px] text-rose-600">View Document</p>
+                </div>
+              </a>
+
+              <a
+                id="cp-privacyLink"
+                href="#"
+                target="_blank"
+                class="hidden flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-lg hover:bg-emerald-100 transition-colors"
+              >
+                <div
+                  class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="ph-bold ph-lock-key text-white text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-bold text-emerald-800">
+                    Privacy Notice
+                  </p>
+                  <p class="text-[10px] text-emerald-600">View Document</p>
+                </div>
+              </a>
             </div>
-            <div class="bg-yellow-50 p-2 rounded">
-              <label class="text-yellow-700 text-xs font-bold">Pets</label>
-              <div class="font-medium text-xs">
-                <span id="cp-pets">--</span> <span id="cp-petsList"></span>
-              </div>
-              <div id="cp-petsNote" class="text-xs italic text-gray-500">
-                --
-              </div>
+            <div
+              id="cp-noDocuments"
+              class="text-center text-gray-400 text-sm py-4"
+            >
+              No signed documents available yet
             </div>
           </div>
         </div>
 
-        <!-- Payment & Insurance -->
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h3
-            class="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2"
+        <!-- Footer Section -->
+        <div class="grid grid-cols-1 gap-6">
+          <div
+            class="bg-gradient-to-r from-gray-50 to-white p-6 rounded-xl shadow-sm border border-gray-200"
           >
-            <i class="ph ph-currency-dollar"></i> Financials & Insurance
-          </h3>
-          <div class="space-y-4 text-sm">
-            <div class="grid grid-cols-2 gap-2">
+            Created: <span id="cp-createdAt">--</span> | Last Reviewed:
+            <span id="cp-lastReviewed">--</span> | Coordinator:
+            <span id="cp-coordinator">--</span>
+          </div>
+        </div>
+
+        <!-- End Profile View -->
+      </div>
+
+      <!-- EDIT CLIENT FORM -->
+      <div id="cl-subview-edit" class="hidden">
+        <div class="mb-6 flex items-center gap-4">
+          <button
+            onclick="switchClView('profile')"
+            class="p-2 rounded-full hover:bg-gray-200 text-gray-600"
+          >
+            <i class="ph ph-arrow-left text-xl"></i>
+          </button>
+          <h1 class="text-2xl font-bold text-gray-800">Edit Client</h1>
+        </div>
+
+        <form
+          id="clientEditForm"
+          onsubmit="submitEditClientForm(event)"
+          class="max-w-4xl bg-white p-8 rounded-xl shadow-sm border border-gray-100 space-y-8"
+        >
+          <input type="hidden" name="id" id="ce-id" />
+
+          <!-- Initial Contact Information -->
+          <div>
+            <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+              Initial Contact Information
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label class="text-gray-500 text-xs">Payment Type</label>
-                <div id="cp-paymentType" class="font-bold">--</div>
+                <label class="input-label">Date</label>
+                <input
+                  type="date"
+                  name="contactDate"
+                  id="ce-contactDate"
+                  required
+                  class="input-field"
+                />
               </div>
               <div>
-                <label class="text-gray-500 text-xs">Options</label>
-                <div id="cp-paymentOptions" class="font-medium">--</div>
+                <label class="input-label">Free Assessment Date/Time</label>
+                <input
+                  type="datetime-local"
+                  name="assessmentDateTime"
+                  id="ce-assessmentDateTime"
+                  required
+                  class="input-field"
+                />
               </div>
-            </div>
-            <!-- Payment Details Block -->
-            <div class="bg-gray-50 p-3 rounded text-xs space-y-1">
-              <p class="font-bold text-gray-500 uppercase">
-                Payment Method Details
-              </p>
-              <div id="cp-paymentDetails">--</div>
-            </div>
-            <!-- Insurance Block -->
-            <div class="bg-blue-50 p-3 rounded text-xs space-y-1">
-              <p class="font-bold text-blue-500 uppercase">Insurance</p>
-              <div class="flex justify-between">
-                <span class="font-bold">Company:</span>
-                <span id="cp-insuranceCompany">--</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="font-bold">Policy/Member ID:</span>
-                <span
-                  ><span id="cp-insurancePolicy">--</span> /
-                  <span id="cp-insuranceMemberId">--</span></span
-                >
-              </div>
-              <div class="flex justify-between">
-                <span class="font-bold">Claim/Case:</span>
-                <span
-                  ><span id="cp-insuranceClaim">--</span> /
-                  <span id="cp-insuranceCase">--</span></span
-                >
-              </div>
-              <div class="mt-1 pt-1 border-t border-blue-100">
-                <div id="cp-insuranceContactName">--</div>
-                <div id="cp-insuranceContactPhone">--</div>
+              <div>
+                <label class="input-label">Coordinator</label>
+                <input
+                  type="text"
+                  name="coordinator"
+                  id="ce-coordinator"
+                  required
+                  class="input-field"
+                  placeholder="Enter coordinator name"
+                />
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Footer: Log Info -->
-      <div class="text-center text-xs text-gray-400 mt-8">
-        Created: <span id="cp-createdAt">--</span> | Last Reviewed:
-        <span id="cp-lastReviewed">--</span> | Coordinator:
-        <span id="cp-coordinator">--</span>
+          <!-- Representative -->
+          <div>
+            <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+              Representative
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label class="input-label">Name of Person Calling</label>
+                <input
+                  type="text"
+                  name="repName"
+                  id="ce-repName"
+                  required
+                  class="input-field"
+                  placeholder="Enter representative name"
+                />
+              </div>
+              <div>
+                <label class="input-label">Phone</label>
+                <input
+                  type="tel"
+                  name="repPhone"
+                  id="ce-repPhone"
+                  required
+                  maxlength="14"
+                  class="input-field"
+                  placeholder="(XXX) XXX-XXXX"
+                  oninput="formatPhone(this)"
+                  pattern="\(\d{3}\) \d{3}-\d{4}"
+                  title="Phone number must be in the format (XXX) XXX-XXXX"
+                />
+              </div>
+              <div>
+                <label class="input-label">Relationship to Client</label>
+                <input
+                  type="text"
+                  name="repRelationship"
+                  id="ce-repRelationship"
+                  required
+                  class="input-field"
+                  placeholder="e.g., Daughter, Son, Spouse"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- New Lead Information -->
+          <div>
+            <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+              New Lead Information
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label class="input-label">First Name</label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    id="ce-firstName"
+                    required
+                    class="input-field"
+                    placeholder="First Name"
+                  />
+                </div>
+                <div>
+                  <label class="input-label">Middle Name</label>
+                  <input
+                    type="text"
+                    name="middleName"
+                    id="ce-middleName"
+                    class="input-field"
+                    placeholder="Middle Name"
+                  />
+                </div>
+                <div>
+                  <label class="input-label">Last Name</label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    id="ce-lastName"
+                    required
+                    class="input-field"
+                    placeholder="Last Name"
+                  />
+                </div>
+              </div>
+              <div>
+                <label class="input-label">Phone</label>
+                <input
+                  type="tel"
+                  name="clientPhone"
+                  id="ce-clientPhone"
+                  required
+                  maxlength="14"
+                  class="input-field"
+                  placeholder="(XXX) XXX-XXXX"
+                  oninput="formatPhone(this)"
+                  pattern="\(\d{3}\) \d{3}-\d{4}"
+                  title="Phone number must be in the format (XXX) XXX-XXXX"
+                />
+              </div>
+              <div>
+                <label class="input-label">Status</label>
+                <select
+                  name="status"
+                  id="ce-status"
+                  required
+                  class="input-field"
+                >
+                  <option value="">Select status...</option>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                  <option value="Hospital stay">Hospital stay</option>
+                  <option value="Cancelled service">Cancelled service</option>
+                  <option value="Insurance approval">Insurance approval</option>
+                </select>
+              </div>
+              <div class="md:col-span-2">
+                <label class="input-label">Address</label>
+                <input
+                  type="text"
+                  name="clientAddress"
+                  id="ce-clientAddress"
+                  required
+                  class="input-field"
+                  placeholder="Street address"
+                />
+              </div>
+              <div>
+                <label class="input-label">Apt/Unit</label>
+                <input
+                  type="text"
+                  name="clientApt"
+                  id="ce-clientApt"
+                  class="input-field"
+                  placeholder="Apt #"
+                />
+              </div>
+              <div>
+                <label class="input-label">City</label>
+                <input
+                  type="text"
+                  name="clientCity"
+                  id="ce-clientCity"
+                  required
+                  class="input-field"
+                  placeholder="City"
+                />
+              </div>
+              <div>
+                <label class="input-label">State</label>
+                <input
+                  type="text"
+                  name="clientState"
+                  id="ce-clientState"
+                  required
+                  maxlength="14"
+                  class="input-field"
+                  placeholder="CA"
+                />
+              </div>
+              <div>
+                <label class="input-label">Zip</label>
+                <input
+                  type="text"
+                  name="clientZip"
+                  id="ce-clientZip"
+                  required
+                  maxlength="5"
+                  class="input-field"
+                  placeholder="12345"
+                  oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                />
+              </div>
+              <div class="md:col-span-2">
+                <label class="input-label">Client Care Needs</label>
+                <textarea
+                  name="careNeeds"
+                  id="ce-careNeeds"
+                  rows="3"
+                  class="input-field resize-none"
+                  placeholder="Describe the client's care needs..."
+                ></textarea>
+              </div>
+              <div class="md:col-span-2">
+                <label class="input-label">Referred By</label>
+                <input
+                  type="text"
+                  name="referredBy"
+                  id="ce-referredBy"
+                  class="input-field"
+                  placeholder="Enter referral source (optional)"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-4">
+            <button type="submit" id="updateClientBtn" class="btn-primary">
+              Update Client Information
+            </button>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
-
-  <!-- EDIT CLIENT FORM -->
-  <div id="cl-subview-edit" class="hidden">
-    <div class="mb-6 flex items-center gap-4">
-      <button
-        onclick="switchClView('profile')"
-        class="p-2 rounded-full hover:bg-gray-200 text-gray-600"
-      >
-        <i class="ph ph-arrow-left text-xl"></i>
-      </button>
-      <h1 class="text-2xl font-bold text-gray-800">Edit Client</h1>
-    </div>
-
-    <form
-      id="clientEditForm"
-      onsubmit="submitEditClientForm(event)"
-      class="max-w-4xl bg-white p-8 rounded-xl shadow-sm border border-gray-100 space-y-8"
-    >
-      <input type="hidden" name="id" id="ce-id" />
-
-      <!-- Initial Contact Information -->
-      <div>
-        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-          Initial Contact Information
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label class="input-label">Date</label>
-            <input
-              type="date"
-              name="contactDate"
-              id="ce-contactDate"
-              required
-              class="input-field"
-            />
-          </div>
-          <div>
-            <label class="input-label">Free Assessment Date/Time</label>
-            <input
-              type="datetime-local"
-              name="assessmentDateTime"
-              id="ce-assessmentDateTime"
-              required
-              class="input-field"
-            />
-          </div>
-          <div>
-            <label class="input-label">Coordinator</label>
-            <input
-              type="text"
-              name="coordinator"
-              id="ce-coordinator"
-              required
-              class="input-field"
-              placeholder="Enter coordinator name"
-            />
-          </div>
-        </div>
-      </div>
-
-      <!-- Representative -->
-      <div>
-        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-          Representative
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label class="input-label">Name of Person Calling</label>
-            <input
-              type="text"
-              name="repName"
-              id="ce-repName"
-              required
-              class="input-field"
-              placeholder="Enter representative name"
-            />
-          </div>
-          <div>
-            <label class="input-label">Phone</label>
-            <input
-              type="tel"
-              name="repPhone"
-              id="ce-repPhone"
-              required
-              maxlength="14"
-              class="input-field"
-              placeholder="(XXX) XXX-XXXX"
-              oninput="formatPhone(this)"
-              pattern="\(\d{3}\) \d{3}-\d{4}"
-              title="Phone number must be in the format (XXX) XXX-XXXX"
-            />
-          </div>
-          <div>
-            <label class="input-label">Relationship to Client</label>
-            <input
-              type="text"
-              name="repRelationship"
-              id="ce-repRelationship"
-              required
-              class="input-field"
-              placeholder="e.g., Daughter, Son, Spouse"
-            />
-          </div>
-        </div>
-      </div>
-
-      <!-- New Lead Information -->
-      <div>
-        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-          New Lead Information
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label class="input-label">First Name</label>
-              <input
-                type="text"
-                name="firstName"
-                id="ce-firstName"
-                required
-                class="input-field"
-                placeholder="First Name"
-              />
-            </div>
-            <div>
-              <label class="input-label">Middle Name</label>
-              <input
-                type="text"
-                name="middleName"
-                id="ce-middleName"
-                class="input-field"
-                placeholder="Middle Name"
-              />
-            </div>
-            <div>
-              <label class="input-label">Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                id="ce-lastName"
-                required
-                class="input-field"
-                placeholder="Last Name"
-              />
-            </div>
-          </div>
-          <div>
-            <label class="input-label">Phone</label>
-            <input
-              type="tel"
-              name="clientPhone"
-              id="ce-clientPhone"
-              required
-              maxlength="14"
-              class="input-field"
-              placeholder="(XXX) XXX-XXXX"
-              oninput="formatPhone(this)"
-              pattern="\(\d{3}\) \d{3}-\d{4}"
-              title="Phone number must be in the format (XXX) XXX-XXXX"
-            />
-          </div>
-          <div>
-            <label class="input-label">Status</label>
-            <select name="status" id="ce-status" required class="input-field">
-              <option value="">Select status...</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-              <option value="Hospital stay">Hospital stay</option>
-              <option value="Cancelled service">Cancelled service</option>
-              <option value="Insurance approval">Insurance approval</option>
-            </select>
-          </div>
-          <div class="md:col-span-2">
-            <label class="input-label">Address</label>
-            <input
-              type="text"
-              name="clientAddress"
-              id="ce-clientAddress"
-              required
-              class="input-field"
-              placeholder="Street address"
-            />
-          </div>
-          <div>
-            <label class="input-label">Apt/Unit</label>
-            <input
-              type="text"
-              name="clientApt"
-              id="ce-clientApt"
-              class="input-field"
-              placeholder="Apt #"
-            />
-          </div>
-          <div>
-            <label class="input-label">City</label>
-            <input
-              type="text"
-              name="clientCity"
-              id="ce-clientCity"
-              required
-              class="input-field"
-              placeholder="City"
-            />
-          </div>
-          <div>
-            <label class="input-label">State</label>
-            <input
-              type="text"
-              name="clientState"
-              id="ce-clientState"
-              required
-              maxlength="14"
-              class="input-field"
-              placeholder="CA"
-            />
-          </div>
-          <div>
-            <label class="input-label">Zip</label>
-            <input
-              type="text"
-              name="clientZip"
-              id="ce-clientZip"
-              required
-              maxlength="5"
-              class="input-field"
-              placeholder="12345"
-              oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-            />
-          </div>
-          <div class="md:col-span-2">
-            <label class="input-label">Client Care Needs</label>
-            <textarea
-              name="careNeeds"
-              id="ce-careNeeds"
-              rows="3"
-              class="input-field resize-none"
-              placeholder="Describe the client's care needs..."
-            ></textarea>
-          </div>
-          <div class="md:col-span-2">
-            <label class="input-label">Referred By</label>
-            <input
-              type="text"
-              name="referredBy"
-              id="ce-referredBy"
-              class="input-field"
-              placeholder="Enter referral source (optional)"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="flex justify-end pt-4">
-        <button type="submit" id="updateClientBtn" class="btn-primary">
-          Update Client Information
-        </button>
-      </div>
-    </form>
   </div>
 </div>

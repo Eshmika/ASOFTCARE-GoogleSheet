@@ -199,7 +199,7 @@ function getOrCreateClientSheet() {
       !currentHeaders.includes("Agreement Link")
     ) {
       const missingHeaders = additionalHeaders.filter(
-        (h) => !currentHeaders.includes(h),
+        (h) => !currentHeaders.includes(h)
       );
       if (missingHeaders.length > 0) {
         const startCol = currentHeaders.length + 1;
@@ -418,6 +418,9 @@ function getClientList() {
   const privacyLinkIdx = headers.indexOf("Privacy Link");
   const emailIdx = headers.indexOf("Email");
 
+  const cityIdx = headers.indexOf("Client City");
+  const zipIdx = headers.indexOf("Client Zip");
+
   return data
     .filter((row) => row[0] !== "")
     .map((row) => {
@@ -436,8 +439,8 @@ function getClientList() {
         phone: row[10] || "--", // Client Phone
         status: row[11] || "Pending", // Status
         type: "Lead",
-        city: "--",
-        zip: "--",
+        city: cityIdx > -1 ? row[cityIdx] : "--",
+        zip: zipIdx > -1 ? row[zipIdx] : "--",
         stage: headers.includes("Stage")
           ? row[headers.indexOf("Stage")]
           : "New leads",
@@ -818,8 +821,8 @@ function updateClient(data) {
     ].includes(data.stage)
       ? "In progress"
       : data.stage === "Convert Clients"
-        ? "Active"
-        : data.status,
+      ? "Active"
+      : data.status,
     data.clientAddress,
     data.clientApt,
     data.clientCity,
