@@ -138,7 +138,7 @@
         } else if (client.paymentFilled) {
           actionHtml = `
                     <div class="flex flex-wrap items-center justify-end gap-2 px-4">
-                        <button onclick="openInsurancePendingDialog('${client.id}')" class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-bold hover:bg-yellow-200 flex items-center gap-1">
+                        <button onclick="openInsurancePendingDialog('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90 flex items-center gap-1" style="background-color: #F1C40F;">
                             <i class="ph ph-clock"></i> Pending
                         </button>
                         <button onclick="openInsuranceDeniedDialog('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90 flex items-center gap-1" style="background-color: #E74C3C;">
@@ -268,11 +268,22 @@
                 `;
       }
 
+      let statusBgColor = "#E8E8E8";
+      let statusTextColor = "#666666";
+
+      if (client.status === "In progress") {
+        statusBgColor = "#3498DB";
+        statusTextColor = "#FFFFFF";
+      } else if (client.status === "Active") {
+        statusBgColor = "#2ECC71";
+        statusTextColor = "#FFFFFF";
+      }
+
       const statusHtml = `
                     <div class="flex flex-col gap-1">
-                        <span class="inline-block w-fit px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600">${
-                          client.status
-                        }</span>
+                        <span class="inline-block w-fit px-2 py-0.5 rounded-full text-[10px] font-bold" style="background-color: ${statusBgColor}; color: ${statusTextColor};">${
+        client.status
+      }</span>
                         ${
                           client.insuranceNote
                             ? `<div class="text-[10px] text-gray-400 italic whitespace-pre-wrap break-words mt-1 leading-relaxed">${client.insuranceNote}</div>`
