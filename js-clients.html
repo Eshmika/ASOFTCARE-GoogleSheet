@@ -247,18 +247,22 @@
     set("cp-id", data.id);
     set("cp-status", data.status);
     set("cp-type", data.serviceTypes || "Client");
+    set("cp-username", data.username);
 
     // 2. Personal Info
     set("cp-dob", data.dob);
     set("cp-gender", data.gender);
     set("cp-ssn", data.ssn);
+    set("cp-ein", data.ein);
     set("cp-maritalStatus", data.maritalStatus);
+    set("cp-codeStatus", data.codeStatus);
     set("cp-spouseName", data.spouseName);
     set("cp-languages", data.languages);
 
     // 3. Contact Info
     set("cp-clientPhone", data.clientPhone);
     set("cp-email", data.email);
+    set("cp-referredBy", data.referredBy);
     set(
       "cp-clientAddressFull",
       fmtAddr(
@@ -280,14 +284,48 @@
       ),
     );
 
-    // 4. Representative
+    // 4. Key Contacts
+    // Representative
     set("cp-repName", data.repName);
     set("cp-repRelationship", data.repRelationship);
     set("cp-repPhone", data.repPhone);
 
+    // Emergency
+    set("cp-emergencyName", data.emergencyName);
+    set("cp-emergencyPhone", data.emergencyPhone);
+    set("cp-emergencyRelationship", data.emergencyRelationship);
+    set("cp-emergencyEmail", data.emergencyEmail);
+    set(
+      "cp-emergencyAddressFull",
+      fmtAddr(
+        data.emergencyAddress,
+        data.emergencyApt,
+        data.emergencyCity,
+        data.emergencyState,
+        data.emergencyZip,
+      ),
+    );
+
+    // Authorization
+    set("cp-authName", data.authName);
+    set("cp-authPhone", data.authPhone);
+    set("cp-authEmail", data.authEmail);
+    set("cp-authRelationship", data.authRelationship);
+    set(
+      "cp-authAddressFull",
+      fmtAddr(
+        data.authAddress,
+        data.authApt,
+        data.authCity,
+        data.authState,
+        data.authZip,
+      ),
+    );
+
     // 5. Medical Status
     set("cp-height", data.height);
     set("cp-weight", data.weight);
+    set("cp-mentalStatus", data.mentalStatus);
     set("cp-diagnosis", data.diagnosis);
     set(
       "cp-allergies",
@@ -305,32 +343,81 @@
         (data.fluVaccineDetail ? ` (${data.fluVaccineDetail})` : ""),
     );
 
+    // Aids
+    let aids = [];
+    if (data.blind === "Yes") aids.push("Blind");
+    if (data.glasses === "Yes") aids.push("Glasses");
+    if (data.dentures === "Yes") aids.push("Dentures");
+    if (data.medicalAids) aids.push(data.medicalAids);
+    set("cp-physicalAids", aids.join(", ") || "--");
+
+    // Continence
+    let cont = [];
+    if (data.continentInfo) cont.push(`Continent: ${data.continentInfo}`);
+    if (data.incontinentInfo) cont.push(`Incontinent: ${data.incontinentInfo}`);
+    set("cp-continence", cont.join(" | ") || "--");
+
+    set("cp-medicalHistory", data.medicalHistory);
+
+    // Medications
+    set("cp-medReminder", data.medReminder);
+    set("cp-selfAdminMed", data.selfAdminMed);
+    set("cp-takingMed", data.takingMed);
+    set("cp-medOverseer", data.medOverseer);
+    set("cp-medList", data.medList);
+    set(
+      "cp-assistDirections",
+      data.assistDirections +
+        (data.assistDirectionsDetail
+          ? `\nDetails: ${data.assistDirectionsDetail}`
+          : ""),
+    );
+
+    // Healthcare Providers
+    set("cp-primaryDrName", data.primaryDrName);
+    set("cp-drOfficeName", data.drOfficeName);
+    set("cp-drPhone", data.drPhone);
+    set("cp-drAddress", data.drAddress);
+
+    set("cp-hospitalName", data.hospitalName);
+    set("cp-hospitalPhone", data.hospitalPhone);
+    set("cp-hospitalAddress", data.hospitalAddress);
+
+    set("cp-pharmacyName", data.pharmacyName);
+    set("cp-pharmacyPhone", data.pharmacyPhone);
+    set("cp-pharmacyAddress", data.pharmacyAddress);
+
     // 6. Care Needs
     set("cp-mobility", data.mobility);
     set("cp-dailyLivingSkills", data.dailyLivingSkills);
     set("cp-dietaryInfo", data.dietaryInfo);
     set("cp-careNeeds", data.careNeeds);
+    set("cp-mealPreparation", data.mealPreparation);
+    set("cp-lightHousekeeping", data.lightHousekeeping);
+    set("cp-transportation", data.transportation);
+    set("cp-goals", data.goals);
 
-    // 7. Emergency Contact
-    set("cp-emergencyName", data.emergencyName);
-    set("cp-emergencyPhone", data.emergencyPhone);
-    set("cp-emergencyRelationship", data.emergencyRelationship);
+    // Caregiver Prefs
+    set("cp-careGender", data.careGender);
     set(
-      "cp-emergencyAddressFull",
-      fmtAddr(
-        data.emergencyAddress,
-        data.emergencyApt,
-        data.emergencyCity,
-        data.emergencyState,
-        data.emergencyZip,
-      ),
+      "cp-careSmokePremises",
+      data.careSmokePremises +
+        (data.careSmokeNote ? ` (${data.careSmokeNote})` : ""),
     );
+    set(
+      "cp-careLiveIn",
+      data.careLiveIn +
+        (data.careAccommodation ? ` - Accom: ${data.careAccommodation}` : ""),
+    );
+    set("cp-careSkills", data.careSkills);
 
     // 8. Service Plan
     set("cp-levelOfCare", data.levelOfCare);
     set("cp-projectHours", data.projectHours);
     set("cp-hourlyRate", data.hourlyRate ? `$${data.hourlyRate}` : "");
     set("cp-weeklyCost", data.weeklyCost ? `$${data.weeklyCost}` : "");
+    set("cp-overtime", data.overtime);
+    set("cp-monthlyCost", data.monthlyCost ? `$${data.monthlyCost}` : "");
     set("cp-serviceTypes", data.serviceTypes);
 
     // 9. Schedule
@@ -355,10 +442,39 @@
     if (data.liveFamily === "Yes")
       livingDetails.push(`Family: ${data.liveFamilyName}`);
     if (data.liveSenior === "Yes")
-      livingDetails.push(`Senior Housing: ${data.liveSeniorName}`);
+      livingDetails.push(
+        `Senior Housing: ${data.liveSeniorName} - ${data.liveSeniorAddress}`,
+      );
     if (data.liveRehab === "Yes")
-      livingDetails.push(`Rehab: ${data.liveRehabName}`);
+      livingDetails.push(
+        `Rehab: ${data.liveRehabName} - ${data.liveRehabAddress}`,
+      );
     set("cp-liveDetails", livingDetails.join(" | "));
+
+    // Payment & Insurance
+    set("cp-paymentType", data.paymentType);
+    set("cp-paymentOptions", data.paymentOptions);
+
+    let payDetails = "";
+    if (["Direct Deposit", "Bank Deposit"].includes(data.paymentOptions)) {
+      payDetails = `Bank: ${data.payBankName}\nHolder: ${data.payHolderName}\nAcct: ${data.payAccountNum}\nRouting: ${data.payRoutingNum}\nType: ${data.payAccountType} (${data.payHolderType})`;
+    } else if (data.paymentOptions === "Check") {
+      payDetails = "Check payments.";
+    } else if (data.paymentOptions === "Credit Card") {
+      payDetails = `Card: ${data.payCardName}\nNum: **** ${data.payCardNumber ? data.payCardNumber.slice(-4) : "****"}\nExp: ${data.payCardExpiry}`;
+    } else if (data.paymentOptions === "Digital Wallet") {
+      payDetails = `${data.payDigitalType}: ${data.payDigitalFullName} (${data.payDigitalValue})`;
+    }
+    const payDetailsEl = document.getElementById("cp-paymentDetails");
+    if (payDetailsEl) payDetailsEl.innerText = payDetails || "--";
+
+    set("cp-insuranceCompany", data.insuranceCompany);
+    set("cp-insurancePolicy", data.insurancePolicy);
+    set("cp-insuranceMemberId", data.insuranceMemberId);
+    set("cp-insuranceClaim", data.insuranceClaim);
+    set("cp-insuranceCase", data.insuranceCase);
+    set("cp-insuranceContactName", data.insuranceContactName);
+    set("cp-insuranceContactPhone", data.insuranceContactPhone);
 
     // 11. Footer / Metadata
     // Clean date formatting
