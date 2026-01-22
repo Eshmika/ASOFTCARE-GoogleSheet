@@ -90,8 +90,8 @@
         } else {
           actionHtml = `
                         <div class="flex items-center justify-end gap-2 px-4">
-                            <button onclick="passClient('${client.id}')" class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold hover:bg-green-200">Pass</button>
-                            <button onclick="failClient('${client.id}')" class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold hover:bg-red-200">Fail</button>
+                            <button onclick="passClient('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90" style="background-color: #1ABC9C;">Approve</button>
+                            <button onclick="failClient('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90" style="background-color: #E74C3C;">Deny</button>
                         </div>
                     `;
         }
@@ -100,7 +100,7 @@
           actionHtml = `
                         <div class="flex items-center justify-end gap-2 px-4">
                             <span class="text-xs text-red-600 font-bold mr-2">Failed</span>
-                            <button onclick="undoFailClient('${client.id}')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1">
+                            <button onclick="undoFailClient('${client.id}')" class="text-xs text-white px-3 py-1 rounded-full hover:opacity-90 font-bold border border-0 flex items-center gap-1" style="background-color: #5C6BC0;">
                                 <i class="ph ph-arrow-u-up-left"></i> Undo
                             </button>
                         </div>
@@ -108,9 +108,12 @@
         } else if (client.assessmentFilled) {
           actionHtml = `
                     <div class="flex items-center justify-end gap-2 px-4">
-                        <button onclick="passAssessment('${client.id}')" class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold hover:bg-green-200">Pass</button>
-                        <button onclick="failAssessment('${client.id}')" class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold hover:bg-red-200">Fail</button>
-                        <button onclick="openAssessmentForm('${client.id}')" class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-bold hover:bg-gray-200">Edit</button>
+                        <button onclick="passAssessment('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90" style="background-color: #1ABC9C;">Approve</button>
+                        <button onclick="failAssessment('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90" style="background-color: #E74C3C;">Deny</button>
+                        <button onclick="openAssessmentForm('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90" style="background-color: #9B59B6;">Edit</button>
+                        <button onclick="undoAssessment('${client.id}')" title="Return to New Leads" class="w-8 h-8 flex items-center justify-center text-white rounded-lg hover:opacity-90 border border-0 transition-colors" style="background-color: #5C6BC0;">
+                            <i class="ph-bold ph-arrow-u-up-left"></i>
+                        </button>
                     </div>
                 `;
         } else {
@@ -127,7 +130,7 @@
           actionHtml = `
                         <div class="flex items-center justify-end gap-2 px-4">
                             <span class="text-xs text-gray-600 font-bold mr-2">Archived</span>
-                            <button onclick="undoArchiveClient('${client.id}')" class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 font-bold border border-gray-200 flex items-center gap-1">
+                            <button onclick="undoArchiveClient('${client.id}')" class="text-xs text-white px-3 py-1 rounded-full hover:opacity-90 font-bold border border-0 flex items-center gap-1" style="background-color: #5C6BC0;">
                                 <i class="ph ph-arrow-u-up-left"></i> Undo
                             </button>
                         </div>
@@ -138,13 +141,13 @@
                         <button onclick="openInsurancePendingDialog('${client.id}')" class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-bold hover:bg-yellow-200 flex items-center gap-1">
                             <i class="ph ph-clock"></i> Pending
                         </button>
-                        <button onclick="openInsuranceDeniedDialog('${client.id}')" class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold hover:bg-red-200 flex items-center gap-1">
-                            <i class="ph ph-x-circle"></i> Denied
+                        <button onclick="openInsuranceDeniedDialog('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90 flex items-center gap-1" style="background-color: #E74C3C;">
+                            <i class="ph ph-x-circle"></i> Deny
                         </button>
-                        <button onclick="approveInsurance('${client.id}')" class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold hover:bg-green-200 flex items-center gap-1">
-                            <i class="ph ph-check-circle"></i> Approval
+                        <button onclick="approveInsurance('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90 flex items-center gap-1" style="background-color: #1ABC9C;">
+                            <i class="ph ph-check-circle"></i> Approve
                         </button>
-                        <button onclick="openPaymentForm('${client.id}')" class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-bold hover:bg-gray-200 flex items-center gap-1">
+                        <button onclick="openPaymentForm('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90 flex items-center gap-1" style="background-color: #9B59B6;">
                             <i class="ph ph-pencil"></i> Edit
                         </button>
                     </div>
@@ -206,7 +209,7 @@
                class="flex items-center justify-center w-8 h-8 rounded-lg bg-${doc.color}-50 text-${doc.color}-600 border border-${doc.color}-100 hover:bg-${doc.color}-100 hover:scale-105 transition-all shadow-sm">
                 <i class="ph-bold ph-${doc.icon}"></i>
             </a>
-            `,
+            `
           )
           .join("");
 
@@ -216,7 +219,7 @@
 
         // Check if all documents are signed (have a link)
         const signedCount = docs.filter(
-          (doc) => doc.link && doc.link.trim() !== "",
+          (doc) => doc.link && doc.link.trim() !== ""
         ).length;
         const allSigned = signedCount === 6;
 
@@ -224,8 +227,8 @@
         if (allSigned) {
           passFailButtons = `
                 <div class="h-6 w-px bg-gray-300"></div>
-                <button onclick="passClientAgreement('${client.id}')" class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold hover:bg-green-200">Approve</button>
-                <button onclick="failClientAgreement('${client.id}')" class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold hover:bg-red-200">Deny</button>
+                <button onclick="passClientAgreement('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90" style="background-color: #1ABC9C;">Approve</button>
+                <button onclick="failClientAgreement('${client.id}')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90" style="background-color: #E74C3C;">Deny</button>
             `;
         }
 
@@ -239,7 +242,7 @@
                 <button onclick="resendIntakeEmail('${client.id}')" title="Resend Intake Email" class="w-8 h-8 flex items-center justify-center bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 border border-orange-100 transition-colors">
                     <i class="ph-bold ph-envelope-simple"></i>
                 </button>
-                <button onclick="undoClientAgreement('${client.id}')" title="Return to Insurance Stage" class="w-8 h-8 flex items-center justify-center bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 border border-gray-200 transition-colors">
+                <button onclick="undoClientAgreement('${client.id}')" title="Return to Insurance Stage" class="w-8 h-8 flex items-center justify-center text-white rounded-lg hover:opacity-90 border border-0 transition-colors" style="background-color: #5C6BC0;">
                     <i class="ph-bold ph-arrow-u-up-left"></i>
                 </button>
             </div>
@@ -255,7 +258,7 @@
       } else if (stage === "Archived") {
         actionHtml = `
                     <div class="flex items-center justify-end gap-2 px-4">
-                        <button onclick="undoArchiveClient('${client.id}')" class="flex items-center gap-2 px-3 py-1.5 bg-white text-gray-700 rounded-lg text-xs font-bold hover:bg-blue-50 hover:text-blue-600 transition-all border border-gray-200 shadow-sm">
+                        <button onclick="undoArchiveClient('${client.id}')" class="flex items-center gap-2 px-3 py-1.5 text-white rounded-lg text-xs font-bold hover:opacity-90 transition-all border border-0 shadow-sm" style="background-color: #5C6BC0;">
                             <i class="ph-bold ph-arrow-u-up-left"></i> Restore Client
                         </button>
                     </div>
@@ -363,7 +366,7 @@
               Swal.fire(
                 "Archived",
                 "Lead has been moved to archives.",
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
@@ -428,7 +431,7 @@
               Swal.fire(
                 "Archived",
                 "Assessment has been moved to archives.",
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
@@ -501,7 +504,7 @@
     }).then((result) => {
       if (result.isConfirmed) {
         const reason = document.querySelector(
-          'input[name="pendingReason"]:checked',
+          'input[name="pendingReason"]:checked'
         )?.value;
         const note = document.getElementById("pendingNote").value;
 
@@ -516,7 +519,7 @@
               Swal.fire(
                 "Pending",
                 `Status updated to Pending - ${reason}`,
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
@@ -571,7 +574,7 @@
     }).then((result) => {
       if (result.isConfirmed) {
         const reason = document.querySelector(
-          'input[name="denialReason"]:checked',
+          'input[name="denialReason"]:checked'
         )?.value;
         const note = document.getElementById("denialNote").value;
 
@@ -584,7 +587,7 @@
           Swal.fire(
             "Error",
             "Please add a note explaining the denial",
-            "error",
+            "error"
           );
           return;
         }
@@ -595,7 +598,7 @@
               Swal.fire(
                 "Denied",
                 "Client has been marked as Denied and archived.",
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
@@ -646,7 +649,7 @@
                       (emailRes.success
                         ? "Email sent!"
                         : "Warning: Email failed to send."),
-                    "success",
+                    "success"
                   );
                   loadClientStages();
                 })
@@ -676,7 +679,7 @@
           Swal.fire(
             "Sent!",
             "Intake packet email has been re-sent.",
-            "success",
+            "success"
           );
         } else {
           Swal.fire("Error", res.message, "error");
@@ -685,13 +688,41 @@
       .sendIntakePacketEmail(clientId);
   }
 
+  function undoAssessment(clientId) {
+    Swal.fire({
+      title: "Undo Stage?",
+      text: "Move this client back to New Leads?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#5C6BC0",
+      confirmButtonText: "Yes, Undo",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (res.success) {
+              Swal.fire(
+                "Restored",
+                "Client moved back to New Leads.",
+                "success"
+              );
+              loadClientStages();
+            } else {
+              Swal.fire("Error", res.message, "error");
+            }
+          })
+          .updateClientStage(clientId, "New leads");
+      }
+    });
+  }
+
   function undoClientAgreement(clientId) {
     Swal.fire({
       title: "Undo Stage?",
       text: "Move this client back to Insurance Verification?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#f59e0b",
+      confirmButtonColor: "#5C6BC0",
       confirmButtonText: "Yes, Undo",
     }).then((result) => {
       if (result.isConfirmed) {
@@ -701,7 +732,7 @@
               Swal.fire(
                 "Restored",
                 "Client moved back to Insurance Verification.",
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
@@ -738,7 +769,7 @@
               Swal.fire(
                 "Restored",
                 `Client has been restored to ${targetStage}.`,
-                "success",
+                "success"
               );
               loadClientStages();
             } else {
@@ -827,7 +858,7 @@
               Swal.fire(
                 "Archived",
                 "Client failed agreements and archived.",
-                "info",
+                "info"
               );
               loadClientStages();
             } else {
