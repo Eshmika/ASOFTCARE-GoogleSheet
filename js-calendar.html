@@ -9,10 +9,43 @@
   const DAY_MS = 24 * 60 * 60 * 1000;
 
   function loadCaregiverCalendar() {
-    updateCalendarViewToggle();
-    renderCaregiverList();
-    renderActiveCalendar();
-    renderMiniMonthCalendar();
+    // Ensure caregiver and client data are loaded
+    if (cgData.length === 0 || clData.length === 0) {
+      // Load both in parallel
+      let cgLoaded = false;
+      let clLoaded = false;
+
+      const checkBothLoaded = () => {
+        if (cgLoaded && clLoaded) {
+          updateCalendarViewToggle();
+          renderCaregiverList();
+          renderActiveCalendar();
+          renderMiniMonthCalendar();
+        }
+      };
+
+      google.script.run
+        .withSuccessHandler((data) => {
+          cgData = data;
+          cgLoaded = true;
+          checkBothLoaded();
+        })
+        .getCaregiverList();
+
+      google.script.run
+        .withSuccessHandler((data) => {
+          clData = data;
+          clLoaded = true;
+          checkBothLoaded();
+        })
+        .getClientList();
+    } else {
+      // Data already loaded, just render
+      updateCalendarViewToggle();
+      renderCaregiverList();
+      renderActiveCalendar();
+      renderMiniMonthCalendar();
+    }
   }
 
   function getCaregiverColor(id) {
@@ -169,10 +202,20 @@
   function createShiftCard(shift) {
     const cg = cgData.find((c) => c.id === shift.caregiverId);
     const cl = clData.find((c) => c.id === shift.clientId);
-    const cgName = cg ? cg.name : shift.caregiverId;
-    const clName = cl ? cl.firstName + " " + cl.lastName : shift.clientId;
+
+    // Better fallback names
+    const cgName = cg ? cg.name : `CG-${shift.caregiverId || "Unknown"}`;
+    const clName = cl
+      ? `${cl.firstName || ""} ${cl.lastName || ""}`.trim()
+      : `Client-${shift.clientId || "Unknown"}`;
 
     const color = getCaregiverColor(shift.caregiverId);
+
+    // Format time display
+    const timeDisplay =
+      shift.clockIn && shift.clockOut
+        ? `${shift.clockIn} - ${shift.clockOut}`
+        : "Time TBD";
 
     const card = document.createElement("div");
     card.className =
@@ -181,11 +224,17 @@
     card.style.backgroundColor = color;
     card.style.borderColor = "rgba(0,0,0,0.1)";
 
+    // Add click handler to navigate to shifts page with this shift selected
+    card.onclick = () => {
+      console.log("Shift clicked:", shift);
+      appNavigate("shifts");
+    };
+
     card.innerHTML = `
-      <div class="font-bold text-gray-800 truncate">${clName}</div>
-      <div class="text-gray-700 truncate font-medium">${cgName}</div>
+      <div class="font-bold text-gray-800 truncate" title="${clName}">${clName}</div>
+      <div class="text-gray-700 truncate font-medium" title="${cgName}">${cgName}</div>
       <div class="mt-1 flex justify-between text-[10px] text-gray-600 font-semibold border-t border-black/10 pt-1">
-        <span>${shift.clockIn} - ${shift.clockOut}</span>
+        <span>${timeDisplay}</span>
       </div>
     `;
     return card;
@@ -211,6 +260,7 @@
 
     google.script.run
       .withSuccessHandler((shifts) => {
+        shifts = shifts || [];
         grid.innerHTML = "";
 
         const isToday = isSameDate(day, new Date());
@@ -239,9 +289,20 @@
             return false;
           return true;
         });
-        dayShifts.forEach((s) => container.appendChild(createShiftCard(s)));
+
+        if (dayShifts.length === 0) {
+          container.innerHTML =
+            '<div class="text-xs text-gray-400 text-center mt-4">No shifts scheduled</div>';
+        } else {
+          dayShifts.forEach((s) => container.appendChild(createShiftCard(s)));
+        }
 
         grid.appendChild(col);
+      })
+      .withFailureHandler((error) => {
+        console.error("Error loading shifts:", error);
+        grid.innerHTML =
+          '<div class="col-span-7 text-center p-4 text-red-500">Error loading shifts. Please try again.</div>';
       })
       .getShifts(dateStr, dateStr);
   }
@@ -275,6 +336,7 @@
 
     google.script.run
       .withSuccessHandler((shifts) => {
+        shifts = shifts || [];
         grid.innerHTML = "";
 
         // Generate 7 columns
@@ -317,8 +379,17 @@
           });
           const container = col.querySelector(`#day-${dateStr}`);
 
-          dayShifts.forEach((s) => container.appendChild(createShiftCard(s)));
+          if (dayShifts.length === 0) {
+            // Don't show message in week view to keep it clean
+          } else {
+            dayShifts.forEach((s) => container.appendChild(createShiftCard(s)));
+          }
         }
+      })
+      .withFailureHandler((error) => {
+        console.error("Error loading shifts:", error);
+        grid.innerHTML =
+          '<div class="col-span-7 text-center p-4 text-red-500">Error loading shifts. Please try again.</div>';
       })
       .getShifts(startStr, endStr);
   }
@@ -351,6 +422,7 @@
 
     google.script.run
       .withSuccessHandler((shifts) => {
+        shifts = shifts || [];
         grid.innerHTML = "";
 
         for (let i = 0; i < 14; i++) {
@@ -391,8 +463,15 @@
             return true;
           });
           const container = col.querySelector(`#day-${dateStr}`);
-          dayShifts.forEach((s) => container.appendChild(createShiftCard(s)));
+          if (dayShifts.length > 0) {
+            dayShifts.forEach((s) => container.appendChild(createShiftCard(s)));
+          }
         }
+      })
+      .withFailureHandler((error) => {
+        console.error("Error loading shifts:", error);
+        grid.innerHTML =
+          '<div class="col-span-7 text-center p-4 text-red-500">Error loading shifts. Please try again.</div>';
       })
       .getShifts(startStr, endStr);
   }
@@ -425,6 +504,7 @@
 
     google.script.run
       .withSuccessHandler((shifts) => {
+        shifts = shifts || [];
         grid.innerHTML = "";
 
         const shiftMap = shifts.reduce((acc, s) => {
@@ -477,10 +557,17 @@
             return true;
           });
           const container = cell.querySelector(`#day-${dateStr}`);
-          dayShifts.forEach((s) => container.appendChild(createShiftCard(s)));
+          if (dayShifts.length > 0) {
+            dayShifts.forEach((s) => container.appendChild(createShiftCard(s)));
+          }
 
           grid.appendChild(cell);
         }
+      })
+      .withFailureHandler((error) => {
+        console.error("Error loading shifts:", error);
+        grid.innerHTML =
+          '<div class="col-span-7 text-center p-4 text-red-500">Error loading shifts. Please try again.</div>';
       })
       .getShifts(startStr, endStr);
   }
