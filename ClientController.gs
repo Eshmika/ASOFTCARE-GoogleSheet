@@ -793,6 +793,7 @@ function updateClient(data) {
   const lastRow = sheet.getLastRow();
   if (lastRow <= 1) return { success: false, message: "No clients found." };
 
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   const ids = sheet
     .getRange(2, 1, lastRow - 1, 1)
     .getDisplayValues()
@@ -805,195 +806,203 @@ function updateClient(data) {
 
   const rowNum = rowIndex + 2; // +2 because of header and 0-based index
 
-  // Standard Fields (Columns 2 to 83)
-  const standardFields = [
-    data.contactDate || "",
-    data.assessmentDateTime || "",
-    data.coordinator || "",
-    data.repName || "",
-    data.repPhone || "",
-    data.repRelationship || "",
-    data.firstName,
-    data.middleName,
-    data.lastName,
-    data.clientPhone,
+  // Read current row to preserve values for columns not being updated (though here we update almost everything)
+  const currentRowValues = sheet
+    .getRange(rowNum, 1, 1, headers.length)
+    .getValues()[0];
+
+  // Helper to update value if header exists
+  const setVal = (headerName, value) => {
+    const idx = headers.indexOf(headerName);
+    if (idx > -1) {
+      currentRowValues[idx] = value;
+    }
+  };
+
+  setVal("Contact Date", data.contactDate);
+  setVal("Free Assessment Date/Time", data.assessmentDateTime);
+  setVal("Coordinator", data.coordinator);
+  setVal("Representative Name", data.repName);
+  setVal("Representative Phone", data.repPhone);
+  setVal("Representative Relationship", data.repRelationship);
+  setVal("First Name", data.firstName);
+  setVal("Middle Name", data.middleName);
+  setVal("Last Name", data.lastName);
+  setVal("Client Phone", data.clientPhone);
+
+  let newStatus = data.status;
+  if (
     [
       "New leads",
       "Assessment",
       "Insurance Verification",
       "Client Agreements",
     ].includes(data.stage)
-      ? "In progress"
-      : data.stage === "Convert Clients"
-      ? "Active"
-      : data.status,
-    data.clientAddress,
-    data.clientApt,
-    data.clientCity,
-    data.clientState,
-    data.clientZip,
-    data.careNeeds || "",
-    data.referredBy || "",
-    data.email || "",
-    data.username || "",
-    data.gender || "",
-    data.maritalStatus || "",
-    data.spouseName || "",
-    data.dob || "",
-    data.ssn || "",
-    data.ein || "",
-    data.codeStatus || "",
-    data.languages || "",
-    data.billingAddress || "",
-    data.billingApt || "",
-    data.billingCity || "",
-    data.billingState || "",
-    data.billingZip || "",
-    data.emergencyName || "",
-    data.emergencyPhone || "",
-    data.emergencyEmail || "",
-    data.emergencyRelationship || "",
-    data.emergencyAddress || "",
-    data.emergencyApt || "",
-    data.emergencyCity || "",
-    data.emergencyState || "",
-    data.emergencyZip || "",
-    data.authName || "",
-    data.authPhone || "",
-    data.authEmail || "",
-    data.authRelationship || "",
-    data.authAddress || "",
-    data.authApt || "",
-    data.authCity || "",
-    data.authState || "",
-    data.authZip || "",
-    data.projectHours || "",
-    data.levelOfCare || "",
-    data.hourlyRate || "",
-    data.overtime || "",
-    data.weeklyCost || "",
-    data.monthlyCost || "",
-    data.serviceTypes || "",
-    data.schMO || "",
-    data.schT || "",
-    data.schW || "",
-    data.schTH || "",
-    data.schFR || "",
-    data.schSA || "",
-    data.schSU || "",
-    data.height || "",
-    data.weight || "",
-    data.mentalStatus || "",
-    data.diagnosis || "",
-    data.serviceNeedsText || "",
-    data.goals || "",
-    data.blind || "",
-    data.glasses || "",
-    data.dentures || "",
-    data.continentInfo || "",
-    data.incontinentInfo || "",
-    data.medicalAids || "",
-    data.medicalHistory || "",
-    data.stage || "",
-    data.pets || "",
-    data.petsList || "",
-    data.petsNote || "",
-  ];
+  ) {
+    newStatus = "In progress";
+  } else if (data.stage === "Convert Clients") {
+    newStatus = "Active";
+  }
+  setVal("Status", newStatus);
 
+  setVal("Client Address", data.clientAddress);
+  setVal("Client Apt", data.clientApt);
+  setVal("Client City", data.clientCity);
+  setVal("Client State", data.clientState);
+  setVal("Client Zip", data.clientZip);
+  setVal("Client Care Needs", data.careNeeds);
+  setVal("Referred By", data.referredBy);
+  setVal("Email", data.email);
+  setVal("Username", data.username);
+  setVal("Gender", data.gender);
+  setVal("Marital Status", data.maritalStatus);
+  setVal("Spouse Full Name", data.spouseName);
+  setVal("DOB", data.dob);
+  setVal("SSN", data.ssn);
+  setVal("EIN", data.ein);
+  setVal("Code Status", data.codeStatus);
+  setVal("Languages", data.languages);
+  setVal("Billing Address", data.billingAddress);
+  setVal("Billing Apt", data.billingApt);
+  setVal("Billing City", data.billingCity);
+  setVal("Billing State", data.billingState);
+  setVal("Billing Zip", data.billingZip);
+  setVal("Emergency Name", data.emergencyName);
+  setVal("Emergency Phone", data.emergencyPhone);
+  setVal("Emergency Email", data.emergencyEmail);
+  setVal("Emergency Relationship", data.emergencyRelationship);
+  setVal("Emergency Address", data.emergencyAddress);
+  setVal("Emergency Apt", data.emergencyApt);
+  setVal("Emergency City", data.emergencyCity);
+  setVal("Emergency State", data.emergencyState);
+  setVal("Emergency Zip", data.emergencyZip);
+  setVal("Auth Name", data.authName);
+  setVal("Auth Phone", data.authPhone);
+  setVal("Auth Email", data.authEmail);
+  setVal("Auth Relationship", data.authRelationship);
+  setVal("Auth Address", data.authAddress);
+  setVal("Auth Apt", data.authApt);
+  setVal("Auth City", data.authCity);
+  setVal("AuthState", data.authState);
+  setVal("Auth Zip", data.authZip);
+  setVal("Project Hours", data.projectHours);
+  setVal("Level of Care", data.levelOfCare);
+  setVal("Hourly Rate", data.hourlyRate);
+  setVal("Overtime", data.overtime);
+  setVal("Weekly Cost", data.weeklyCost);
+  setVal("Monthly Cost", data.monthlyCost);
+  setVal("Service Types", data.serviceTypes);
+  setVal("Schedule MO", data.schMO);
+  setVal("Schedule T", data.schT);
+  setVal("Schedule W", data.schW);
+  setVal("Schedule TH", data.schTH);
+  setVal("Schedule FR", data.schFR);
+  setVal("Schedule SA", data.schSA);
+  setVal("Schedule SU", data.schSU);
+  setVal("Height", data.height);
+  setVal("Weight", data.weight);
+  setVal("Mental Status", data.mentalStatus);
+  setVal("Diagnosis", data.diagnosis);
+  setVal("Service Needs", data.serviceNeedsText);
+  setVal("Goals", data.goals);
+  setVal("Blind", data.blind);
+  setVal("Glasses", data.glasses);
+  setVal("Dentures", data.dentures);
+  setVal("Continent Info", data.continentInfo);
+  setVal("Incontinent Info", data.incontinentInfo);
+  setVal("Medical Aids", data.medicalAids);
+  setVal("Medical History", data.medicalHistory);
+
+  if (data.stage) setVal("Stage", data.stage);
+
+  setVal("Pets", data.pets);
+  setVal("Pets List", data.petsList);
+  setVal("Pets Note", data.petsNote);
+
+  setVal("Last Reviewed", new Date());
+
+  // New Fields
+  setVal("Mobility", data.mobility);
+  setVal("Daily Living Skills", data.dailyLivingSkills);
+  setVal("Transportation", data.transportation);
+  setVal("Meal Preparation", data.mealPreparation);
+  setVal("Light Housekeeping", data.lightHousekeeping);
+  setVal("Dietary Information", data.dietaryInfo);
+  setVal("Live Alone", data.liveAlone);
+  setVal("Live Family", data.liveFamily);
+  setVal("Live Family Name", data.liveFamilyName);
+  setVal("Live Senior", data.liveSenior);
+  setVal("Live Senior Name", data.liveSeniorName);
+  setVal("Live Senior Address", data.liveSeniorAddress);
+  setVal("Live Rehab", data.liveRehab);
+  setVal("Live Rehab Name", data.liveRehabName);
+  setVal("Live Rehab Address", data.liveRehabAddress);
+  setVal("Smoke", data.smoke);
+  setVal("Drink", data.drink);
+  setVal("Medication Reminder", data.medReminder);
+  setVal("Self Admin Med", data.selfAdminMed);
+  setVal("Allergies", data.allergies);
+  setVal("Allergies Detail", data.allergiesDetail);
+  setVal("Assist Directions", data.assistDirections);
+  setVal("Assist Directions Detail", data.assistDirectionsDetail);
+  setVal("Taking Med", data.takingMed);
+  setVal("Med Overseer", data.medOverseer);
+  setVal("Med List", data.medList);
+  setVal("Covid Vaccine", data.covidVaccine);
+  setVal("Covid Vaccine Detail", data.covidVaccineDetail);
+  setVal("Flu Vaccine", data.fluVaccine);
+  setVal("Flu Vaccine Detail", data.fluVaccineDetail);
+  setVal("Primary Dr Name", data.primaryDrName);
+  setVal("Dr Office Name", data.drOfficeName);
+  setVal("Dr Phone", data.drPhone);
+  setVal("Dr Address", data.drAddress);
+  setVal("Hospital Name", data.hospitalName);
+  setVal("Hospital Phone", data.hospitalPhone);
+  setVal("Hospital Address", data.hospitalAddress);
+  setVal("Pharmacy Name", data.pharmacyName);
+  setVal("Pharmacy Phone", data.pharmacyPhone);
+  setVal("Pharmacy Address", data.pharmacyAddress);
+  setVal("Care Certifications", data.careCertifications);
+  setVal("Care Gender", data.careGender);
+  setVal("Care Smoke Premises", data.careSmokePremises);
+  setVal("Care Smoke Note", data.careSmokeNote);
+  setVal("Care Skills", data.careSkills);
+  setVal("Care Live In", data.careLiveIn);
+  setVal("Care Accommodation", data.careAccommodation);
+  setVal("Payment Type", data.paymentType);
+  setVal("Payment Options", data.paymentOptions);
+  setVal("Pay Bank Name", data.payBankName);
+  setVal("Pay Holder Name", data.payHolderName);
+  setVal("Pay Account Type", data.payAccountType);
+  setVal("Pay Holder Type", data.payHolderType);
+  setVal("Pay Account Number", data.payAccountNum);
+  setVal("Pay Routing Number", data.payRoutingNum);
+  setVal("Pay Digital Full Name", data.payDigitalFullName);
+  setVal("Pay Digital Type", data.payDigitalType);
+  setVal("Pay Digital Value", data.payDigitalValue);
+  setVal("Insurance Company", data.insuranceCompany);
+  setVal("Insurance Address", data.insuranceAddress);
+  setVal("Insurance Apt", data.insuranceApt);
+  setVal("Insurance City", data.insuranceCity);
+  setVal("Insurance State", data.insuranceState);
+  setVal("Insurance Zip", data.insuranceZip);
+  setVal("Insurance Policy", data.insurancePolicy);
+  setVal("Insurance Contact Name", data.insuranceContactName);
+  setVal("Insurance Member Id", data.insuranceMemberId);
+  setVal("Insurance Contact Phone", data.insuranceContactPhone);
+  setVal("Insurance Case", data.insuranceCase);
+  setVal("Insurance Claim", data.insuranceClaim);
+  setVal("Insurance Add Note", data.insuranceAddNote);
+  setVal("Pay Business Name", data.payBusinessName);
+  setVal("Pay Card Name", data.payCardName);
+  setVal("Pay Card Number", data.payCardNumber);
+  setVal("Pay Card Expiry", data.payCardExpiry);
+  setVal("Pay Card CVV", data.payCardCVV);
+
+  // Write all values back
   sheet
-    .getRange(rowNum, 2, 1, standardFields.length)
-    .setValues([standardFields]);
-
-  // Update Last Reviewed (Col 85)
-  // Headers indices:
-  // ... Pets Note (82 -> Col 83)
-  // Created At (83 -> Col 84)
-  // Last Reviewed (84 -> Col 85)
-  sheet.getRange(rowNum, 85).setValue(new Date());
-
-  // Additional Fields (Columns 86+)
-  const additionalFields = [
-    data.mobility || "",
-    data.dailyLivingSkills || "",
-    data.transportation || "",
-    data.mealPreparation || "",
-    data.lightHousekeeping || "",
-    data.dietaryInfo || "",
-    data.liveAlone || "",
-    data.liveFamily || "",
-    data.liveFamilyName || "",
-    data.liveSenior || "",
-    data.liveSeniorName || "",
-    data.liveSeniorAddress || "",
-    data.liveRehab || "",
-    data.liveRehabName || "",
-    data.liveRehabAddress || "",
-    data.smoke || "",
-    data.drink || "",
-    data.medReminder || "",
-    data.selfAdminMed || "",
-    data.allergies || "",
-    data.allergiesDetail || "",
-    data.assistDirections || "",
-    data.assistDirectionsDetail || "",
-    data.takingMed || "",
-    data.medOverseer || "",
-    data.medList || "",
-    data.covidVaccine || "",
-    data.covidVaccineDetail || "",
-    data.fluVaccine || "",
-    data.fluVaccineDetail || "",
-    data.primaryDrName || "",
-    data.drOfficeName || "",
-    data.drPhone || "",
-    data.drAddress || "",
-    data.hospitalName || "",
-    data.hospitalPhone || "",
-    data.hospitalAddress || "",
-    data.pharmacyName || "",
-    data.pharmacyPhone || "",
-    data.pharmacyAddress || "",
-    data.careCertifications || "",
-    data.careGender || "",
-    data.careSmokePremises || "",
-    data.careSmokeNote || "",
-    data.careSkills || "",
-    data.careLiveIn || "",
-    data.careAccommodation || "",
-    data.paymentType || "",
-    data.paymentOptions || "",
-    data.payBankName || "",
-    data.payHolderName || "",
-    data.payAccountType || "",
-    data.payHolderType || "",
-    data.payAccountNum || "",
-    data.payRoutingNum || "",
-    data.payDigitalFullName || "",
-    data.payDigitalType || "",
-    data.payDigitalValue || "",
-    data.insuranceCompany || "",
-    data.insuranceAddress || "",
-    data.insuranceApt || "",
-    data.insuranceCity || "",
-    data.insuranceState || "",
-    data.insuranceZip || "",
-    data.insurancePolicy || "",
-    data.insuranceContactName || "",
-    data.insuranceMemberId || "",
-    data.insuranceContactPhone || "",
-    data.insuranceCase || "",
-    data.insuranceClaim || "",
-    data.insuranceAddNote || "",
-    data.payBusinessName || "",
-    data.payCardName || "",
-    data.payCardNumber || "",
-    data.payCardExpiry || "",
-    data.payCardCVV || "",
-  ];
-
-  sheet
-    .getRange(rowNum, 86, 1, additionalFields.length)
-    .setValues([additionalFields]);
+    .getRange(rowNum, 1, 1, currentRowValues.length)
+    .setValues([currentRowValues]);
 
   return { success: true, message: "Client updated successfully!" };
 }
