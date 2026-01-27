@@ -78,6 +78,9 @@ function getShifts(startDateStr, endDateStr) {
     rowDate.setHours(0, 0, 0, 0);
 
     if (rowDate >= start && rowDate <= end) {
+      const clockInVal = row[startIdx];
+      const clockOutVal = row[endIdx];
+
       shifts.push({
         id: row[0],
         clientId: row[clientIdx],
@@ -87,8 +90,22 @@ function getShifts(startDateStr, endDateStr) {
           Session.getScriptTimeZone(),
           "yyyy-MM-dd"
         ),
-        clockIn: row[startIdx] || "",
-        clockOut: row[endIdx] || "",
+        clockIn:
+          clockInVal instanceof Date
+            ? Utilities.formatDate(
+                clockInVal,
+                Session.getScriptTimeZone(),
+                "HH:mm"
+              )
+            : String(clockInVal || ""),
+        clockOut:
+          clockOutVal instanceof Date
+            ? Utilities.formatDate(
+                clockOutVal,
+                Session.getScriptTimeZone(),
+                "HH:mm"
+              )
+            : String(clockOutVal || ""),
         // Add names if possible, but for now IDs are fine, frontend can map them
       });
     }

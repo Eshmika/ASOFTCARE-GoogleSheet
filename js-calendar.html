@@ -178,8 +178,10 @@
 
   function toISODate(date) {
     const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    return d.toISOString().split("T")[0];
+    const yr = d.getFullYear();
+    const mo = String(d.getMonth() + 1).padStart(2, "0");
+    const da = String(d.getDate()).padStart(2, "0");
+    return `${yr}-${mo}-${da}`;
   }
 
   function isSameDate(a, b) {
@@ -245,7 +247,10 @@
 
   function parseTime(timeStr) {
     if (!timeStr) return null;
-    const parts = timeStr.split(":");
+    // ensure string
+    const s = String(timeStr);
+    const parts = s.split(":");
+    if (parts.length < 2) return null;
     return parseInt(parts[0]) * 60 + parseInt(parts[1]);
   }
 
@@ -358,7 +363,7 @@
     document.getElementById("currentWeekLabel").textContent = label;
 
     grid.innerHTML =
-      '<div class="absolute inset-0 flex items-center justify-center text-gray-400">Loading...</div>';
+      '<div id="calendar-loading" class="absolute inset-0 flex items-center justify-center text-gray-400 z-[60] bg-white bg-opacity-80">Loading...</div>';
 
     // Header
     const headerRow = document.createElement("div");
@@ -410,7 +415,9 @@
 
         const laidOut = layoutShifts(dayShifts);
 
-        // Remove loading overlay if any (we overwrote innerHTML so gone, but just in case)
+        // Remove loading overlay
+        const loader = document.getElementById("calendar-loading");
+        if (loader) loader.remove();
 
         laidOut.forEach((s) => {
           if (!s.clockIn || !s.clockOut) {
@@ -426,6 +433,11 @@
       })
       .withFailureHandler((error) => {
         console.error("Error loading shifts:", error);
+        const loader = document.getElementById("calendar-loading");
+        if (loader) {
+          loader.textContent = "Error loading data";
+          loader.classList.add("text-red-500");
+        }
       })
       .getShifts(dateStr, dateStr);
   }
@@ -453,7 +465,7 @@
     document.getElementById("currentWeekLabel").textContent = label;
 
     grid.innerHTML =
-      '<div class="absolute inset-0 flex items-center justify-center text-gray-400">Loading...</div>';
+      '<div id="calendar-loading" class="absolute inset-0 flex items-center justify-center text-gray-400 z-[60] bg-white bg-opacity-80">Loading...</div>';
 
     // Header Row
     const headerRow = document.createElement("div");
@@ -526,13 +538,10 @@
     google.script.run
       .withSuccessHandler((shifts) => {
         shifts = shifts || [];
-        // Clear existing loader (already cleared by overwriting grid innerHTML above? No, appended.)
-        // But headers are appended. The Loading text was overwritten by headerRow append? No, grid.innerHTML set before.
-        // Wait, grid.innerHTML = 'Loading' cleans everything.
-        // Then we append headerRow etc.
-        // So Loading text is GONE when we construct the grid structure.
-        // Correct is: show loading overlay? Or just build structure and wait for data?
-        // User prefers instant structure.
+
+        // Remove loading overlay
+        const loader = document.getElementById("calendar-loading");
+        if (loader) loader.remove();
 
         dayCols.forEach((col) => {
           const dateStr = col.dataset.date;
@@ -552,6 +561,13 @@
       })
       .withFailureHandler((error) => {
         console.error("Error loading shifts:", error);
+        const loader = document.getElementById("calendar-loading");
+        if (loader) {
+          loader.textContent = "Error loading data";
+          loader.classList.add("text-red-500");
+          // Optional: remove after delay? Or keep it to show error?
+          // Better to let user retry or see error.
+        }
       })
       .getShifts(startStr, endStr);
   }
