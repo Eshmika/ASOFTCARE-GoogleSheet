@@ -438,7 +438,10 @@ function getClientList() {
         email: emailIdx > -1 ? row[emailIdx] : "--",
         phone: row[10] || "--", // Client Phone
         status: row[11] || "Pending", // Status
-        type: "Lead",
+        type:
+          headers.indexOf("Payment Type") > -1
+            ? row[headers.indexOf("Payment Type")]
+            : "Lead",
         city: cityIdx > -1 ? row[cityIdx] : "--",
         zip: zipIdx > -1 ? row[zipIdx] : "--",
         stage: headers.includes("Stage")
