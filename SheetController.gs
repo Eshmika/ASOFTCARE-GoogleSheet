@@ -803,7 +803,7 @@ function updateCaregiverStage(id, stage, value) {
   return { success: true, newValue: value };
 }
 
-function restoreCaregiverFromArchive(id) {
+function restoreCaregiverFromArchive(id, targetStage) {
   const sheet = getOrCreateSheet();
   const data = sheet.getDataRange().getDisplayValues();
   const headers = data[0];
@@ -817,18 +817,41 @@ function restoreCaregiverFromArchive(id) {
 
   const r = rowIndex + 1;
 
-  const interviewIdx = headers.indexOf("Interview Status");
-  const backgroundIdx = headers.indexOf("Background Check");
-  const appStatusIdx = headers.indexOf("App Status");
+  const setCell = (colName, val) => {
+    const idx = headers.indexOf(colName);
+    if (idx > -1) sheet.getRange(r, idx + 1).setValue(val);
+  };
 
-  if (interviewIdx > -1)
-    sheet.getRange(r, interviewIdx + 1).setValue("Pending");
-  if (backgroundIdx > -1)
-    sheet.getRange(r, backgroundIdx + 1).setValue("Pending");
-  if (appStatusIdx > -1)
-    sheet.getRange(r, appStatusIdx + 1).setValue("Application Completed");
+  // Always clear archive reason
+  setCell("Archive Reason", "");
 
-  return { success: true, message: "Caregiver restored to Interview stage." };
+  // Default common fields
+  setCell("Status", "Applicant");
+
+  if (targetStage === "New Application") {
+    setCell("App Status", "Pending Application");
+    setCell("Interview Status", "");
+    setCell("Background Check", "");
+  } else if (targetStage === "Interview") {
+    setCell("App Status", "Application Completed");
+    setCell("Interview Status", "Pending");
+    setCell("Background Check", "");
+  } else if (targetStage === "Background Check") {
+    setCell("App Status", "Application Completed");
+    setCell("Interview Status", "Passed");
+    setCell("Background Check", "Pending");
+  } else if (targetStage === "Active") {
+    setCell("Status", "Active");
+    setCell("App Status", "Application Completed");
+    setCell("Interview Status", "Passed");
+    setCell("Background Check", "Passed");
+  } else {
+    // Default fallback (restore to Interview)
+    setCell("App Status", "Application Completed");
+    setCell("Interview Status", "Pending");
+  }
+
+  return { success: true };
 }
 
 function getDashboardStats() {

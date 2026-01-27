@@ -159,8 +159,12 @@
         }
       } else if (stage === "active") {
         let statusColor = "bg-gray-100 text-gray-700";
-        if (cg.status === "Active") statusColor = "bg-green-100 text-green-700";
-        else if (cg.status === "Inactive")
+        let statusStyle = "";
+
+        if (cg.status === "Active") {
+          statusColor = "text-white";
+          statusStyle = "background-color: #2ECC71;";
+        } else if (cg.status === "Inactive")
           statusColor = "bg-red-100 text-red-700";
         else if (cg.status === "No call")
           statusColor = "bg-yellow-100 text-yellow-700";
@@ -175,7 +179,7 @@
         actionHtml = `
           <div class="flex items-center justify-end gap-2">
             ${paymentBtn}
-            <span class="text-xs ${statusColor} px-2 py-1 rounded font-bold">${cg.status}</span>
+            <span class="text-xs ${statusColor} px-2 py-1 rounded font-bold" style="${statusStyle}">${cg.status}</span>
             <button onclick="updateStageStatus('${cg.id}', 'Active', 'Applicant')" class="px-2 py-1 text-white rounded text-xs font-bold hover:opacity-90 flex items-center gap-1" style="background-color: #5C6BC0;" title="Return to Background Stage">
               <i class="ph ph-arrow-u-up-left"></i> Undo
             </button>
@@ -250,23 +254,56 @@
 
   function restoreCaregiver(id) {
     Swal.fire({
-      title: "Restore Caregiver?",
-      text: "This will move the caregiver back to the Interview stage.",
-      icon: "question",
+      title: "Restore Caregiver",
+      text: "Select the stage to restore this caregiver to:",
+      input: "select",
+      inputOptions: {
+        "New Application": "New Application",
+        Interview: "Interview",
+        "Background Check": "Background Check",
+        Active: "Active",
+      },
+      inputValue: "Interview",
       showCancelButton: true,
-      confirmButtonText: "Yes, restore",
+      confirmButtonColor: "#3b82f6",
+      confirmButtonText: "Yes, Restore",
     }).then((result) => {
       if (result.isConfirmed) {
+        const targetStage = result.value;
+        const btn = document.querySelector(
+          `button[onclick="restoreCaregiver('${id}')"]`
+        );
+        const originalText = btn ? btn.innerHTML : "Restore";
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i>';
+        }
+
         google.script.run
           .withSuccessHandler((res) => {
             if (res.success) {
-              Swal.fire("Restored", res.message, "success");
+              Swal.fire(
+                "Restored",
+                `Caregiver has been restored to ${targetStage}.`,
+                "success"
+              );
               loadCaregiverStages();
             } else {
               Swal.fire("Error", res.message, "error");
+              if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+              }
             }
           })
-          .restoreCaregiverFromArchive(id);
+          .withFailureHandler((err) => {
+            Swal.fire("Error", err.message, "error");
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = originalText;
+            }
+          })
+          .restoreCaregiverFromArchive(id, targetStage);
       }
     });
   }
