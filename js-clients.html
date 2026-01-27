@@ -752,4 +752,98 @@
       })
       .updateClient(data);
   }
+
+  // --- Archive Client Functions ---
+
+  function openArchiveClientModal() {
+    document.getElementById("archiveModal").classList.remove("hidden");
+    document.getElementById("archiveReason").value = "";
+    document.getElementById("archiveNote").value = "";
+    toggleArchiveOtherInput();
+  }
+
+  function closeArchiveClientModal() {
+    document.getElementById("archiveModal").classList.add("hidden");
+  }
+
+  function toggleArchiveOtherInput() {
+    const reason = document.getElementById("archiveReason").value;
+    const otherContainer = document.getElementById("archiveOtherContainer");
+    if (reason === "Other") {
+      otherContainer.classList.remove("hidden");
+    } else {
+      otherContainer.classList.add("hidden");
+    }
+  }
+
+  function submitArchiveClient() {
+    const reason = document.getElementById("archiveReason").value;
+    const note = document.getElementById("archiveNote").value.trim();
+
+    if (!reason) {
+      Swal.fire("Error", "Please select a reason.", "error");
+      return;
+    }
+
+    let finalReason = reason;
+    if (reason === "Other") {
+      if (!note) {
+        Swal.fire(
+          "Error",
+          "Please provide a note for 'Other' reason.",
+          "error"
+        );
+        return;
+      }
+      finalReason = `Other: ${note}`;
+    } else if (note) {
+      // Append note if provided for standard reasons too
+      finalReason = `${reason} - ${note}`;
+    }
+
+    const clientId = document.getElementById("cp-id").textContent;
+    if (!clientId || clientId === "--") {
+      Swal.fire("Error", "No Client ID found.", "error");
+      return;
+    }
+
+    const submitBtn = document.querySelector("#archiveModal button.bg-red-600");
+    const originalText = submitBtn.innerText;
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Archiving...";
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalText;
+        closeArchiveClientModal();
+        if (res.success) {
+          Swal.fire(
+            "Success",
+            "Client moved to archive successfully.",
+            "success"
+          ).then(() => {
+            switchClView("list");
+            loadClientList();
+          });
+        } else {
+          Swal.fire(
+            "Error",
+            res.message || "Failed to archive client.",
+            "error"
+          );
+        }
+      })
+      .withFailureHandler((err) => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalText;
+        console.error(err);
+        Swal.fire(
+          "Error",
+          "An unexpected error occurred: " + err.message,
+          "error"
+        );
+      })
+      .archiveClient(clientId, finalReason);
+  }
 </script>
