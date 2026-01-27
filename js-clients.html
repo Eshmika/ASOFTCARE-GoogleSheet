@@ -68,17 +68,27 @@
 
   function renderClTable() {
     const searchEl = document.getElementById("clSearch");
+    const typeFilterEl = document.getElementById("clTypeFilter");
+    const statusFilterEl = document.getElementById("clStatusFilter");
 
     if (!searchEl) return;
 
     const search = searchEl.value.toLowerCase();
+    const typeFilter = typeFilterEl ? typeFilterEl.value : "";
+    const statusFilter = statusFilterEl ? statusFilterEl.value : "";
+
     const filtered = clData.filter((item) => {
       const matchSearch =
         item.name.toLowerCase().includes(search) ||
-        item.email.toLowerCase().includes(search);
-      const isConvertActive =
-        item.stage === "Convert Clients" && item.status === "Active";
-      return matchSearch && isConvertActive;
+        item.email.toLowerCase().includes(search) ||
+        String(item.id).toLowerCase().includes(search);
+
+      const isClientStage = item.stage === "Convert Clients";
+      const matchType =
+        typeFilter === "" || (item.type && item.type.includes(typeFilter));
+      const matchStatus = statusFilter === "" || item.status === statusFilter;
+
+      return matchSearch && isClientStage && matchType && matchStatus;
     });
 
     const totalPages = Math.ceil(filtered.length / clRowsPerPage);
@@ -116,6 +126,21 @@
           statusStyle = "background-color: #1A5276;";
         }
 
+        let codeStatusStyle = "";
+        let codeStatusClass =
+          "px-2 py-1 rounded-full text-xs font-bold inline-block";
+        const cs = (row.codeStatus || "").trim();
+
+        if (cs === "Full code") {
+          codeStatusStyle = "background-color: #1E8449; color: white;";
+        } else if (cs === "Comfort care") {
+          codeStatusStyle = "background-color: #AF7AC5; color: white;";
+        } else if (cs === "DNR") {
+          codeStatusStyle = "background-color: #7B241C; color: white;";
+        } else {
+          codeStatusStyle = "background-color: #E5E7EB; color: #374151;";
+        }
+
         tbody.innerHTML += `
         <tr class="hover:bg-gray-50 border-b border-gray-50">
           <td class="p-4">
@@ -140,7 +165,11 @@
               <p class="text-xs text-gray-400">${row.zip || ""}</p>
             </div>
           </td>
-          <td class="p-4 text-xs text-gray-500">${row.lastReviewed || "--"}</td>
+          <td class="p-4">
+            <span class="${codeStatusClass}" style="${codeStatusStyle}">${
+          row.codeStatus || "--"
+        }</span>
+          </td>
           <td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${statusColor}" style="${statusStyle}">${
           row.status
         }</span></td>

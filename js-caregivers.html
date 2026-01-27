@@ -16,7 +16,9 @@
   // -- 2. Render Table --
   function renderCgTable() {
     const search = document.getElementById("cgSearch").value.toLowerCase();
+    const titleFilterEl = document.getElementById("cgFilterTitle");
     const statusFilter = document.getElementById("cgFilterStatus").value;
+    const titleFilter = titleFilterEl ? titleFilterEl.value : "";
 
     cgFiltered = cgData.filter((item) => {
       // Only show caregivers who have been converted to Active/Inactive/etc.
@@ -28,9 +30,12 @@
         item.name.toLowerCase().includes(search) ||
         item.email.toLowerCase().includes(search) ||
         String(item.id).toLowerCase().includes(search);
+
+      const matchTitle = titleFilter === "" || item.title === titleFilter;
       const matchStatus =
         statusFilter === "All" || item.status === statusFilter;
-      return matchSearch && matchStatus;
+
+      return matchSearch && matchTitle && matchStatus;
     });
 
     const totalPages = Math.ceil(cgFiltered.length / cgRowsPerPage);
@@ -57,12 +62,20 @@
           loadProfile(row.id);
         };
 
-        let statusColor = "bg-gray-100 text-gray-600";
-        if (row.status === "Active")
-          statusColor = "bg-green-100 text-green-700";
-        if (row.status === "Inactive") statusColor = "bg-red-100 text-red-700";
-        if (row.status === "Vacation")
-          statusColor = "bg-orange-100 text-orange-700";
+        let statusStyle = "";
+        let statusClass = "px-2 py-1 rounded text-xs font-bold";
+
+        if (row.status === "Active") {
+          statusStyle = "background-color: #2ECC71; color: white;";
+        } else if (row.status === "Inactive") {
+          statusStyle = "background-color: #95A5A6; color: white;";
+        } else if (row.status === "No Call") {
+          statusStyle = "background-color: #1A5276; color: white;";
+        } else if (row.status === "Vacation") {
+          statusStyle = "background-color: #8E2A2A; color: white;";
+        } else {
+          statusClass += " bg-gray-100 text-gray-600";
+        }
 
         tr.innerHTML = `
           <td class="p-4">
@@ -92,14 +105,14 @@
             row.lastClientSeen || "--"
           }</td>
           <td class="p-4">
-            <span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${
+            <span class="${statusClass}" style="${statusStyle}">${
           row.status
         }</span>
           </td>
           <td class="p-4 text-right">
              <button onclick="loadProfile('${
                row.id
-             }')" class="text-xs bg-gray-50 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-100 font-bold border border-gray-200 transition-colors">Details</button>
+             }')" class="text-xs text-white px-3 py-1 rounded-full hover:opacity-90 font-bold transition-colors" style="background-color: #00BCD4;">Details</button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -587,11 +600,24 @@
         const badge = document.getElementById("p-status-badge");
         if (badge) {
           badge.textContent = data["Status"];
-          badge.className = `px-3 py-1 rounded-full text-xs font-bold ${
-            data["Status"] === "Active"
-              ? "bg-green-100 text-green-700"
-              : "bg-gray-100 text-gray-600"
-          }`;
+
+          let statusStyle = "";
+          let statusClass = "px-3 py-1 rounded-full text-xs font-bold";
+
+          if (data["Status"] === "Active") {
+            statusStyle = "background-color: #2ECC71; color: white;";
+          } else if (data["Status"] === "Inactive") {
+            statusStyle = "background-color: #95A5A6; color: white;";
+          } else if (data["Status"] === "No Call") {
+            statusStyle = "background-color: #1A5276; color: white;";
+          } else if (data["Status"] === "Vacation") {
+            statusStyle = "background-color: #8E2A2A; color: white;";
+          } else {
+            statusClass += " bg-gray-100 text-gray-600";
+          }
+
+          badge.className = statusClass;
+          badge.setAttribute("style", statusStyle);
         }
 
         const emailBtn = document.getElementById("p-email-btn");

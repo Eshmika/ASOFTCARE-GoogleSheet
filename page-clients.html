@@ -28,9 +28,38 @@
           type="text"
           id="clSearch"
           onkeyup="renderClTable()"
-          placeholder="Search by name or email..."
+          placeholder="Search by name, email or ID..."
           class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:border-[#65c027]"
         />
+      </div>
+      <div class="w-full md:w-48">
+        <select
+          id="clTypeFilter"
+          onchange="renderClTable()"
+          class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:border-[#65c027] appearance-none"
+        >
+          <option value="">All Types</option>
+          <option value="Respite care">Respite care</option>
+          <option value="Hourly routine care">Hourly routine care</option>
+          <option value="On call care">On call care</option>
+          <option value="Overnight">Overnight</option>
+          <option value="24/7 care live out">24/7 care live out</option>
+          <option value="24/7 care live in">24/7 care live in</option>
+        </select>
+      </div>
+      <div class="w-full md:w-48">
+        <select
+          id="clStatusFilter"
+          onchange="renderClTable()"
+          class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:border-[#65c027] appearance-none"
+        >
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+          <option value="Hospital stay">Hospital stay</option>
+          <option value="Cancelled service">Cancelled service</option>
+          <option value="Insurance approval">Insurance approval</option>
+        </select>
       </div>
     </div>
 
@@ -48,7 +77,7 @@
               <th class="p-4">Contact</th>
               <th class="p-4">Type</th>
               <th class="p-4">City/Zipcode</th>
-              <th class="p-4">Last Reviewed</th>
+              <th class="p-4">Code Status</th>
               <th class="p-4">Status</th>
               <th class="p-4 text-right">Actions</th>
             </tr>
