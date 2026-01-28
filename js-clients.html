@@ -1035,11 +1035,70 @@
           "Yes"
         );
       }
-      setVal("ce-pharmacyPhone", d.pharmacyPhone);
+
+      // Extended Healthcare
       setVal("ce-primaryDrName", d.primaryDrName);
+      setVal("ce-drOfficeName", d.drOfficeName);
       setVal("ce-drPhone", d.drPhone);
+      setVal("ce-drAddress", d.drAddress);
+
+      setVal("ce-hospitalName", d.hospitalName);
+      setVal("ce-hospitalPhone", d.hospitalPhone);
+      setVal("ce-hospitalAddress", d.hospitalAddress);
+
+      setVal("ce-pharmacyName", d.pharmacyName);
+      setVal("ce-pharmacyPhone", d.pharmacyPhone);
+      setVal("ce-pharmacyAddress", d.pharmacyAddress);
 
       // 6. Care Plan
+      // Care Matching
+      setCheckboxes("ce-careCertifications-container", d.careCertifications);
+      setVal("ce-careGender", d.careGender);
+      setVal("ce-careSmokePremises", d.careSmokePremises);
+      setVal("ce-careSmokeNote", d.careSmokeNote);
+      setCheckboxes("ce-careSkills-container", d.careSkills);
+
+      // Live-in Radio
+      if (d.careLiveIn) {
+        const radios = document.getElementsByName("careLiveIn");
+        radios.forEach((r) => {
+          if (r.value === d.careLiveIn) r.checked = true;
+        });
+      }
+
+      // Accommodation
+      setCheckboxes("ce-careAccommodation-container", d.careAccommodation);
+      // Handle Accommodation Other
+      if (d.careAccommodation && d.careAccommodation.includes("Other")) {
+        const accOther = d.careAccommodation.split("Other:")[1]; // crude parse if stored as "Bedroom, Other: X"
+        // Better: Check if "Other" checkbox is checked, if so, populate input?
+        // The setCheckboxes function checks "Other" if "Other" is in the string.
+        // But our storage format is comma separated.
+        // If stored as "Bedroom, Other: My Note", split by comma might be tricky if note has comma.
+        // Assuming simple CSV.
+
+        // Let's refine how we handle "Other" for accommodation if it mimics the mentalStatus pattern
+        const accContainer = document.getElementById(
+          "ce-careAccommodation-container"
+        );
+        if (accContainer) {
+          const otherCb = accContainer.querySelector('input[value="Other"]');
+          if (otherCb && otherCb.checked) {
+            const detailContainer = document.getElementById(
+              "ce-careAccommodation-other-container"
+            );
+            const detailInput = document.getElementById(
+              "ce-careAccommodation-other"
+            );
+            if (detailContainer) detailContainer.classList.remove("hidden");
+            // Extract text: "Other: details" -> "details"
+            const match = d.careAccommodation.match(/Other:\s*(.*)/);
+            if (match && detailInput)
+              detailInput.value = match[1].split(",")[0]; // rough extraction
+          }
+        }
+      }
+
       setVal("ce-levelOfCare", d.levelOfCare);
 
       setVal("ce-careNeeds", d.careNeeds);
@@ -1161,6 +1220,26 @@
     data.lightHousekeeping = getChecked("ce-lightHousekeeping-container");
 
     data.petsList = getChecked("ce-petsList-container");
+
+    // Care Matching
+    data.careCertifications = getChecked("ce-careCertifications-container");
+    data.careSkills = getChecked("ce-careSkills-container");
+
+    const liveInTo = document.querySelector('input[name="careLiveIn"]:checked');
+    data.careLiveIn = liveInTo ? liveInTo.value : "";
+
+    data.careAccommodation = getChecked("ce-careAccommodation-container");
+    const accOther = document.getElementById("ce-careAccommodation-other");
+    if (
+      accOther &&
+      data.careAccommodation.includes("Other") &&
+      accOther.value.trim()
+    ) {
+      data.careAccommodation = data.careAccommodation.replace(
+        "Other",
+        "Other: " + accOther.value.trim()
+      );
+    }
 
     // Handle Languages
     const langContainer = document.getElementById("ce-languages-container");

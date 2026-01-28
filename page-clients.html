@@ -2609,40 +2609,192 @@
 
             <div>
               <label class="input-label">Pharmacy Name & Phone</label>
-              <div class="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  name="pharmacyName"
-                  id="ce-pharmacyName"
-                  placeholder="Name"
-                  class="input-field"
-                />
-                <input
-                  type="text"
-                  name="pharmacyPhone"
-                  id="ce-pharmacyPhone"
-                  placeholder="Phone"
-                  class="input-field"
-                />
+              <!-- REPLACED WITH FULL HEALTHCARE SECTION -->
+            </div>
+
+            <!-- Vaccination -->
+            <div class="md:col-span-2 border-t pt-4">
+              <h4 class="font-bold text-gray-700 mb-2 text-sm uppercase">
+                <i class="ph ph-syringe text-purple-600"></i> Vaccination
+              </h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Covid -->
+                <div>
+                  <label class="input-label">Covid vaccination</label>
+                  <select
+                    name="covidVaccine"
+                    id="ce-covidVaccine"
+                    class="input-field"
+                    onchange="toggleDetailInput(this, 'ce-covidVaccine-detail', 'Yes')"
+                  >
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                  </select>
+                  <div id="ce-covidVaccine-detail" class="mt-2 hidden">
+                    <input
+                      type="text"
+                      name="covidVaccineDetail"
+                      id="ce-covidVaccineDetail"
+                      placeholder="Type in answer"
+                      class="input-field"
+                    />
+                  </div>
+                </div>
+                <!-- Flu -->
+                <div>
+                  <label class="input-label">Flu/cold vaccination</label>
+                  <select
+                    name="fluVaccine"
+                    id="ce-fluVaccine"
+                    class="input-field"
+                    onchange="toggleDetailInput(this, 'ce-fluVaccine-detail', 'Yes')"
+                  >
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                  </select>
+                  <div id="ce-fluVaccine-detail" class="mt-2 hidden">
+                    <input
+                      type="text"
+                      name="fluVaccineDetail"
+                      id="ce-fluVaccineDetail"
+                      placeholder="Type in answer"
+                      class="input-field"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-            <div>
-              <label class="input-label">Primary Doctor</label>
-              <div class="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  name="primaryDrName"
-                  id="ce-primaryDrName"
-                  placeholder="Dr. Name"
-                  class="input-field"
-                />
-                <input
-                  type="text"
-                  name="drPhone"
-                  id="ce-drPhone"
-                  placeholder="Office Phone"
-                  class="input-field"
-                />
+
+            <!-- Doctors -->
+            <div class="md:col-span-2 border-t pt-4">
+              <h4 class="font-bold text-gray-700 mb-2 text-sm uppercase">
+                <i class="ph ph-stethoscope text-purple-600"></i> Doctors
+              </h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="input-label">Primary Dr. Name</label>
+                  <input
+                    type="text"
+                    name="primaryDrName"
+                    id="ce-primaryDrName"
+                    class="input-field"
+                    placeholder="Dr. Name"
+                  />
+                </div>
+                <div>
+                  <label class="input-label">Office Name</label>
+                  <input
+                    type="text"
+                    name="drOfficeName"
+                    id="ce-drOfficeName"
+                    class="input-field"
+                    placeholder="Office Name"
+                  />
+                </div>
+                <div>
+                  <label class="input-label">Phone</label>
+                  <input
+                    type="tel"
+                    name="drPhone"
+                    id="ce-drPhone"
+                    class="input-field"
+                    placeholder="(XXX) XXX-XXXX"
+                    oninput="formatPhone(this)"
+                    maxlength="14"
+                  />
+                </div>
+                <div>
+                  <label class="input-label">Address</label>
+                  <input
+                    type="text"
+                    name="drAddress"
+                    id="ce-drAddress"
+                    class="input-field"
+                    placeholder="Address"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Hospital -->
+            <div class="md:col-span-2 border-t pt-4">
+              <h4 class="font-bold text-gray-700 mb-2 text-sm uppercase">
+                <i class="ph ph-hospital text-purple-600"></i> Hospital
+              </h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="input-label">Hospital Name</label>
+                  <input
+                    type="text"
+                    name="hospitalName"
+                    id="ce-hospitalName"
+                    class="input-field"
+                    placeholder="Hospital Name"
+                  />
+                </div>
+                <div>
+                  <label class="input-label">Phone</label>
+                  <input
+                    type="tel"
+                    name="hospitalPhone"
+                    id="ce-hospitalPhone"
+                    class="input-field"
+                    placeholder="(XXX) XXX-XXXX"
+                    oninput="formatPhone(this)"
+                    maxlength="14"
+                  />
+                </div>
+                <div class="md:col-span-2">
+                  <label class="input-label">Address</label>
+                  <input
+                    type="text"
+                    name="hospitalAddress"
+                    id="ce-hospitalAddress"
+                    class="input-field"
+                    placeholder="Address"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Pharmacy -->
+            <div class="md:col-span-2 border-t pt-4">
+              <h4 class="font-bold text-gray-700 mb-2 text-sm uppercase">
+                <i class="ph ph-first-aid text-purple-600"></i> Pharmacy
+              </h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="input-label">Pharmacy Name</label>
+                  <input
+                    type="text"
+                    name="pharmacyName"
+                    id="ce-pharmacyName"
+                    class="input-field"
+                    placeholder="Pharmacy Name"
+                  />
+                </div>
+                <div>
+                  <label class="input-label">Phone</label>
+                  <input
+                    type="tel"
+                    name="pharmacyPhone"
+                    id="ce-pharmacyPhone"
+                    class="input-field"
+                    placeholder="(XXX) XXX-XXXX"
+                    oninput="formatPhone(this)"
+                    maxlength="14"
+                  />
+                </div>
+                <div class="md:col-span-2">
+                  <label class="input-label">Address</label>
+                  <input
+                    type="text"
+                    name="pharmacyAddress"
+                    id="ce-pharmacyAddress"
+                    class="input-field"
+                    placeholder="Address"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -2756,6 +2908,528 @@
               />
               24/7 care live in
             </label>
+          </div>
+        </div>
+
+        <!-- Care Matching Section -->
+        <h4 class="font-bold text-gray-700 mb-2 border-b pb-1 mt-6">
+          Caregiver Matching Preferences
+        </h4>
+
+        <!-- Certifications -->
+        <div class="mb-4">
+          <label class="input-label">Certification</label>
+          <div
+            class="grid grid-cols-2 lg:grid-cols-3 gap-2"
+            id="ce-careCertifications-container"
+          >
+            <label
+              class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value="CPR & First Aid"
+                class="rounded text-purple-600"
+              />
+              CPR & First Aid
+            </label>
+            <label
+              class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value="Geriatric Aide"
+                class="rounded text-purple-600"
+              />
+              Geriatric Aide
+            </label>
+            <label
+              class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value="Medication Aide"
+                class="rounded text-purple-600"
+              />
+              Medication Aide
+            </label>
+            <label
+              class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value="Patient Care Tech (PCT)"
+                class="rounded text-purple-600"
+              />
+              Patient Care Tech (PCT)
+            </label>
+            <label
+              class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value="No preference"
+                class="rounded text-purple-600"
+              />
+              No preference
+            </label>
+            <label
+              class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value="Caregiver (CG)"
+                class="rounded text-purple-600"
+              />
+              Caregiver (CG)
+            </label>
+            <label
+              class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value="Certified Nursing Assistant (CNA)"
+                class="rounded text-purple-600"
+              />
+              Certified Nursing Assistant (CNA)
+            </label>
+            <label
+              class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value="Home Health Aide (HHA)"
+                class="rounded text-purple-600"
+              />
+              Home Health Aide (HHA)
+            </label>
+            <label
+              class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value="Licensed Practical Nurse (LPN)"
+                class="rounded text-purple-600"
+              />
+              Licensed Practical Nurse (LPN)
+            </label>
+            <label
+              class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                value="Registered Nurse (RN)"
+                class="rounded text-purple-600"
+              />
+              Registered Nurse (RN)
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <!-- Gender Preference -->
+          <div>
+            <label class="input-label">Gender Preference</label>
+            <select name="careGender" id="ce-careGender" class="input-field">
+              <option value="No preference">No preference</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+
+          <!-- Care Smoke Premises -->
+          <div>
+            <label class="input-label">Can caregiver smoke on premises?</label>
+            <select
+              name="careSmokePremises"
+              id="ce-careSmokePremises"
+              class="input-field"
+            >
+              <option value="No preference">No preference</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <input
+              type="text"
+              name="careSmokeNote"
+              id="ce-careSmokeNote"
+              class="input-field"
+              placeholder="Smoke notes..."
+            />
+          </div>
+        </div>
+
+        <!-- Care Skills -->
+        <div class="mb-4">
+          <label class="input-label">Skills (for Caregiver Matching)</label>
+          <div
+            class="grid grid-cols-2 lg:grid-cols-4 gap-2"
+            id="ce-careSkills-container"
+          >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Bathing / Showering"
+                class="rounded text-purple-600"
+              /><span>Bathing / Showering</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Ambulating"
+                class="rounded text-purple-600"
+              /><span>Ambulating</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Food Preparation"
+                class="rounded text-purple-600"
+              /><span>Food Preparation</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Medication Assistance"
+                class="rounded text-purple-600"
+              /><span>Medication Assistance</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Bed-bath"
+                class="rounded text-purple-600"
+              /><span>Bed-bath</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Transferring"
+                class="rounded text-purple-600"
+              /><span>Transferring</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Meal Planning"
+                class="rounded text-purple-600"
+              /><span>Meal Planning</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Combative"
+                class="rounded text-purple-600"
+              /><span>Combative</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Oral Hygiene"
+                class="rounded text-purple-600"
+              /><span>Oral Hygiene</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Transportation"
+                class="rounded text-purple-600"
+              /><span>Transportation</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Nutrition Training"
+                class="rounded text-purple-600"
+              /><span>Nutrition Training</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Bed-bound"
+                class="rounded text-purple-600"
+              /><span>Bed-bound</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Dressing"
+                class="rounded text-purple-600"
+              /><span>Dressing</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Eating Assistance"
+                class="rounded text-purple-600"
+              /><span>Eating Assistance</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Dementia"
+                class="rounded text-purple-600"
+              /><span>Dementia</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Toileting"
+                class="rounded text-purple-600"
+              /><span>Toileting</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Parkinson’s"
+                class="rounded text-purple-600"
+              /><span>Parkinson’s</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Bedpan"
+                class="rounded text-purple-600"
+              /><span>Bedpan</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Hospital Bed"
+                class="rounded text-purple-600"
+              /><span>Hospital Bed</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Bed Linen Change"
+                class="rounded text-purple-600"
+              /><span>Bed Linen Change</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Paralyzed"
+                class="rounded text-purple-600"
+              /><span>Paralyzed</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Foley Catheter care"
+                class="rounded text-purple-600"
+              /><span>Foley Catheter care</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Shower Chair"
+                class="rounded text-purple-600"
+              /><span>Shower Chair</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Linen Change (person in bed)"
+                class="rounded text-purple-600"
+              /><span>Linen Change (person in bed)</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Stroke / Heart Attack"
+                class="rounded text-purple-600"
+              /><span>Stroke / Heart Attack</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Skin Care"
+                class="rounded text-purple-600"
+              /><span>Skin Care</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Wheelchair"
+                class="rounded text-purple-600"
+              /><span>Wheelchair</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Laundry"
+                class="rounded text-purple-600"
+              /><span>Laundry</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Diabetes"
+                class="rounded text-purple-600"
+              /><span>Diabetes</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Shaving"
+                class="rounded text-purple-600"
+              /><span>Shaving</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Hoyer Lift"
+                class="rounded text-purple-600"
+              /><span>Hoyer Lift</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Dusting / Vacuuming"
+                class="rounded text-purple-600"
+              /><span>Dusting / Vacuuming</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Cancers"
+                class="rounded text-purple-600"
+              /><span>Cancers</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Gait Belt"
+                class="rounded text-purple-600"
+              /><span>Gait Belt</span></label
+            >
+            <label
+              class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer"
+              ><input
+                type="checkbox"
+                value="Light Housework / Cleaning"
+                class="rounded text-purple-600"
+              /><span>Light Housework / Cleaning</span></label
+            >
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <!-- Live-in -->
+          <div>
+            <label class="input-label">Live-in</label>
+            <div class="flex items-center gap-4 mt-2">
+              <label class="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="careLiveIn"
+                  value="Yes"
+                  class="text-purple-600 focus:ring-purple-500"
+                />
+                <span class="text-sm text-gray-600">Yes</span>
+              </label>
+              <label class="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="careLiveIn"
+                  value="No"
+                  class="text-purple-600 focus:ring-purple-500"
+                />
+                <span class="text-sm text-gray-600">No</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Accommodation -->
+          <div>
+            <label class="input-label">Accommodation for caregiver</label>
+            <div
+              class="flex flex-col gap-2 mt-2"
+              id="ce-careAccommodation-container"
+            >
+              <label
+                class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  value="Bedroom"
+                  class="rounded text-purple-600"
+                />
+                <span>Bedroom</span>
+              </label>
+              <label
+                class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  value="Bath"
+                  class="rounded text-purple-600"
+                />
+                <span>Bath</span>
+              </label>
+              <div class="flex items-center gap-2">
+                <label
+                  class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    value="Other"
+                    id="ce-careAccommodation-other-cb"
+                    class="rounded text-purple-600"
+                    onchange="toggleDetailInput(this, 'ce-careAccommodation-other-container', 'Other')"
+                  />
+                  <span>Other:</span>
+                </label>
+                <div
+                  id="ce-careAccommodation-other-container"
+                  class="hidden flex-1"
+                >
+                  <input
+                    type="text"
+                    id="ce-careAccommodation-other"
+                    class="input-field text-sm py-1 px-2 w-full"
+                    placeholder="Type note..."
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
