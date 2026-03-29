@@ -417,7 +417,14 @@ function submitClientAgreement(form) {
 
     // 5. Upload to Drive
     var file = folder.createFile(pdfBlob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    try {
+      file.setSharing(
+        DriveApp.Access.ANYONE_WITH_LINK,
+        DriveApp.Permission.VIEW
+      );
+    } catch (e) {
+      console.log("Could not set sharing permissions: " + e.message);
+    }
 
     // 6. Save Link to Sheet
     var fileUrl = file.getUrl();
@@ -478,7 +485,14 @@ function submitClientExhibitA(form) {
 
     // 5. Upload to Drive
     var file = folder.createFile(pdfBlob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    try {
+      file.setSharing(
+        DriveApp.Access.ANYONE_WITH_LINK,
+        DriveApp.Permission.VIEW
+      );
+    } catch (e) {
+      console.log("Could not set sharing permissions: " + e.message);
+    }
 
     // 6. Save Link to Sheet
     var fileUrl = file.getUrl();
@@ -539,7 +553,14 @@ function submitClientExhibitB(form) {
 
     // 5. Upload to Drive
     var file = folder.createFile(pdfBlob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    try {
+      file.setSharing(
+        DriveApp.Access.ANYONE_WITH_LINK,
+        DriveApp.Permission.VIEW
+      );
+    } catch (e) {
+      console.log("Could not set sharing permissions: " + e.message);
+    }
 
     // 6. Save Link to Sheet
     var fileUrl = file.getUrl();
@@ -598,7 +619,14 @@ function submitBillOfRights(form) {
 
     // 5. Upload to Drive
     var file = folder.createFile(pdfBlob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    try {
+      file.setSharing(
+        DriveApp.Access.ANYONE_WITH_LINK,
+        DriveApp.Permission.VIEW
+      );
+    } catch (e) {
+      console.log("Could not set sharing permissions: " + e.message);
+    }
 
     // 6. Save Link to Sheet
     var fileUrl = file.getUrl();
@@ -657,7 +685,14 @@ function submitHipaaRelease(form) {
 
     // 5. Upload to Drive
     var file = folder.createFile(pdfBlob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    try {
+      file.setSharing(
+        DriveApp.Access.ANYONE_WITH_LINK,
+        DriveApp.Permission.VIEW
+      );
+    } catch (e) {
+      console.log("Could not set sharing permissions: " + e.message);
+    }
 
     // 6. Save Link to Sheet
     var fileUrl = file.getUrl();
@@ -720,7 +755,14 @@ function submitPrivacyPractices(form) {
 
     // 5. Upload to Drive
     var file = folder.createFile(pdfBlob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    try {
+      file.setSharing(
+        DriveApp.Access.ANYONE_WITH_LINK,
+        DriveApp.Permission.VIEW
+      );
+    } catch (e) {
+      console.log("Could not set sharing permissions: " + e.message);
+    }
 
     // 6. Save Link to Sheet
     var fileUrl = file.getUrl();
@@ -873,7 +915,14 @@ function submitContract(form) {
     }
 
     const file = folder.createFile(pdfBlob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    try {
+      file.setSharing(
+        DriveApp.Access.ANYONE_WITH_LINK,
+        DriveApp.Permission.VIEW
+      );
+    } catch (e) {
+      console.log("Could not set sharing permissions: " + e.message);
+    }
 
     // 5. Save Link to Sheet
     const fileUrl = file.getUrl();
@@ -939,10 +988,15 @@ function submitBackground(form) {
           details["Last Name"]
         } - Background Check Copy - ${uploadBlob.getName()}`
       );
-      uploadedFile.setSharing(
-        DriveApp.Access.ANYONE_WITH_LINK,
-        DriveApp.Permission.VIEW
-      );
+      try {
+        uploadedFile.setSharing(
+          DriveApp.Access.ANYONE_WITH_LINK,
+          DriveApp.Permission.VIEW
+        );
+      } catch (e) {
+        console.log("Could not set sharing permissions: " + e.message);
+      }
+
       details["UploadedBackgroundUrl"] = uploadedFile.getUrl();
     }
 
@@ -977,7 +1031,14 @@ function submitBackground(form) {
 
     // 6. Save PDF to Drive
     const file = folder.createFile(pdfBlob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    try {
+      file.setSharing(
+        DriveApp.Access.ANYONE_WITH_LINK,
+        DriveApp.Permission.VIEW
+      );
+    } catch (e) {
+      console.log("Could not set sharing permissions: " + e.message);
+    }
 
     // 7. Save Link to Sheet
     const fileUrl = file.getUrl();
@@ -1049,7 +1110,14 @@ function submitW9(form) {
     }
 
     const file = folder.createFile(pdfBlob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    try {
+      file.setSharing(
+        DriveApp.Access.ANYONE_WITH_LINK,
+        DriveApp.Permission.VIEW
+      );
+    } catch (e) {
+      console.log("Could not set sharing permissions: " + e.message);
+    }
 
     // 5. Save Link to Sheet
     const fileUrl = file.getUrl();
