@@ -1256,13 +1256,17 @@
     );
     calendarMain.className += " block w-full"; // Ensure block layout
     calendarMain.style.height = "auto";
-    calendarMain.style.minHeight = "600px"; // Force visual height
+    calendarMain.style.minHeight = "auto";
 
     // Remove the interactive header (selectors, buttons) from the clone
     const interactiveHeader = calendarMain.querySelector(
       ".flex.items-center.justify-between.mb-4"
     );
     if (interactiveHeader) interactiveHeader.remove();
+
+    // Remove loading overlay
+    const loader = calendarMain.querySelector("#calendar-loading");
+    if (loader) loader.remove();
 
     // Fix the inner container (the white box)
     const gridContainer = calendarMain.querySelector(
@@ -1277,7 +1281,7 @@
         "h-full"
       );
       gridContainer.style.height = "auto";
-      gridContainer.style.minHeight = "600px"; // Pass down min-height
+      gridContainer.style.minHeight = "auto";
       gridContainer.style.overflow = "visible";
       gridContainer.style.display = "block";
     }
@@ -1285,25 +1289,65 @@
     // Clean up the grid for print
     const grid = calendarMain.querySelector("#weekGrid");
     if (grid) {
-      grid.classList.remove("flex-1", "overflow-y-auto", "h-full");
+      grid.classList.remove(
+        "flex-1",
+        "overflow-y-auto",
+        "h-full",
+        "overflow-hidden"
+      );
       grid.style.height = "auto";
-      grid.style.minHeight = "100%"; // Fill container
+      grid.style.minHeight = "auto";
       grid.style.overflow = "visible";
-      grid.style.display = "grid";
+
+      // Determine layout based on view mode logic
+      if (
+        typeof calendarViewMode !== "undefined" &&
+        (calendarViewMode === "month" || calendarViewMode === "biweekly")
+      ) {
+        grid.style.display = "grid";
+        // Ensure grid rows expand to content
+        grid.style.gridAutoRows = "minmax(min-content, auto)";
+      } else {
+        // Week/Day view: typically flex column (header row + scroll container)
+        grid.style.display = "flex";
+        grid.style.flexDirection = "column";
+      }
 
       // Handle the scroll container - often present in Day/Week views
-      const scrollContainer = grid.querySelector("#week-scroll-container");
+      const scrollContainer =
+        grid.querySelector("#week-scroll-container") ||
+        grid.querySelector(".overflow-y-auto");
       if (scrollContainer) {
         scrollContainer.style.height = "auto";
-        scrollContainer.style.minHeight = "600px";
+        scrollContainer.style.minHeight = "auto";
         scrollContainer.style.overflow = "visible";
         scrollContainer.classList.remove("overflow-y-auto", "h-full", "flex-1");
-        // Also remove relative if it traps absolute positioning, but Dayview needs relative.
+
+        // Remove relative from scrollContainer if not strictly needed? Day view events are usually in bodyFlex/inner grid
         // WeekView bodyFlex:
-        const bodyFlex = scrollContainer.querySelector(".grid");
+        const bodyFlex =
+          scrollContainer.querySelector(".grid") || scrollContainer.children[0];
         if (bodyFlex) {
-          bodyFlex.style.minHeight = "600px";
+          bodyFlex.style.minHeight = "auto";
           bodyFlex.style.height = "auto";
+          bodyFlex.classList.remove(
+            "min-h-full",
+            "h-full",
+            "absolute",
+            "overflow-y-auto"
+          );
+
+          // Day View Specific Adjustment
+          if (
+            typeof calendarViewMode !== "undefined" &&
+            calendarViewMode === "day"
+          ) {
+            // Day view uses absolute positioning for events based on time.
+            // Grid container must have explicit height for 24h * 60px
+            // 24 * 60 = 1440px
+            bodyFlex.style.height = "1440px";
+            bodyFlex.style.position = "relative";
+          }
         }
       }
     }
@@ -1335,9 +1379,12 @@
         useCORS: true,
         letterRendering: true,
         logging: false,
-        windowWidth: 1200, // Hint to html2canvas about viewport size
+        windowWidth: 1200,
+        scrollY: 0,
+        height: element.offsetHeight + 50, // Capture full height
       },
       jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+      pagebreak: { mode: ["avoid-all", "css", "legacy"] },
     };
 
     // Run html2pdf
