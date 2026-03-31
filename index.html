@@ -22,11 +22,29 @@
   </head>
   <body class="bg-gray-50 text-gray-800 antialiased font-sans">
     <!-- Flex Container -->
-    <div class="flex h-screen overflow-hidden">
+    <div class="flex h-screen overflow-hidden relative">
+      <!-- Mobile/Tablet Overlay -->
+      <div
+        id="sidebarOverlay"
+        class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden transition-opacity"
+        onclick="toggleSidebar()"
+      ></div>
+
       <!-- Sidebar -->
-      <aside class="w-64 bg-white shadow-xl hidden md:flex flex-col z-10">
+      <aside
+        id="sidebar"
+        class="w-64 bg-white shadow-xl flex flex-col z-50 fixed inset-y-0 left-0 transform -translate-x-full transition-transform duration-300 lg:relative lg:translate-x-0 h-full"
+      >
+        <!-- Sidebar Close Button (Mobile/Tablet) -->
+        <button
+          onclick="toggleSidebar()"
+          class="lg:hidden absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
+        >
+          <i class="ph ph-x text-xl"></i>
+        </button>
+
         <div
-          class="h-20 flex items-center justify-center border-b border-gray-100"
+          class="h-20 flex items-center justify-center border-b border-gray-100 mt-4 lg:mt-0"
         >
           <div class="flex items-center gap-2 text-[#65c027] font-bold text-xl">
             <i class="ph ph-heart-beat text-3xl"></i>
@@ -173,11 +191,19 @@
       </aside>
 
       <!-- Main Content -->
-      <main class="flex-1 overflow-y-auto bg-gray-50 p-8 relative">
+      <main class="flex-1 overflow-y-auto bg-gray-50 p-4 lg:p-8 relative">
         <!-- Mobile Header -->
-        <div class="md:hidden flex items-center justify-between mb-6">
-          <span class="text-[#65c027] font-bold text-lg">CareAdmin</span>
-          <button class="p-2 text-gray-600">
+        <div
+          class="lg:hidden flex items-center justify-between mb-6 bg-white p-3 rounded-xl shadow-sm border border-gray-200"
+        >
+          <div class="flex items-center gap-2 text-[#65c027] font-bold text-lg">
+            <i class="ph ph-heart-beat text-2xl"></i>
+            <span>Allevia Senior Care</span>
+          </div>
+          <button
+            onclick="toggleSidebar()"
+            class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          >
             <i class="ph ph-list text-2xl"></i>
           </button>
         </div>
@@ -217,5 +243,35 @@
     <?!= include('js-shifts'); ?>
     <?!=
     include('js-calendar'); ?>
+
+    <script>
+      // Sidebar Toggle Logic for Mobile/Tablet
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        if (sidebar.classList.contains("-translate-x-full")) {
+          // Open
+          sidebar.classList.remove("-translate-x-full");
+          overlay.classList.remove("hidden");
+        } else {
+          // Close
+          sidebar.classList.add("-translate-x-full");
+          overlay.classList.add("hidden");
+        }
+      }
+
+      // Close sidebar when clicking a nav link on mobile/tablet
+      document.addEventListener("DOMContentLoaded", () => {
+        const navItems = document.querySelectorAll(".sidebar-nav .nav-item");
+        navItems.forEach((item) => {
+          item.addEventListener("click", () => {
+            if (window.innerWidth < 1024) {
+              toggleSidebar();
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>
