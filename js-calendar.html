@@ -9,6 +9,7 @@
 
   const DAY_MS = 24 * 60 * 60 * 1000;
   let currentModalShift = null;
+  let activePersonSection = "caregiver";
 
   function loadCaregiverCalendar() {
     // Ensure caregiver and client data are loaded
@@ -68,38 +69,39 @@
   }
 
   function renderPersonList() {
-    const listContainer = document.getElementById("caregiverList");
-    const titleElement = document.getElementById("sidePanelTitle");
-    listContainer.innerHTML = "";
+    const caregiverContainer = document.getElementById("caregiverSectionBody");
+    const clientContainer = document.getElementById("clientSectionBody");
+    if (!caregiverContainer || !clientContainer) return;
 
-    const isCaregiver = calendarPerspective === "caregiver";
-    titleElement.textContent = isCaregiver ? "Caregivers" : "Clients";
+    renderEntityList(caregiverContainer, "caregiver", cgData);
+    renderEntityList(clientContainer, "client", clData);
+    updatePersonSectionsUI();
+  }
 
-    // "All" option
+  function renderEntityList(container, type, data) {
+    const isCaregiver = type === "caregiver";
+    const isActiveType = calendarPerspective === type;
+    container.innerHTML = "";
+
     const allItem = document.createElement("div");
     allItem.className = `flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
-      selectedPersonId === "all"
+      isActiveType && selectedPersonId === "all"
         ? "bg-blue-50 border border-blue-200"
         : "hover:bg-gray-50 border border-transparent"
     }`;
-    allItem.onclick = () => selectPerson("all");
+    allItem.onclick = () => selectPersonForType(type, "all");
     allItem.innerHTML = `
-        <div class="w-3 h-3 rounded-full bg-gray-400"></div>
-        <span class="text-sm font-medium text-gray-700">All ${
-          isCaregiver ? "Caregivers" : "Clients"
-        }</span>
+      <div class="w-3 h-3 rounded-full bg-gray-400"></div>
+      <span class="text-sm font-medium text-gray-700">All ${
+        isCaregiver ? "Caregivers" : "Clients"
+      }</span>
     `;
-    listContainer.appendChild(allItem);
-
-    const data = isCaregiver ? cgData : clData;
+    container.appendChild(allItem);
 
     if (data && data.length > 0) {
       data.forEach((p) => {
-        const color = isCaregiver
-          ? getCaregiverColor(p.id)
-          : getCaregiverColor(p.id); // Or generate client colors? Use same for now.
-        const isSelected = selectedPersonId === p.id;
-
+        const color = getCaregiverColor(p.id);
+        const isSelected = isActiveType && selectedPersonId === p.id;
         const name = isCaregiver
           ? p.name
           : `${p.firstName || ""} ${p.lastName || ""}`.trim();
@@ -110,18 +112,55 @@
             ? "bg-gray-100 border border-gray-300"
             : "hover:bg-gray-50 border border-transparent"
         }`;
-        item.onclick = () => selectPerson(p.id);
+        item.onclick = () => selectPersonForType(type, p.id);
         item.innerHTML = `
-                <div class="w-3 h-3 rounded-full border border-gray-300" style="background-color: ${color}"></div>
-                <span class="text-sm text-gray-700 truncate">${name}</span>
-            `;
-        listContainer.appendChild(item);
+          <div class="w-3 h-3 rounded-full border border-gray-300" style="background-color: ${color}"></div>
+          <span class="text-sm text-gray-700 truncate">${name}</span>
+        `;
+        container.appendChild(item);
       });
     } else {
-      listContainer.innerHTML += `<div class="text-xs text-gray-400 text-center mt-2">No ${
+      container.innerHTML += `<div class="text-xs text-gray-400 text-center mt-2">No ${
         isCaregiver ? "caregivers" : "clients"
       } found</div>`;
     }
+  }
+
+  function togglePersonSection(type) {
+    activePersonSection = type;
+    updatePersonSectionsUI();
+  }
+
+  function updatePersonSectionsUI() {
+    const caregiverBody = document.getElementById("caregiverSectionBody");
+    const clientBody = document.getElementById("clientSectionBody");
+    const caregiverIcon = document.getElementById("caregiverSectionIcon");
+    const clientIcon = document.getElementById("clientSectionIcon");
+    if (!caregiverBody || !clientBody || !caregiverIcon || !clientIcon) return;
+
+    const caregiverOpen = activePersonSection === "caregiver";
+    caregiverBody.classList.toggle("hidden", !caregiverOpen);
+    clientBody.classList.toggle("hidden", caregiverOpen);
+
+    caregiverIcon.className = caregiverOpen
+      ? "ph ph-caret-down text-gray-500"
+      : "ph ph-caret-right text-gray-500";
+    clientIcon.className = caregiverOpen
+      ? "ph ph-caret-right text-gray-500"
+      : "ph ph-caret-down text-gray-500";
+  }
+
+  function selectPersonForType(type, id) {
+    calendarPerspective = type;
+    const perspectiveSelector = document.getElementById("calendarPerspective");
+    if (perspectiveSelector) perspectiveSelector.value = type;
+    activePersonSection = type;
+    selectedPersonId = id;
+    const selector = document.getElementById("personSelector");
+    if (selector) selector.value = id;
+    renderPersonList();
+    updatePersonDropdown();
+    renderActiveCalendar();
   }
 
   function updatePersonDropdown() {
@@ -150,6 +189,7 @@
 
   function switchPerspective() {
     calendarPerspective = document.getElementById("calendarPerspective").value;
+    activePersonSection = calendarPerspective;
     selectedPersonId = "all";
     renderPersonList();
     updatePersonDropdown();
