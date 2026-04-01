@@ -91,6 +91,13 @@
               <span class="nav-label">Add Shift</span>
             </button>
             <button
+              onclick="appNavigate('shift-history')"
+              class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400 ml-2 pl-6 border-l-2 border-transparent hover:border-[#65c027]"
+            >
+              <i class="ph ph-clock-counter-clockwise text-xl"></i>
+              <span class="nav-label">Shift History</span>
+            </button>
+            <button
               onclick="appNavigate('caregiver-calendar')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
@@ -231,6 +238,7 @@
           <?!= include('page-client-stages');
           ?>
           <?!= include('page-shifts'); ?>
+          <?!= include('page-shift-history'); ?>
           <?!=
           include('page-caregiver-calendar'); ?>
           <?!=
@@ -256,6 +264,7 @@
     <?!= include('js-client-assessment'); ?>
     <?!= include('js-communication'); ?>
     <?!= include('js-shifts'); ?>
+    <?!= include('js-shift-history'); ?>
     <?!=
     include('js-calendar'); ?>
 

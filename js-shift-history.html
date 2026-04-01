@@ -1,0 +1,415 @@
+<script>
+  const SHIFT_HISTORY_COLUMNS = [
+    { key: "errorFlag", label: "Error flag" },
+    { key: "shiftId", label: "Shift ID" },
+    { key: "invoiceId", label: "Invoice ID" },
+    { key: "invoiceStatus", label: "Invoice Status" },
+    { key: "clientName", label: "Client Full Name / ID" },
+    { key: "caregiverName", label: "Caregiver Full Name / ID" },
+    { key: "evv", label: "EVV" },
+    { key: "startDate", label: "Start Date" },
+    { key: "endDate", label: "End Date" },
+    { key: "clockIn", label: "Clock In" },
+    { key: "clockOut", label: "Clock Out" },
+    { key: "totalHours", label: "Total Hours" },
+    { key: "inMethod", label: "In Method" },
+    { key: "outMethod", label: "Out Method" },
+    { key: "billableHours", label: "Billable Hours" },
+    { key: "payableHours", label: "Payable Hours" },
+    { key: "billingType", label: "Billing Type" },
+    { key: "service", label: "Service" },
+    { key: "type", label: "Type" },
+    { key: "authorizationCode", label: "Authorization Code" },
+    { key: "clientRate", label: "Client Rate" },
+    { key: "cgRate", label: "CG Rate" },
+    { key: "softcareRate", label: "Softcare Rate" },
+    { key: "agencyRate", label: "Agency Rate" },
+    { key: "mileageKm", label: 'Mileage "km"' },
+    { key: "mileagePrice", label: "Mileage $" },
+    { key: "confirmationIndicator", label: "Confirmation" },
+    { key: "invoiceTotal", label: "Invoice" },
+    { key: "scheduleNote", label: "Schedule Note" },
+    { key: "adminNote", label: "Admin Note" },
+    { key: "cgShiftStatus", label: "CG Shift Status" },
+    { key: "clientShiftStatus", label: "Client Shift Status" },
+    { key: "systemShiftStatus", label: "System Shift Status" },
+    { key: "systemCheck", label: "System Check" },
+    { key: "createdBy", label: "Created By" },
+    { key: "createdAt", label: "Created At" },
+    { key: "lastModifiedBy", label: "Last Modified By" },
+    { key: "lastModifiedAt", label: "Last Modified At" },
+  ];
+
+  const shiftHistoryState = {
+    payPeriodMode: "Weekly",
+    period: null,
+    rows: [],
+    summary: null,
+    loading: false,
+  };
+
+  function loadShiftHistoryView() {
+    const today = new Date();
+    const dateInput = document.getElementById("shiftHistoryPayDate");
+    if (dateInput && !dateInput.value) {
+      dateInput.valueAsDate = today;
+    }
+
+    const setButtons = (mode) => {
+      const weeklyBtn = document.getElementById("shiftHistoryWeeklyBtn");
+      const biweeklyBtn = document.getElementById("shiftHistoryBiweeklyBtn");
+      if (weeklyBtn && biweeklyBtn) {
+        weeklyBtn.className =
+          mode === "Weekly"
+            ? "flex-1 px-3 py-2 rounded-lg text-sm font-bold bg-[#65c027] text-white shadow-sm transition-colors"
+            : "flex-1 px-3 py-2 rounded-lg text-sm font-bold text-gray-500 hover:bg-white transition-colors";
+        biweeklyBtn.className =
+          mode === "Biweekly"
+            ? "flex-1 px-3 py-2 rounded-lg text-sm font-bold bg-[#65c027] text-white shadow-sm transition-colors"
+            : "flex-1 px-3 py-2 rounded-lg text-sm font-bold text-gray-500 hover:bg-white transition-colors";
+      }
+    };
+
+    google.script.run
+      .withSuccessHandler((settings) => {
+        shiftHistoryState.payPeriodMode = settings.payPeriodMode || "Weekly";
+        setButtons(shiftHistoryState.payPeriodMode);
+        loadShiftHistoryLists();
+        refreshShiftHistory();
+      })
+      .getShiftHistorySettings();
+  }
+
+  function loadShiftHistoryLists() {
+    const caregiverSelect = document.getElementById(
+      "shiftHistoryCaregiverFilter"
+    );
+    const clientSelect = document.getElementById("shiftHistoryClientFilter");
+    if (caregiverSelect)
+      caregiverSelect.innerHTML = '<option value="all">All Caregivers</option>';
+    if (clientSelect)
+      clientSelect.innerHTML = '<option value="all">All Clients</option>';
+
+    google.script.run
+      .withSuccessHandler((data) => {
+        if (!caregiverSelect) return;
+        data.forEach((item) => {
+          const option = document.createElement("option");
+          option.value = item.id;
+          option.textContent = `${item.name} / ${item.id}`;
+          caregiverSelect.appendChild(option);
+        });
+      })
+      .getCaregiverList();
+
+    google.script.run
+      .withSuccessHandler((data) => {
+        if (!clientSelect) return;
+        data.forEach((item) => {
+          const option = document.createElement("option");
+          option.value = item.id;
+          option.textContent = `${item.name} / ${item.id}`;
+          clientSelect.appendChild(option);
+        });
+      })
+      .getClientList();
+  }
+
+  function setShiftHistoryPayPeriodMode(mode) {
+    shiftHistoryState.payPeriodMode = mode;
+    google.script.run
+      .withSuccessHandler(() => {
+        loadShiftHistoryView();
+      })
+      .saveShiftHistoryPayPeriodSetting(mode);
+  }
+
+  function getShiftHistoryFilters() {
+    return {
+      payPeriodDate:
+        document.getElementById("shiftHistoryPayDate")?.value || "",
+      caregiverId:
+        document.getElementById("shiftHistoryCaregiverFilter")?.value || "all",
+      clientId:
+        document.getElementById("shiftHistoryClientFilter")?.value || "all",
+      systemCheck:
+        document.getElementById("shiftHistorySystemFilter")?.value || "all",
+      search: document.getElementById("shiftHistorySearch")?.value || "",
+    };
+  }
+
+  function refreshShiftHistory() {
+    const filters = getShiftHistoryFilters();
+    const thead = document.getElementById("shiftHistoryThead");
+    const tbody = document.getElementById("shiftHistoryTbody");
+    const emptyState = document.getElementById("shiftHistoryEmptyState");
+
+    if (!thead || !tbody) return;
+
+    shiftHistoryState.loading = true;
+    thead.innerHTML = "";
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="${SHIFT_HISTORY_COLUMNS.length}" class="px-6 py-16 text-center text-gray-400">Loading shift history...</td>
+      </tr>`;
+
+    google.script.run
+      .withSuccessHandler((payload) => {
+        shiftHistoryState.loading = false;
+        shiftHistoryState.period = payload.period;
+        shiftHistoryState.rows = payload.rows || [];
+        shiftHistoryState.summary = payload.summary || {};
+
+        renderShiftHistory(payload);
+      })
+      .withFailureHandler((error) => {
+        shiftHistoryState.loading = false;
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="${SHIFT_HISTORY_COLUMNS.length}" class="px-6 py-16 text-center text-red-500">Unable to load shift history: ${error.message}</td>
+          </tr>`;
+        if (emptyState) emptyState.classList.add("hidden");
+      })
+      .getShiftHistory(filters);
+  }
+
+  function resetShiftHistoryFilters() {
+    const today = new Date();
+    const dateInput = document.getElementById("shiftHistoryPayDate");
+    const caregiverFilter = document.getElementById(
+      "shiftHistoryCaregiverFilter"
+    );
+    const clientFilter = document.getElementById("shiftHistoryClientFilter");
+    const systemFilter = document.getElementById("shiftHistorySystemFilter");
+    const search = document.getElementById("shiftHistorySearch");
+
+    if (dateInput) dateInput.valueAsDate = today;
+    if (caregiverFilter) caregiverFilter.value = "all";
+    if (clientFilter) clientFilter.value = "all";
+    if (systemFilter) systemFilter.value = "all";
+    if (search) search.value = "";
+
+    refreshShiftHistory();
+  }
+
+  function renderShiftHistory(payload) {
+    const thead = document.getElementById("shiftHistoryThead");
+    const tbody = document.getElementById("shiftHistoryTbody");
+    const emptyState = document.getElementById("shiftHistoryEmptyState");
+    const periodLabel = document.getElementById("shiftHistoryPeriodLabel");
+    const invoiceLabel = document.getElementById("shiftHistoryInvoiceLabel");
+
+    if (!thead || !tbody) return;
+
+    if (periodLabel) periodLabel.textContent = payload.period?.label || "--";
+    if (invoiceLabel)
+      invoiceLabel.textContent = payload.rows?.[0]?.invoiceId || "Auto";
+
+    document.getElementById("summaryTotalClient").textContent = formatCurrency(
+      payload.summary?.totalClient || 0
+    );
+    document.getElementById("summaryTotalCaregiver").textContent =
+      formatCurrency(payload.summary?.totalCaregiver || 0);
+    document.getElementById("summaryTotalAgency").textContent = formatCurrency(
+      payload.summary?.totalAgency || 0
+    );
+    document.getElementById("summaryTotalSoftcare").textContent =
+      formatCurrency(payload.summary?.totalSoftcare || 0);
+    document.getElementById("summaryTotalMileage").textContent = formatCurrency(
+      payload.summary?.totalMileage || 0
+    );
+    document.getElementById("summaryTotalHours").textContent = (
+      payload.summary?.totalHours || 0
+    ).toFixed(2);
+
+    thead.innerHTML = `
+      <tr>${SHIFT_HISTORY_COLUMNS.map(
+        (column) =>
+          `<th class="px-4 py-4 font-bold whitespace-nowrap">${column.label}</th>`
+      ).join(
+        ""
+      )}<th class="px-4 py-4 font-bold whitespace-nowrap text-right">Actions</th></tr>
+    `;
+
+    if (!payload.rows || payload.rows.length === 0) {
+      tbody.innerHTML = "";
+      if (emptyState) emptyState.classList.remove("hidden");
+      return;
+    }
+
+    if (emptyState) emptyState.classList.add("hidden");
+
+    tbody.innerHTML = payload.rows
+      .map((row) => {
+        return `
+          <tr class="hover:bg-gray-50/80 transition-colors">
+            ${SHIFT_HISTORY_COLUMNS.map((column) =>
+              renderHistoryCell(column.key, row)
+            ).join("")}
+            <td class="px-4 py-4 whitespace-nowrap text-right">
+              <div class="flex items-center justify-end gap-2">
+                <button type="button" onclick='openShiftHistoryAction("edit", ${JSON.stringify(
+                  row
+                ).replace(
+                  /'/g,
+                  "&#39;"
+                )})' class="px-3 py-2 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-50">Edit</button>
+                <button type="button" onclick='openShiftHistoryAction("pdf", ${JSON.stringify(
+                  row
+                ).replace(
+                  /'/g,
+                  "&#39;"
+                )})' class="px-3 py-2 rounded-lg bg-[#65c027] text-white text-xs font-bold hover:bg-[#54a51f]">PDF</button>
+              </div>
+            </td>
+          </tr>`;
+      })
+      .join("");
+  }
+
+  function renderHistoryCell(key, row) {
+    const value = row[key] ?? "";
+    const base = "px-4 py-4 align-top whitespace-nowrap";
+
+    if (key === "errorFlag") {
+      return `<td class="${base}">${renderBadge(
+        value || "OK",
+        value ? "red" : "green"
+      )}</td>`;
+    }
+
+    if (key === "invoiceStatus") {
+      return `<td class="${base}">${renderInvoiceBadge(value)}</td>`;
+    }
+
+    if (key === "confirmationIndicator") {
+      return `<td class="${base}">${
+        value === "Split"
+          ? renderBadge("Split", "amber")
+          : renderBadge(value || "Confirmed", "green")
+      }</td>`;
+    }
+
+    if (key === "systemCheck") {
+      const tone =
+        value === "OK" ? "green" : value.includes("Missing") ? "red" : "amber";
+      return `<td class="${base} whitespace-normal min-w-[180px]">${renderBadge(
+        value || "OK",
+        tone
+      )}</td>`;
+    }
+
+    if (
+      ["scheduleNote", "adminNote", "clientName", "caregiverName"].includes(key)
+    ) {
+      return `<td class="${base} whitespace-normal min-w-[180px] max-w-[260px]"><div class="text-sm text-gray-700">${escapeHtml(
+        value
+      )}</div></td>`;
+    }
+
+    if (
+      [
+        "clientRate",
+        "cgRate",
+        "softcareRate",
+        "agencyRate",
+        "invoiceTotal",
+        "mileagePrice",
+      ].includes(key)
+    ) {
+      return `<td class="${base} font-semibold text-gray-900">${formatCurrency(
+        value
+      )}</td>`;
+    }
+
+    if (["totalHours", "billableHours", "payableHours"].includes(key)) {
+      return `<td class="${base} font-semibold text-gray-900">${escapeHtml(
+        String(value || "0.00")
+      )}</td>`;
+    }
+
+    return `<td class="${base} text-gray-700">${escapeHtml(
+      String(value || "")
+    )}</td>`;
+  }
+
+  function renderBadge(text, tone) {
+    const palette = {
+      green: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      red: "bg-rose-50 text-rose-700 border-rose-200",
+      amber: "bg-amber-50 text-amber-700 border-amber-200",
+      orange: "bg-orange-50 text-orange-700 border-orange-200",
+      gray: "bg-gray-100 text-gray-600 border-gray-200",
+    };
+    return `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border ${
+      palette[tone] || palette.gray
+    }">${escapeHtml(String(text))}</span>`;
+  }
+
+  function renderInvoiceBadge(text) {
+    const tone =
+      text === "Paid"
+        ? "green"
+        : text === "Partially"
+        ? "amber"
+        : text === "Voided"
+        ? "gray"
+        : "orange";
+    return renderBadge(text || "Unpaid", tone);
+  }
+
+  function formatCurrency(value) {
+    const number = Number(String(value).replace(/[^0-9.-]/g, "")) || 0;
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(number);
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function openShiftHistoryAction(action, row) {
+    if (action === "edit") {
+      if (typeof loadShiftForEdit === "function") {
+        loadShiftForEdit(row);
+        return;
+      }
+      Swal.fire(
+        "Unavailable",
+        "Shift editing is not available right now.",
+        "info"
+      );
+      return;
+    }
+
+    if (action === "pdf") {
+      const temp = document.createElement("div");
+      temp.className = "p-6 text-sm text-gray-800 bg-white";
+      temp.innerHTML = `
+        <h1 class="text-xl font-bold mb-3">Shift Summary</h1>
+        <div>Shift ID: ${escapeHtml(row.shiftId)}</div>
+        <div>Invoice ID: ${escapeHtml(row.invoiceId)}</div>
+        <div>Client: ${escapeHtml(row.clientName)}</div>
+        <div>Caregiver: ${escapeHtml(row.caregiverName)}</div>
+        <div>Period: ${escapeHtml(row.payPeriodStart)} to ${escapeHtml(
+        row.payPeriodEnd
+      )}</div>
+        <div>Hours: ${escapeHtml(row.totalHours)}</div>
+        <div>Invoice: ${escapeHtml(row.invoiceTotal)}</div>
+      `;
+      document.body.appendChild(temp);
+      html2pdf()
+        .from(temp)
+        .save(`shift-${row.shiftId}.pdf`)
+        .then(() => temp.remove());
+      return;
+    }
+  }
+</script>
