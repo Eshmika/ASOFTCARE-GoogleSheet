@@ -439,9 +439,23 @@
 
         const peopleHeader = document.createElement("div");
         peopleHeader.className =
-          "sticky left-0 z-30 px-3 py-2 text-xs font-bold uppercase text-gray-500 border-r border-gray-200 bg-gray-50 flex items-center justify-center text-center";
-        peopleHeader.textContent =
-          calendarPerspective === "caregiver" ? "Caregivers" : "Clients";
+          "sticky left-0 z-30 px-3 py-2 text-xs font-bold uppercase text-gray-500 border-r border-gray-200 bg-gray-50 text-center";
+        peopleHeader.innerHTML = `
+          <div class="flex flex-col items-center gap-1">            
+            <select
+              id="calendarPerspective"
+              onchange="switchPerspective()"
+              class="w-full max-w-[160px] bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#65c027]/20 cursor-pointer"
+            >
+              <option value="caregiver" ${
+                calendarPerspective === "caregiver" ? "selected" : ""
+              }>Caregiver View</option>
+              <option value="client" ${
+                calendarPerspective === "client" ? "selected" : ""
+              }>Client View</option>
+            </select>
+          </div>
+        `;
         header.appendChild(peopleHeader);
 
         days.forEach((d) => {
