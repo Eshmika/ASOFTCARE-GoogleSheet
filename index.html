@@ -22,7 +22,7 @@
   </head>
   <body class="bg-gray-50 text-gray-800 antialiased font-sans">
     <!-- Flex Container -->
-    <div class="flex h-screen overflow-hidden relative">
+    <div id="appShell" class="flex h-screen overflow-hidden relative">
       <!-- Mobile/Tablet Overlay -->
       <div
         id="sidebarOverlay"
@@ -33,8 +33,21 @@
       <!-- Sidebar -->
       <aside
         id="sidebar"
-        class="w-64 bg-white shadow-xl flex flex-col z-50 fixed inset-y-0 left-0 transform -translate-x-full transition-transform duration-300 lg:relative lg:translate-x-0 h-full"
+        class="w-64 lg:w-64 bg-white shadow-xl flex flex-col z-50 fixed inset-y-0 left-0 transform -translate-x-full transition-all duration-300 lg:relative lg:translate-x-0 h-full"
       >
+        <!-- Desktop Collapse Toggle -->
+        <button
+          onclick="toggleDesktopSidebar()"
+          class="hidden lg:flex items-center justify-center absolute -right-3 top-24 h-7 w-7 rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm hover:bg-gray-50"
+          aria-label="Toggle sidebar"
+          title="Toggle sidebar"
+        >
+          <i
+            id="desktopSidebarToggleIcon"
+            class="ph ph-caret-left text-sm transition-transform duration-300"
+          ></i>
+        </button>
+
         <!-- Sidebar Close Button (Mobile/Tablet) -->
         <button
           onclick="toggleSidebar()"
@@ -46,9 +59,11 @@
         <div
           class="h-20 flex items-center justify-center border-b border-gray-100 mt-4 lg:mt-0"
         >
-          <div class="flex items-center gap-2 text-[#65c027] font-bold text-xl">
+          <div
+            class="brand-wrap flex items-center gap-2 text-[#65c027] font-bold text-xl"
+          >
             <i class="ph ph-heart-beat text-3xl"></i>
-            <span>Allevia Senior Care</span>
+            <span class="brand-text">Allevia Senior Care</span>
           </div>
         </div>
 
@@ -58,13 +73,13 @@
             class="nav-item active w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-bold text-black uppercase"
           >
             <i class="ph ph-squares-four text-xl"></i>
-            Dashboard
+            <span class="nav-label">Dashboard</span>
           </button>
 
           <!-- Shifts Section -->
           <div class="space-y-1">
             <div
-              class="px-4 py-2 text-xs font-bold text-black uppercase tracking-wider"
+              class="section-label px-4 py-2 text-xs font-bold text-black uppercase tracking-wider"
             >
               Shifts
             </div>
@@ -73,21 +88,21 @@
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-calendar-plus text-xl"></i>
-              Add Shift
+              <span class="nav-label">Add Shift</span>
             </button>
             <button
               onclick="appNavigate('caregiver-calendar')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-calendar text-xl"></i>
-              Calendar
+              <span class="nav-label">Calendar</span>
             </button>
           </div>
 
           <!-- Clients Section -->
           <div class="space-y-1">
             <div
-              class="px-4 py-2 text-xs font-bold text-black uppercase tracking-wider"
+              class="section-label px-4 py-2 text-xs font-bold text-black uppercase tracking-wider"
             >
               Clients
             </div>
@@ -96,28 +111,28 @@
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-users text-xl"></i>
-              All clients
+              <span class="nav-label">All clients</span>
             </button>
             <button
               onclick="appNavigate('add-new-leads')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-user-plus text-xl"></i>
-              Add new leads
+              <span class="nav-label">Add new leads</span>
             </button>
             <button
               onclick="appNavigate('client-stages')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-rocket-launch text-xl"></i>
-              Care activation
+              <span class="nav-label">Care activation</span>
             </button>
           </div>
 
           <!-- Caregiver Section -->
           <div class="space-y-1">
             <div
-              class="px-4 py-2 text-xs font-bold text-black uppercase tracking-wider"
+              class="section-label px-4 py-2 text-xs font-bold text-black uppercase tracking-wider"
             >
               Caregiver
             </div>
@@ -126,21 +141,21 @@
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-users-three text-xl"></i>
-              All caregivers
+              <span class="nav-label">All caregivers</span>
             </button>
             <button
               onclick="appNavigate('caregiver-stages')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-steps text-xl"></i>
-              Application
+              <span class="nav-label">Application</span>
             </button>
           </div>
 
           <!-- Communication Section -->
           <div class="space-y-1">
             <div
-              class="px-4 py-2 text-xs font-bold text-black uppercase tracking-wider"
+              class="section-label px-4 py-2 text-xs font-bold text-black uppercase tracking-wider"
             >
               Communication
             </div>
@@ -149,14 +164,14 @@
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-envelope-simple text-xl"></i>
-              Send Email
+              <span class="nav-label">Send Email</span>
             </button>
           </div>
 
           <!-- Archives Section -->
           <div class="space-y-1">
             <div
-              class="px-4 py-2 text-xs font-bold text-black uppercase tracking-wider"
+              class="section-label px-4 py-2 text-xs font-bold text-black uppercase tracking-wider"
             >
               Archives
             </div>
@@ -165,14 +180,14 @@
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-archive text-xl"></i>
-              Archived Clients
+              <span class="nav-label">Archived Clients</span>
             </button>
             <button
               onclick="appNavigate('caregiver-archives')"
               class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium text-gray-400"
             >
               <i class="ph ph-users-four text-xl"></i>
-              Archived Caregivers
+              <span class="nav-label">Archived Caregivers</span>
             </button>
           </div>
         </nav>
@@ -245,6 +260,8 @@
     include('js-calendar'); ?>
 
     <script>
+      const DESKTOP_SIDEBAR_KEY = "desktopSidebarCollapsed";
+
       // Sidebar Toggle Logic for Mobile/Tablet
       function toggleSidebar() {
         const sidebar = document.getElementById("sidebar");
@@ -261,8 +278,40 @@
         }
       }
 
+      function setDesktopSidebarCollapsed(collapsed) {
+        const sidebar = document.getElementById("sidebar");
+        const icon = document.getElementById("desktopSidebarToggleIcon");
+
+        if (!sidebar) return;
+
+        sidebar.classList.toggle("sidebar-collapsed", collapsed);
+        sidebar.classList.toggle("lg:w-20", collapsed);
+        sidebar.classList.toggle("lg:w-64", !collapsed);
+
+        if (icon) {
+          icon.classList.toggle("rotate-180", collapsed);
+        }
+      }
+
+      function toggleDesktopSidebar() {
+        if (window.innerWidth < 1024) return;
+
+        const sidebar = document.getElementById("sidebar");
+        const isCollapsed = sidebar.classList.contains("sidebar-collapsed");
+        const nextState = !isCollapsed;
+
+        setDesktopSidebarCollapsed(nextState);
+        localStorage.setItem(DESKTOP_SIDEBAR_KEY, String(nextState));
+      }
+
       // Close sidebar when clicking a nav link on mobile/tablet
       document.addEventListener("DOMContentLoaded", () => {
+        if (window.innerWidth >= 1024) {
+          const savedState =
+            localStorage.getItem(DESKTOP_SIDEBAR_KEY) === "true";
+          setDesktopSidebarCollapsed(savedState);
+        }
+
         const navItems = document.querySelectorAll(".sidebar-nav .nav-item");
         navItems.forEach((item) => {
           item.addEventListener("click", () => {
@@ -271,7 +320,38 @@
             }
           });
         });
+
+        window.addEventListener("resize", () => {
+          if (window.innerWidth >= 1024) {
+            const savedState =
+              localStorage.getItem(DESKTOP_SIDEBAR_KEY) === "true";
+            setDesktopSidebarCollapsed(savedState);
+          }
+        });
       });
     </script>
+
+    <style>
+      #sidebar.sidebar-collapsed .brand-wrap {
+        justify-content: center;
+      }
+
+      #sidebar.sidebar-collapsed .brand-text,
+      #sidebar.sidebar-collapsed .section-label,
+      #sidebar.sidebar-collapsed .nav-label {
+        display: none;
+      }
+
+      #sidebar.sidebar-collapsed .nav-item {
+        justify-content: center;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+
+      #sidebar.sidebar-collapsed .sidebar-nav {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+    </style>
   </body>
 </html>
