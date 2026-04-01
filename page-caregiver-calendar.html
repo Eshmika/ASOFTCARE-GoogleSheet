@@ -89,7 +89,7 @@
 
     <!-- Toggles and Perspective -->
     <div
-      class="md:col-start-2 md:col-span-2 md:row-start-1 lg:col-start-2 lg:col-span-1 lg:row-start-1 flex flex-col gap-2 min-w-0"
+      class="md:col-start-2 md:col-span-2 md:row-start-1 lg:col-start-2 lg:col-span-1 lg:row-start-1 flex flex-col items-start gap-2 min-w-0"
     >
       <div
         id="calendarViewToggle"
@@ -176,31 +176,31 @@
 
     <!-- Buttons -->
     <div
-      class="md:col-start-3 md:col-span-1 md:row-start-2 lg:col-start-4 lg:col-span-1 lg:row-start-1 flex items-center justify-end gap-3 flex-wrap"
+      class="md:col-start-3 md:col-span-1 md:row-start-2 lg:col-start-4 lg:col-span-1 lg:row-start-1 flex items-center justify-end gap-2 md:gap-1 flex-wrap md:flex-nowrap"
     >
       <button
         onclick="appNavigate('shifts')"
         title="Add Shift"
         aria-label="Add Shift"
-        class="bg-[#65c027] text-white p-2.5 rounded-lg font-bold shadow-lg hover:bg-[#54a020] transition transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
+        class="bg-[#65c027] text-white p-2 md:p-1.5 lg:p-2.5 rounded-lg font-bold shadow-lg hover:bg-[#54a020] transition transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
       >
-        <i class="ph ph-plus font-bold text-xl"></i>
+        <i class="ph ph-plus font-bold text-lg md:text-base lg:text-xl"></i>
       </button>
       <button
         onclick="downloadPDF()"
         title="Export PDF"
         aria-label="Export PDF"
-        class="bg-gradient-to-r from-red-500 to-orange-600 text-white p-2.5 rounded-lg font-bold shadow-lg hover:from-red-600 hover:to-orange-700 transition transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
+        class="bg-gradient-to-r from-red-500 to-orange-600 text-white p-2 md:p-1.5 lg:p-2.5 rounded-lg font-bold shadow-lg hover:from-red-600 hover:to-orange-700 transition transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
       >
-        <i class="ph ph-file-pdf text-xl"></i>
+        <i class="ph ph-file-pdf text-lg md:text-base lg:text-xl"></i>
       </button>
       <button
         type="button"
         title="Full Screen"
         aria-label="Full Screen"
-        class="bg-white text-gray-700 p-2.5 rounded-lg font-bold shadow-lg border border-gray-200 hover:bg-gray-50 transition transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
+        class="bg-white text-gray-700 p-2 md:p-1.5 lg:p-2.5 rounded-lg font-bold shadow-lg border border-gray-200 hover:bg-gray-50 transition transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
       >
-        <i class="ph ph-corners-out text-xl"></i>
+        <i class="ph ph-corners-out text-lg md:text-base lg:text-xl"></i>
       </button>
     </div>
 
