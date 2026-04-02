@@ -155,6 +155,11 @@
 
     google.script.run
       .withSuccessHandler((payload) => {
+        if (!payload) {
+          throw new Error(
+            "Server returned null payload. Check if sheet data contains invalid types like unstringified Date objects."
+          );
+        }
         shiftHistoryState.loading = false;
         shiftHistoryState.period = payload.period;
         shiftHistoryState.rows = payload.rows || [];

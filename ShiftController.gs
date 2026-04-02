@@ -298,8 +298,14 @@ function buildShiftHistoryRows(
         ),
         payPeriodEnd: Utilities.formatDate(period.end, timeZone, "yyyy-MM-dd"),
         segmentNumber: segment.segmentNumber,
-        originalStartTime: shift.clockIn || "",
-        originalEndTime: shift.clockOut || "",
+        originalStartTime:
+          shift.clockIn instanceof Date
+            ? Utilities.formatDate(shift.clockIn, timeZone, "HH:mm")
+            : String(shift.clockIn || ""),
+        originalEndTime:
+          shift.clockOut instanceof Date
+            ? Utilities.formatDate(shift.clockOut, timeZone, "HH:mm")
+            : String(shift.clockOut || ""),
         errorFlag,
         systemCheck,
         clientName: `${client.name} / ${shift.clientId}`,
@@ -341,9 +347,17 @@ function buildShiftHistoryRows(
         clientShiftStatus: shift.clientShiftStatus || "Pending",
         systemShiftStatus: shift.systemShiftStatus || "Pending",
         createdBy: shift.createdBy || "System",
-        createdAt: shift.createdAt || "",
+        createdAt: shift.createdAt
+          ? shift.createdAt instanceof Date
+            ? shift.createdAt.toISOString()
+            : String(shift.createdAt)
+          : "",
         lastModifiedBy: shift.lastModifiedBy || "",
-        lastModifiedAt: shift.lastModifiedAt || "",
+        lastModifiedAt: shift.lastModifiedAt
+          ? shift.lastModifiedAt instanceof Date
+            ? shift.lastModifiedAt.toISOString()
+            : String(shift.lastModifiedAt)
+          : "",
         notes: shift.notes || "",
         segmentDateKey,
         periodStartKey,
@@ -423,11 +437,17 @@ function getShiftHistory(data) {
 
   const values = sheet.getDataRange().getValues();
   if (values.length <= 1) {
+    const timeZone = Session.getScriptTimeZone();
+    const settingsMode = getShiftHistoryPayPeriodSetting();
+    const period = getShiftHistoryPeriod(new Date(), settingsMode);
+
     return {
-      period: getShiftHistoryPeriod(
-        new Date(),
-        getShiftHistoryPayPeriodSetting()
-      ),
+      period: {
+        start: Utilities.formatDate(period.start, timeZone, "yyyy-MM-dd"),
+        end: Utilities.formatDate(period.end, timeZone, "yyyy-MM-dd"),
+        label: period.label,
+        payPeriodMode: settingsMode,
+      },
       rows: [],
       summary: {
         totalClient: 0,
