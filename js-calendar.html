@@ -405,7 +405,9 @@
     if (grid.previousElementSibling)
       grid.previousElementSibling.style.display = "none";
 
-    grid.className = "h-full overflow-auto bg-white relative";
+    grid.className = "flex-1 h-full overflow-auto bg-white relative";
+    grid.style.maxHeight = "none";
+
     document.getElementById("currentWeekLabel").textContent = labelText;
     grid.innerHTML =
       '<div id="calendar-loading" class="absolute inset-0 flex items-center justify-center text-gray-400 z-[60] bg-white bg-opacity-80">Loading...</div>';
@@ -430,12 +432,12 @@
         grid.innerHTML = "";
 
         const matrix = document.createElement("div");
-        matrix.className = "min-w-[980px]";
+        matrix.className = "w-full min-w-[700px]";
 
         const header = document.createElement("div");
         header.className =
           "grid sticky top-0 z-20 bg-gray-50 border-b border-gray-200";
-        header.style.gridTemplateColumns = `220px repeat(${days.length}, minmax(130px, 1fr))`;
+        header.style.gridTemplateColumns = `220px repeat(${days.length}, minmax(0, 1fr))`;
 
         const peopleHeader = document.createElement("div");
         peopleHeader.className =
@@ -496,8 +498,8 @@
 
         people.forEach((person, idx) => {
           const row = document.createElement("div");
-          row.className = "grid border-b border-gray-100";
-          row.style.gridTemplateColumns = `220px repeat(${days.length}, minmax(130px, 1fr))`;
+          row.className = "grid border-b border-gray-100 w-full";
+          row.style.gridTemplateColumns = `220px repeat(${days.length}, minmax(0, 1fr))`;
 
           const nameCell = document.createElement("div");
           nameCell.className = `sticky left-0 z-10 border-r border-gray-200 px-3 py-2 flex items-center gap-2 ${
@@ -773,6 +775,7 @@
       grid.previousElementSibling.style.display = "none";
 
     grid.className = "flex flex-col h-full bg-white relative overflow-hidden";
+    grid.style.maxHeight = "none";
 
     const day = new Date(currentCalendarDate);
     const label = day.toLocaleDateString("en-US", {
