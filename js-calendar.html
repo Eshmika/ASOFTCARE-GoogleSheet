@@ -424,7 +424,7 @@
     if (grid.previousElementSibling)
       grid.previousElementSibling.style.display = "none";
 
-    grid.className = "flex-1 min-h-0 h-full overflow-y-auto bg-white relative";
+    grid.className = "flex-1 min-h-0 h-full overflow-auto bg-white relative";
     grid.style.maxHeight = "none";
 
     document.getElementById("currentWeekLabel").textContent = labelText;
@@ -451,7 +451,13 @@
         grid.innerHTML = "";
 
         const matrix = document.createElement("div");
-        matrix.className = "w-full min-w-[700px]";
+        if (dayCount <= 7) {
+          matrix.className = "w-full min-w-[700px]"; // keep fit to width mostly
+        } else if (dayCount <= 14) {
+          matrix.className = "w-full min-w-[1400px]"; // allow horizontal scroll
+        } else {
+          matrix.className = "w-full min-w-[3000px]"; // month view readable width
+        }
 
         const header = document.createElement("div");
         header.className =
