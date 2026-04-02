@@ -380,10 +380,26 @@
 
   function createMatrixShiftCard(shift) {
     const counterpart = getCounterpartName(shift);
+
+    let displayCounterpart = counterpart;
+    if (calendarPerspective === "client") {
+      // Perspective is Client, so the counterpart is the Caregiver
+      displayCounterpart = `${counterpart} (CG)`;
+    } else if (calendarPerspective === "caregiver") {
+      // Perspective is Caregiver, so the counterpart is the Client
+      displayCounterpart = `${counterpart} (CL)`;
+    }
+
     const timeDisplay =
       shift.clockIn && shift.clockOut
         ? `${shift.clockIn} - ${shift.clockOut}`
         : "Time TBD";
+
+    const totalHoursDisplay = calculateTotalHours(
+      shift.clockIn,
+      shift.clockOut
+    );
+
     const color = getCaregiverColor(
       shift.caregiverId || getShiftPersonId(shift)
     );
@@ -394,8 +410,11 @@
     card.style.borderLeftColor = color;
     card.onclick = () => openShiftDetailsModal(shift);
     card.innerHTML = `
-      <div class="font-semibold text-gray-800 truncate" title="${counterpart}">${counterpart}</div>
-      <div class="text-[10px] text-gray-600 truncate">${timeDisplay}</div>
+      <div class="font-semibold text-gray-800 truncate" title="${displayCounterpart}">${displayCounterpart}</div>
+      <div class="mt-1 flex flex-col text-[10px] text-gray-600 font-semibold border-t border-black/10 pt-1">
+        <span class="truncate">${timeDisplay}</span>
+        <span class="opacity-80 mt-0.5">${totalHoursDisplay}</span>
+      </div>
     `;
     return card;
   }
@@ -405,7 +424,7 @@
     if (grid.previousElementSibling)
       grid.previousElementSibling.style.display = "none";
 
-    grid.className = "flex-1 h-full overflow-auto bg-white relative";
+    grid.className = "flex-1 min-h-0 h-full overflow-y-auto bg-white relative";
     grid.style.maxHeight = "none";
 
     document.getElementById("currentWeekLabel").textContent = labelText;
@@ -496,6 +515,13 @@
           });
         });
 
+        const baseGridHeight =
+          grid.clientHeight > 0 ? grid.clientHeight : window.innerHeight * 0.7;
+        const targetRowHeight = Math.max(
+          Math.floor((baseGridHeight - 64) / 4),
+          100
+        );
+
         people.forEach((person, idx) => {
           const row = document.createElement("div");
           row.className = "grid border-b border-gray-100 w-full";
@@ -505,6 +531,7 @@
           nameCell.className = `sticky left-0 z-10 border-r border-gray-200 px-3 py-2 flex items-center gap-2 ${
             idx % 2 === 0 ? "bg-white" : "bg-gray-50/60"
           }`;
+          nameCell.style.minHeight = `${targetRowHeight}px`;
           nameCell.innerHTML = `
             <div class="w-2.5 h-2.5 rounded-full" style="background-color: ${getCaregiverColor(
               person.id
@@ -526,9 +553,10 @@
 
             const cell = document.createElement("div");
             const isToday = isSameDate(d, today);
-            cell.className = `min-h-[86px] p-1.5 border-r border-gray-100 space-y-1 ${
+            cell.className = `p-1.5 border-r border-gray-100 space-y-1 ${
               isToday ? "bg-green-50/40" : "bg-white"
             }`;
+            cell.style.minHeight = `${targetRowHeight}px`;
 
             dayShifts.forEach((s) => {
               cell.appendChild(createMatrixShiftCard(s));
