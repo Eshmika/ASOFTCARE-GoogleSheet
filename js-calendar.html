@@ -84,17 +84,22 @@
     container.innerHTML = "";
 
     const allItem = document.createElement("div");
-    allItem.className = `flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+    allItem.className = `flex items-center gap-3 p-2 rounded cursor-pointer transition-colors ${
       isActiveType && selectedPersonId === "all"
-        ? "bg-blue-50 border border-blue-200"
+        ? "bg-blue-50 border border-blue-200 shadow-sm"
         : "hover:bg-gray-50 border border-transparent"
     }`;
     allItem.onclick = () => selectPersonForType(type, "all");
     allItem.innerHTML = `
-      <div class="w-3 h-3 rounded-full bg-gray-400"></div>
-      <span class="text-sm font-medium text-gray-700">All ${
-        isCaregiver ? "Caregivers" : "Clients"
-      }</span>
+      <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0 border border-gray-300">
+        <i class="ph ph-users text-gray-600 text-lg"></i>
+      </div>
+      <div class="flex flex-col min-w-0">
+        <span class="text-sm font-semibold text-gray-800 truncate">All ${
+          isCaregiver ? "Caregivers" : "Clients"
+        }</span>
+        <span class="text-[10px] text-gray-500 truncate">View everyone</span>
+      </div>
     `;
     container.appendChild(allItem);
 
@@ -105,17 +110,23 @@
         const name = isCaregiver
           ? p.name
           : `${p.firstName || ""} ${p.lastName || ""}`.trim();
+        const initial = name ? name.charAt(0).toUpperCase() : "?";
 
         const item = document.createElement("div");
-        item.className = `flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+        item.className = `flex items-center gap-3 p-2 rounded cursor-pointer transition-colors ${
           isSelected
-            ? "bg-gray-100 border border-gray-300"
+            ? "bg-gray-100 border border-gray-300 shadow-sm"
             : "hover:bg-gray-50 border border-transparent"
         }`;
         item.onclick = () => selectPersonForType(type, p.id);
         item.innerHTML = `
-          <div class="w-3 h-3 rounded-full border border-gray-300" style="background-color: ${color}"></div>
-          <span class="text-sm text-gray-700 truncate">${name}</span>
+          <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border border-gray-200 shadow-sm" style="background-color: ${color}">
+            <span class="text-gray-800 font-bold text-sm">${initial}</span>
+          </div>
+          <div class="flex flex-col min-w-0">
+            <span class="text-sm font-semibold text-gray-800 truncate">${name}</span>
+            <span class="text-[10px] text-gray-500 truncate">ID: ${p.id}</span>
+          </div>
         `;
         container.appendChild(item);
       });
@@ -534,17 +545,27 @@
           row.style.gridTemplateColumns = `220px repeat(${days.length}, minmax(0, 1fr))`;
 
           const nameCell = document.createElement("div");
-          nameCell.className = `sticky left-0 z-10 border-r border-gray-200 px-3 py-2 flex items-center gap-2 ${
+          nameCell.className = `sticky left-0 z-10 border-r border-gray-200 px-3 py-2 flex items-center gap-3 ${
             idx % 2 === 0 ? "bg-white" : "bg-gray-50/60"
           }`;
           nameCell.style.minHeight = `${targetRowHeight}px`;
+          const initial = person.name
+            ? person.name.charAt(0).toUpperCase()
+            : "?";
           nameCell.innerHTML = `
-            <div class="w-2.5 h-2.5 rounded-full" style="background-color: ${getCaregiverColor(
+            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border border-gray-200 shadow-sm" style="background-color: ${getCaregiverColor(
               person.id
-            )}"></div>
-            <span class="text-sm font-semibold text-gray-700 truncate" title="${
-              person.name
-            }">${person.name}</span>
+            )}">
+                <span class="text-gray-800 font-bold text-sm">${initial}</span>
+            </div>
+            <div class="flex flex-col min-w-0">
+                <span class="text-sm font-semibold text-gray-800 truncate" title="${
+                  person.name
+                }">${person.name}</span>
+                <span class="text-[10px] text-gray-500 truncate">ID: ${
+                  person.id
+                }</span>
+            </div>
           `;
           row.appendChild(nameCell);
 
