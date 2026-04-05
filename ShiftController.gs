@@ -170,10 +170,10 @@ function getShiftHistoryPeriod(anchorDate, payPeriodMode) {
 
 function buildInvoiceId(periodStart, payPeriodMode) {
   const prefix = payPeriodMode === "Biweekly" ? "BI" : "WK";
-  return `INV-${prefix}-${Utilities.formatDate(
+  return `${prefix}${Utilities.formatDate(
     periodStart,
     Session.getScriptTimeZone(),
-    "yyyyMMdd"
+    "MMdd"
   )}`;
 }
 
@@ -715,7 +715,7 @@ function saveShift(data) {
 
   // Save each shift
   datesToSave.forEach((date) => {
-    const shiftId = "SH-" + Utilities.getUuid().slice(0, 8).toUpperCase();
+    const shiftId = "SH" + Math.floor(1000 + Math.random() * 9000);
     const formattedDate = Utilities.formatDate(
       date,
       Session.getScriptTimeZone(),
