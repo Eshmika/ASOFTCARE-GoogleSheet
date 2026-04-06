@@ -495,10 +495,38 @@ function getShiftHistory(data) {
       id: record["Shift ID"],
       clientId: record["Client ID"],
       caregiverId: record["Caregiver ID"],
-      date: record["Start Date"],
-      endDate: record["End Date"],
-      clockIn: record["Clock In"],
-      clockOut: record["Clock Out"],
+      date:
+        record["Start Date"] instanceof Date
+          ? Utilities.formatDate(
+              record["Start Date"],
+              Session.getScriptTimeZone(),
+              "yyyy-MM-dd"
+            )
+          : String(record["Start Date"] || ""),
+      endDate:
+        record["End Date"] instanceof Date
+          ? Utilities.formatDate(
+              record["End Date"],
+              Session.getScriptTimeZone(),
+              "yyyy-MM-dd"
+            )
+          : String(record["End Date"] || ""),
+      clockIn:
+        record["Clock In"] instanceof Date
+          ? Utilities.formatDate(
+              record["Clock In"],
+              Session.getScriptTimeZone(),
+              "HH:mm"
+            )
+          : String(record["Clock In"] || ""),
+      clockOut:
+        record["Clock Out"] instanceof Date
+          ? Utilities.formatDate(
+              record["Clock Out"],
+              Session.getScriptTimeZone(),
+              "HH:mm"
+            )
+          : String(record["Clock Out"] || ""),
       billingType: record["Billing Type"],
       serviceType: record["Service Type"],
       shiftType: record["Shift Type"],

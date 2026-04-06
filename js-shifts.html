@@ -9,7 +9,7 @@
         data
           .filter(
             (item) =>
-              item.stage === "Convert Clients" && item.status === "Active",
+              item.stage === "Convert Clients" && item.status === "Active"
           )
           .forEach((item) => {
             html += `<option value="${item.id}">${item.name}</option>`;
@@ -50,7 +50,59 @@
     document.getElementById("shiftId").value = "";
     document.getElementById("btnSaveShift").innerHTML =
       '<i class="ph ph-check-circle text-lg"></i> Save Shift';
-    document.querySelector("h2").textContent = "Add New Shift";
+
+    // Use the specific header in this view
+    const headerEl = document.querySelector("#view-shifts h2");
+    if (headerEl) headerEl.textContent = "Add New Shift";
+
+    // Unlock fields
+    document.getElementById("shiftClient").disabled = false;
+    document
+      .getElementById("shiftClient")
+      .classList.remove("bg-gray-100", "cursor-not-allowed");
+    document.getElementById("shiftCaregiver").disabled = false;
+    document
+      .getElementById("shiftCaregiver")
+      .classList.remove("bg-gray-100", "cursor-not-allowed");
+    document.getElementById("clockIn").readOnly = false;
+    document
+      .getElementById("clockIn")
+      .classList.remove("bg-gray-100", "cursor-not-allowed");
+    document.getElementById("clockOut").readOnly = false;
+    document
+      .getElementById("clockOut")
+      .classList.remove("bg-gray-100", "cursor-not-allowed");
+
+    // Remove lock icons from labels
+    const clientLabel =
+      document.getElementById("shiftClient")?.previousElementSibling;
+    const cgLabel =
+      document.getElementById("shiftCaregiver")?.previousElementSibling;
+    const clockInLabel =
+      document.getElementById("clockIn")?.previousElementSibling;
+    const clockOutLabel =
+      document.getElementById("clockOut")?.previousElementSibling;
+
+    if (clientLabel)
+      clientLabel.innerHTML = clientLabel.innerHTML.replace(
+        / <i class="ph ph-lock.*"><\/i>/g,
+        ""
+      );
+    if (cgLabel)
+      cgLabel.innerHTML = cgLabel.innerHTML.replace(
+        / <i class="ph ph-lock.*"><\/i>/g,
+        ""
+      );
+    if (clockInLabel)
+      clockInLabel.innerHTML = clockInLabel.innerHTML.replace(
+        / <i class="ph ph-lock.*"><\/i>/g,
+        ""
+      );
+    if (clockOutLabel)
+      clockOutLabel.innerHTML = clockOutLabel.innerHTML.replace(
+        / <i class="ph ph-lock.*"><\/i>/g,
+        ""
+      );
 
     // Show repeat options again if hid
     const repeatSection = document
@@ -90,7 +142,49 @@
     // Update UI state
     document.getElementById("btnSaveShift").innerHTML =
       '<i class="ph ph-check-circle text-lg"></i> Update Shift';
-    document.querySelector("h2").textContent = "Edit Shift";
+    document.querySelector("#view-shifts h2").textContent =
+      "Edit Visit Details";
+
+    // Apply lock icons to labels
+    const clientLabel =
+      document.querySelector('label[for="shiftClient"]') ||
+      document.getElementById("shiftClient").previousElementSibling;
+    const cgLabel =
+      document.querySelector('label[for="shiftCaregiver"]') ||
+      document.getElementById("shiftCaregiver").previousElementSibling;
+    const clockInLabel =
+      document.querySelector('label[for="clockIn"]') ||
+      document.getElementById("clockIn").previousElementSibling;
+    const clockOutLabel =
+      document.querySelector('label[for="clockOut"]') ||
+      document.getElementById("clockOut").previousElementSibling;
+
+    if (clientLabel && !clientLabel.innerHTML.includes("ph-lock"))
+      clientLabel.innerHTML += ' <i class="ph ph-lock text-red-500"></i>';
+    if (cgLabel && !cgLabel.innerHTML.includes("ph-lock"))
+      cgLabel.innerHTML += ' <i class="ph ph-lock text-red-500"></i>';
+    if (clockInLabel && !clockInLabel.innerHTML.includes("ph-lock"))
+      clockInLabel.innerHTML += ' <i class="ph ph-lock text-red-500"></i>';
+    if (clockOutLabel && !clockOutLabel.innerHTML.includes("ph-lock"))
+      clockOutLabel.innerHTML += ' <i class="ph ph-lock text-red-500"></i>';
+
+    // Lock fields
+    document.getElementById("shiftClient").disabled = true;
+    document
+      .getElementById("shiftClient")
+      .classList.add("bg-gray-100", "cursor-not-allowed");
+    document.getElementById("shiftCaregiver").disabled = true;
+    document
+      .getElementById("shiftCaregiver")
+      .classList.add("bg-gray-100", "cursor-not-allowed");
+    document.getElementById("clockIn").readOnly = true;
+    document
+      .getElementById("clockIn")
+      .classList.add("bg-gray-100", "cursor-not-allowed");
+    document.getElementById("clockOut").readOnly = true;
+    document
+      .getElementById("clockOut")
+      .classList.add("bg-gray-100", "cursor-not-allowed");
 
     // Hide repeat options for edit mode (simpler MVP)
     const repeatSection = document
@@ -175,6 +269,12 @@
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
+    // If inputs are disabled their values aren't serialized, so we fetch them explicitly
+    if (!data.clientId)
+      data.clientId = document.getElementById("shiftClient").value;
+    if (!data.caregiverId)
+      data.caregiverId = document.getElementById("shiftCaregiver").value;
+
     // Add calculated values
     data.agencyShare = document.getElementById("agencyShare").value;
     data.softcareShare = document.getElementById("softcareShare").value;
@@ -204,7 +304,7 @@
           isUpdate
             ? "Shift updated successfully!"
             : "Shift saved successfully!",
-          "success",
+          "success"
         );
         if (isUpdate) {
           // Return to calendar? Or just reset?
@@ -222,7 +322,7 @@
         Swal.fire(
           "Error",
           `Failed to ${isUpdate ? "update" : "save"} shift: ` + err.message,
-          "error",
+          "error"
         );
         btn.disabled = false;
         btn.innerHTML = originalText;
