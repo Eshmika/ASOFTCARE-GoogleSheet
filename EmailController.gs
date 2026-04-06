@@ -258,6 +258,140 @@ function sendRejectionEmail(caregiverId) {
   }
 }
 
+function sendCaregiverShiftApprovals(caregiverIds) {
+  try {
+    if (!caregiverIds || caregiverIds.length === 0) {
+      return { success: false, message: "No caregivers selected." };
+    }
+
+    const list = getCaregiverList();
+    const selected = list.filter(
+      (c) => caregiverIds.includes(c.id) && c.email && c.email.includes("@")
+    );
+
+    if (selected.length === 0) {
+      return {
+        success: false,
+        message: "No valid emails found for selected caregivers.",
+      };
+    }
+
+    let count = 0;
+    const subject = "Please Confirm Your Hours";
+
+    selected.forEach((c) => {
+      try {
+        const htmlBody = `
+          <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #65c027; padding: 24px; text-align: center;">
+              <h2 style="color: white; margin: 0; font-size: 24px;">Allevia Senior Care</h2>
+            </div>
+            <div style="padding: 30px; background-color: #ffffff;">
+              <p>Hello <strong>${c.name}</strong>,</p>
+              <p>Your weekly/biweekly hours are ready for review.</p>
+              <p>Please confirm or decline each shift for the pay period.</p>
+              
+              <p style="margin-top: 20px; font-weight: bold; color: #d97706;">Deadline:</p>
+              <p>Please complete your confirmation by Monday morning 10am.</p>
+              
+              <p>If anything needs correction, add a note or contact the office.</p>
+
+              <br>
+              <p style="margin-bottom: 5px;">Thank you,</p>
+              <p style="margin: 0; font-weight: bold;">Allevia Senior Care Team</p>
+              <p style="margin: 0; color: #666; font-size: 14px;">Office: 440-907-9599 | contact@alleviaseniorcare.com</p>
+            </div>
+            <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #9ca3af;">
+              &copy; 2025 Allevia Senior Care. All rights reserved.
+            </div>
+          </div>
+        `;
+        MailApp.sendEmail({
+          to: c.email,
+          subject: subject,
+          htmlBody: htmlBody,
+        });
+        count++;
+      } catch (err) {
+        console.error("Failed to send caregiver email: " + err);
+      }
+    });
+
+    return {
+      success: true,
+      message: `Successfully sent to ${count} caregiver(s).`,
+    };
+  } catch (e) {
+    return { success: false, message: e.toString() };
+  }
+}
+
+function sendClientShiftApprovals(clientIds) {
+  try {
+    if (!clientIds || clientIds.length === 0) {
+      return { success: false, message: "No clients selected." };
+    }
+
+    const list = getClientList();
+    const selected = list.filter(
+      (c) => clientIds.includes(c.id) && c.email && c.email.includes("@")
+    );
+
+    if (selected.length === 0) {
+      return {
+        success: false,
+        message: "No valid emails found for selected clients.",
+      };
+    }
+
+    let count = 0;
+    const subject = "Weekly Service Approval Needed";
+
+    selected.forEach((c) => {
+      try {
+        const htmlBody = `
+          <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #2563eb; padding: 24px; text-align: center;">
+              <h2 style="color: white; margin: 0; font-size: 24px;">Allevia Senior Care</h2>
+            </div>
+            <div style="padding: 30px; background-color: #ffffff;">
+              <p>Hello <strong>${c.name}</strong>,</p>
+              <p>Your caregiver’s hours for this week are ready for your approval.</p>
+              <p>Please review the visit times and approve or decline them.</p>
+
+              <p style="margin-top: 20px; font-weight: bold; color: #d97706;">Deadline:</p>
+              <p>Please complete your approval by Tuesday morning 10 am so we can finalize billing and caregiver payroll on time.</p>
+              
+              <br>
+              <p style="margin-bottom: 5px;">Thank you,</p>
+              <p style="margin: 0; font-weight: bold;">Allevia Senior Care Team</p>
+              <p style="margin: 0; color: #666; font-size: 14px;">Office: 440-907-9599 | contact@alleviaseniorcare.com</p>
+            </div>
+            <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #9ca3af;">
+               &copy; 2025 Allevia Senior Care. All rights reserved.
+            </div>
+          </div>
+        `;
+        MailApp.sendEmail({
+          to: c.email,
+          subject: subject,
+          htmlBody: htmlBody,
+        });
+        count++;
+      } catch (err) {
+        console.error("Failed to send client email: " + err);
+      }
+    });
+
+    return {
+      success: true,
+      message: `Successfully sent to ${count} client(s).`,
+    };
+  } catch (e) {
+    return { success: false, message: e.toString() };
+  }
+}
+
 function sendPaymentSetupEmail(caregiverId) {
   try {
     const details = getCaregiverDetails(caregiverId);
