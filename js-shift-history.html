@@ -26,7 +26,6 @@
     { key: "agencyRate", label: "Agency Rate" },
     { key: "mileageKm", label: 'Mileage "km"' },
     { key: "mileagePrice", label: "Mileage $" },
-    { key: "confirmationIndicator", label: "Confirmation" },
     { key: "invoiceTotal", label: "Invoice" },
     { key: "scheduleNote", label: "Schedule Note" },
     { key: "adminNote", label: "Admin Note" },
@@ -38,6 +37,7 @@
     { key: "createdAt", label: "Created At" },
     { key: "lastModifiedBy", label: "Last Modified By" },
     { key: "lastModifiedAt", label: "Last Modified At" },
+    { key: "confirmationIndicator", label: "Confirmation" },
   ];
 
   const shiftHistoryState = {
@@ -263,11 +263,19 @@
     }
 
     if (key === "confirmationIndicator") {
-      return `<td class="${base}">${
-        value === "Split"
-          ? renderBadge("Split", "amber")
-          : renderBadge(value || "Confirmed", "green")
-      }</td>`;
+      const isConfirmed = value === "Confirmed" || value === "";
+      const iconClass = isConfirmed
+        ? "ph-check-circle text-emerald-500 bg-emerald-50"
+        : "ph-x-circle text-rose-500 bg-rose-50";
+
+      return `<td class="${base}">
+        <button type="button" 
+          onclick="toggleConfirmation(this, '${row.shiftId}', '${value}')"
+          class="flex items-center justify-center p-1.5 rounded-lg transition-colors hover:opacity-80"
+          title="Toggle Confirmation">
+          <i class="ph ${iconClass} text-xl rounded-full"></i>
+        </button>
+      </td>`;
     }
 
     if (key === "systemCheck") {
@@ -472,5 +480,51 @@
           [serverFunc](ids);
       }
     });
+  }
+
+  function toggleConfirmation(buttonEl, shiftId, currentStatus) {
+    const isConfirmed = currentStatus === "Confirmed" || currentStatus === "";
+    const newStatus = isConfirmed ? "Unconfirmed" : "Confirmed";
+
+    // Set loading state on button
+    const iconEl = buttonEl.querySelector("i");
+    const originalClass = iconEl.className;
+    iconEl.className = "ph ph-spinner animate-spin text-xl text-gray-400";
+    buttonEl.disabled = true;
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        buttonEl.disabled = false;
+        if (res && res.success) {
+          // Update the DOM to reflect new state
+          const updatedIconClass =
+            res.newStatus === "Confirmed"
+              ? "ph-check-circle text-emerald-500 bg-emerald-50"
+              : "ph-x-circle text-rose-500 bg-rose-50";
+
+          iconEl.className = `ph ${updatedIconClass} text-xl rounded-full`;
+
+          // Update the onclick handler to pass the new status
+          buttonEl.setAttribute(
+            "onclick",
+            `toggleConfirmation(this, '${shiftId}', '${res.newStatus}')`
+          );
+
+          // Update local state if it's cached in rows
+          const row = shiftHistoryState.rows.find((r) => r.shiftId === shiftId);
+          if (row) {
+            row.confirmationIndicator = res.newStatus;
+          }
+        } else {
+          iconEl.className = originalClass;
+          Swal.fire("Error", "Failed to update confirmation status.", "error");
+        }
+      })
+      .withFailureHandler((err) => {
+        buttonEl.disabled = false;
+        iconEl.className = originalClass;
+        Swal.fire("Error", err.message, "error");
+      })
+      .toggleShiftConfirmation(shiftId, currentStatus);
   }
 </script>

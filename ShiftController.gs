@@ -51,7 +51,7 @@ const SHIFT_HISTORY_COLUMNS = [
 function ensureShiftSheetHeaders(sheet) {
   const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   const missingHeaders = SHIFT_HISTORY_COLUMNS.filter(
-    (header) => !headers.includes(header),
+    (header) => !headers.includes(header)
   );
 
   if (missingHeaders.length > 0) {
@@ -80,7 +80,7 @@ function saveShiftHistoryPayPeriodSetting(mode) {
 
   PropertiesService.getScriptProperties().setProperty(
     SHIFT_HISTORY_SETTING_KEY,
-    normalized,
+    normalized
   );
 
   return { payPeriodMode: normalized };
@@ -131,7 +131,7 @@ function pad2(value) {
 function toDateKey(dateValue) {
   if (!(dateValue instanceof Date)) return "";
   return `${dateValue.getFullYear()}-${pad2(dateValue.getMonth() + 1)}-${pad2(
-    dateValue.getDate(),
+    dateValue.getDate()
   )}`;
 }
 
@@ -159,11 +159,11 @@ function getShiftHistoryPeriod(anchorDate, payPeriodMode) {
     label: `${Utilities.formatDate(
       periodStart,
       Session.getScriptTimeZone(),
-      "MMM d, yyyy",
+      "MMM d, yyyy"
     )} - ${Utilities.formatDate(
       periodEnd,
       Session.getScriptTimeZone(),
-      "MMM d, yyyy",
+      "MMM d, yyyy"
     )}`,
   };
 }
@@ -173,7 +173,7 @@ function buildInvoiceId(periodStart, payPeriodMode) {
   return `${prefix}${Utilities.formatDate(
     periodStart,
     Session.getScriptTimeZone(),
-    "MMdd",
+    "MMdd"
   )}`;
 }
 
@@ -197,7 +197,7 @@ function buildShiftHistoryRows(
   clientMap,
   caregiverMap,
   settings,
-  filters,
+  filters
 ) {
   const timeZone = Session.getScriptTimeZone();
   const searchTerm = String(filters.search || "")
@@ -214,7 +214,11 @@ function buildShiftHistoryRows(
     period = {
       start: start,
       end: end,
-      label: `${Utilities.formatDate(start, timeZone, "MMM d, yyyy")} - ${Utilities.formatDate(end, timeZone, "MMM d, yyyy")}`,
+      label: `${Utilities.formatDate(
+        start,
+        timeZone,
+        "MMM d, yyyy"
+      )} - ${Utilities.formatDate(end, timeZone, "MMM d, yyyy")}`,
     };
   } else if (filters.startDate) {
     const start = new Date(`${filters.startDate}T00:00:00`);
@@ -237,7 +241,7 @@ function buildShiftHistoryRows(
       Number(startParts[0]) || 0,
       Number(startParts[1]) || 0,
       0,
-      0,
+      0
     );
     let endTime = new Date(originalEndDate || originalStartDate);
     endTime.setHours(Number(endParts[0]) || 0, Number(endParts[1]) || 0, 0, 0);
@@ -282,7 +286,7 @@ function buildShiftHistoryRows(
       };
       const hours = Math.max(
         0,
-        (segment.segmentEnd - segment.segmentStart) / (1000 * 60 * 60),
+        (segment.segmentEnd - segment.segmentStart) / (1000 * 60 * 60)
       );
       const invoiceTotal = (Number(shift.totalClientPrice) || 0).toFixed(2);
       const systemCheck = buildSystemCheckLabel({
@@ -303,7 +307,7 @@ function buildShiftHistoryRows(
         payPeriodStart: Utilities.formatDate(
           period.start,
           timeZone,
-          "yyyy-MM-dd",
+          "yyyy-MM-dd"
         ),
         payPeriodEnd: Utilities.formatDate(period.end, timeZone, "yyyy-MM-dd"),
         segmentNumber: segment.segmentNumber,
@@ -434,7 +438,7 @@ function buildShiftHistoryRows(
           totalSoftcare: 0,
           totalMileage: 0,
           totalHours: 0,
-        },
+        }
       );
     })(),
   };
@@ -533,7 +537,7 @@ function getShiftHistory(data) {
     {
       payPeriodMode: getShiftHistoryPayPeriodSetting(),
     },
-    data || {},
+    data || {}
   );
 }
 
@@ -650,7 +654,7 @@ function getShifts(startDateStr, endDateStr) {
         endDateOutput = Utilities.formatDate(
           endDateVal,
           timeZone,
-          "yyyy-MM-dd",
+          "yyyy-MM-dd"
         );
       } else if (
         typeof endDateVal === "string" &&
@@ -728,7 +732,7 @@ function saveShift(data) {
     const formattedDate = Utilities.formatDate(
       date,
       Session.getScriptTimeZone(),
-      "yyyy-MM-dd",
+      "yyyy-MM-dd"
     );
 
     // Calculate End Date for this specific shift instance
@@ -736,7 +740,7 @@ function saveShift(data) {
     const originalStart = new Date(
       startParts[0],
       startParts[1] - 1,
-      startParts[2],
+      startParts[2]
     );
 
     const endParts = data.endDate.split("-");
@@ -749,7 +753,7 @@ function saveShift(data) {
     const formattedEndDate = Utilities.formatDate(
       thisEndDate,
       Session.getScriptTimeZone(),
-      "yyyy-MM-dd",
+      "yyyy-MM-dd"
     );
 
     const row = [
@@ -867,6 +871,34 @@ function updateShift(data) {
   });
 
   return { success: true };
+}
+
+function toggleShiftConfirmation(shiftId, currentStatus) {
+  const sheet = getOrCreateShiftSheet();
+  const range = sheet.getDataRange();
+  const values = range.getValues();
+  const headers = values[0];
+
+  let rowIndex = -1;
+  for (let i = 1; i < values.length; i++) {
+    if (values[i][0] === shiftId) {
+      rowIndex = i + 1;
+      break;
+    }
+  }
+
+  if (rowIndex === -1) {
+    throw new Error("Shift not found");
+  }
+
+  const colIdx = headers.indexOf("Confirmation Indicator");
+  if (colIdx === -1) {
+    throw new Error("Confirmation Indicator column not found");
+  }
+
+  const newStatus = currentStatus === "Confirmed" ? "Unconfirmed" : "Confirmed";
+  sheet.getRange(rowIndex, colIdx + 1).setValue(newStatus);
+  return { success: true, newStatus: newStatus };
 }
 
 function deleteShift(shiftId) {
