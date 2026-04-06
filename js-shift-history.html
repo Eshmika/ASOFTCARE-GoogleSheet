@@ -49,31 +49,9 @@
   };
 
   function loadShiftHistoryView() {
-    const today = new Date();
-    const dateInput = document.getElementById("shiftHistoryPayDate");
-    if (dateInput && !dateInput.value) {
-      dateInput.valueAsDate = today;
-    }
-
-    const setButtons = (mode) => {
-      const weeklyBtn = document.getElementById("shiftHistoryWeeklyBtn");
-      const biweeklyBtn = document.getElementById("shiftHistoryBiweeklyBtn");
-      if (weeklyBtn && biweeklyBtn) {
-        weeklyBtn.className =
-          mode === "Weekly"
-            ? "flex-1 px-3 py-2 rounded-lg text-sm font-bold bg-[#65c027] text-white shadow-sm transition-colors"
-            : "flex-1 px-3 py-2 rounded-lg text-sm font-bold text-gray-500 hover:bg-white transition-colors";
-        biweeklyBtn.className =
-          mode === "Biweekly"
-            ? "flex-1 px-3 py-2 rounded-lg text-sm font-bold bg-[#65c027] text-white shadow-sm transition-colors"
-            : "flex-1 px-3 py-2 rounded-lg text-sm font-bold text-gray-500 hover:bg-white transition-colors";
-      }
-    };
-
     google.script.run
       .withSuccessHandler((settings) => {
         shiftHistoryState.payPeriodMode = settings.payPeriodMode || "Weekly";
-        setButtons(shiftHistoryState.payPeriodMode);
         loadShiftHistoryLists();
         refreshShiftHistory();
       })
@@ -82,7 +60,7 @@
 
   function loadShiftHistoryLists() {
     const caregiverSelect = document.getElementById(
-      "shiftHistoryCaregiverFilter"
+      "shiftHistoryCaregiverFilter",
     );
     const clientSelect = document.getElementById("shiftHistoryClientFilter");
     if (caregiverSelect)
@@ -115,19 +93,10 @@
       .getClientList();
   }
 
-  function setShiftHistoryPayPeriodMode(mode) {
-    shiftHistoryState.payPeriodMode = mode;
-    google.script.run
-      .withSuccessHandler(() => {
-        loadShiftHistoryView();
-      })
-      .saveShiftHistoryPayPeriodSetting(mode);
-  }
-
   function getShiftHistoryFilters() {
     return {
-      payPeriodDate:
-        document.getElementById("shiftHistoryPayDate")?.value || "",
+      startDate: document.getElementById("shiftHistoryStartDate")?.value || "",
+      endDate: document.getElementById("shiftHistoryEndDate")?.value || "",
       caregiverId:
         document.getElementById("shiftHistoryCaregiverFilter")?.value || "all",
       clientId:
@@ -157,13 +126,18 @@
       .withSuccessHandler((payload) => {
         if (!payload) {
           throw new Error(
-            "Server returned null payload. Check if sheet data contains invalid types like unstringified Date objects."
+            "Server returned null payload. Check if sheet data contains invalid types like unstringified Date objects.",
           );
         }
         shiftHistoryState.loading = false;
         shiftHistoryState.period = payload.period;
         shiftHistoryState.rows = payload.rows || [];
         shiftHistoryState.summary = payload.summary || {};
+
+        const sDate = document.getElementById("shiftHistoryStartDate");
+        const eDate = document.getElementById("shiftHistoryEndDate");
+        if (sDate && payload.period?.start) sDate.value = payload.period.start;
+        if (eDate && payload.period?.end) eDate.value = payload.period.end;
 
         renderShiftHistory(payload);
       })
@@ -179,20 +153,21 @@
   }
 
   function resetShiftHistoryFilters() {
-    const today = new Date();
-    const dateInput = document.getElementById("shiftHistoryPayDate");
     const caregiverFilter = document.getElementById(
-      "shiftHistoryCaregiverFilter"
+      "shiftHistoryCaregiverFilter",
     );
     const clientFilter = document.getElementById("shiftHistoryClientFilter");
     const systemFilter = document.getElementById("shiftHistorySystemFilter");
     const search = document.getElementById("shiftHistorySearch");
+    const startDate = document.getElementById("shiftHistoryStartDate");
+    const endDate = document.getElementById("shiftHistoryEndDate");
 
-    if (dateInput) dateInput.valueAsDate = today;
     if (caregiverFilter) caregiverFilter.value = "all";
     if (clientFilter) clientFilter.value = "all";
     if (systemFilter) systemFilter.value = "all";
     if (search) search.value = "";
+    if (startDate) startDate.value = "";
+    if (endDate) endDate.value = "";
 
     refreshShiftHistory();
   }
@@ -211,17 +186,17 @@
       invoiceLabel.textContent = payload.rows?.[0]?.invoiceId || "Auto";
 
     document.getElementById("summaryTotalClient").textContent = formatCurrency(
-      payload.summary?.totalClient || 0
+      payload.summary?.totalClient || 0,
     );
     document.getElementById("summaryTotalCaregiver").textContent =
       formatCurrency(payload.summary?.totalCaregiver || 0);
     document.getElementById("summaryTotalAgency").textContent = formatCurrency(
-      payload.summary?.totalAgency || 0
+      payload.summary?.totalAgency || 0,
     );
     document.getElementById("summaryTotalSoftcare").textContent =
       formatCurrency(payload.summary?.totalSoftcare || 0);
     document.getElementById("summaryTotalMileage").textContent = formatCurrency(
-      payload.summary?.totalMileage || 0
+      payload.summary?.totalMileage || 0,
     );
     document.getElementById("summaryTotalHours").textContent = (
       payload.summary?.totalHours || 0
@@ -230,9 +205,9 @@
     thead.innerHTML = `
       <tr>${SHIFT_HISTORY_COLUMNS.map(
         (column) =>
-          `<th class="px-4 py-4 font-bold whitespace-nowrap">${column.label}</th>`
+          `<th class="px-4 py-4 font-bold whitespace-nowrap">${column.label}</th>`,
       ).join(
-        ""
+        "",
       )}<th class="px-4 py-4 font-bold whitespace-nowrap text-right">Actions</th></tr>
     `;
 
@@ -249,21 +224,21 @@
         return `
           <tr class="hover:bg-gray-50/80 transition-colors">
             ${SHIFT_HISTORY_COLUMNS.map((column) =>
-              renderHistoryCell(column.key, row)
+              renderHistoryCell(column.key, row),
             ).join("")}
             <td class="px-4 py-4 whitespace-nowrap text-right">
               <div class="flex items-center justify-end gap-2">
                 <button type="button" onclick='openShiftHistoryAction("edit", ${JSON.stringify(
-                  row
+                  row,
                 ).replace(
                   /'/g,
-                  "&#39;"
+                  "&#39;",
                 )})' class="px-3 py-2 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-50">Edit</button>
                 <button type="button" onclick='openShiftHistoryAction("pdf", ${JSON.stringify(
-                  row
+                  row,
                 ).replace(
                   /'/g,
-                  "&#39;"
+                  "&#39;",
                 )})' class="px-3 py-2 rounded-lg bg-[#65c027] text-white text-xs font-bold hover:bg-[#54a51f]">PDF</button>
               </div>
             </td>
@@ -279,7 +254,7 @@
     if (key === "errorFlag") {
       return `<td class="${base}">${renderBadge(
         value || "OK",
-        value ? "red" : "green"
+        value ? "red" : "green",
       )}</td>`;
     }
 
@@ -300,7 +275,7 @@
         value === "OK" ? "green" : value.includes("Missing") ? "red" : "amber";
       return `<td class="${base} whitespace-normal min-w-[180px]">${renderBadge(
         value || "OK",
-        tone
+        tone,
       )}</td>`;
     }
 
@@ -308,7 +283,7 @@
       ["scheduleNote", "adminNote", "clientName", "caregiverName"].includes(key)
     ) {
       return `<td class="${base} whitespace-normal min-w-[180px] max-w-[260px]"><div class="text-sm text-gray-700">${escapeHtml(
-        value
+        value,
       )}</div></td>`;
     }
 
@@ -323,18 +298,18 @@
       ].includes(key)
     ) {
       return `<td class="${base} font-semibold text-gray-900">${formatCurrency(
-        value
+        value,
       )}</td>`;
     }
 
     if (["totalHours", "billableHours", "payableHours"].includes(key)) {
       return `<td class="${base} font-semibold text-gray-900">${escapeHtml(
-        String(value || "0.00")
+        String(value || "0.00"),
       )}</td>`;
     }
 
     return `<td class="${base} text-gray-700">${escapeHtml(
-      String(value || "")
+      String(value || ""),
     )}</td>`;
   }
 
@@ -356,10 +331,10 @@
       text === "Paid"
         ? "green"
         : text === "Partially"
-        ? "amber"
-        : text === "Voided"
-        ? "gray"
-        : "orange";
+          ? "amber"
+          : text === "Voided"
+            ? "gray"
+            : "orange";
     return renderBadge(text || "Unpaid", tone);
   }
 
@@ -389,7 +364,7 @@
       Swal.fire(
         "Unavailable",
         "Shift editing is not available right now.",
-        "info"
+        "info",
       );
       return;
     }
@@ -404,8 +379,8 @@
         <div>Client: ${escapeHtml(row.clientName)}</div>
         <div>Caregiver: ${escapeHtml(row.caregiverName)}</div>
         <div>Period: ${escapeHtml(row.payPeriodStart)} to ${escapeHtml(
-        row.payPeriodEnd
-      )}</div>
+          row.payPeriodEnd,
+        )}</div>
         <div>Hours: ${escapeHtml(row.totalHours)}</div>
         <div>Invoice: ${escapeHtml(row.invoiceTotal)}</div>
       `;

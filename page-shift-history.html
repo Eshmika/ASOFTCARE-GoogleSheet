@@ -21,12 +21,6 @@
           Loading...
         </div>
       </div>
-      <div
-        class="bg-[#65c027]/10 text-[#4f9d1a] border border-[#65c027]/20 rounded-xl px-4 py-2 shadow-sm"
-      >
-        <p class="text-xs uppercase font-semibold">Invoice batch</p>
-        <div id="shiftHistoryInvoiceLabel" class="font-bold">Auto</div>
-      </div>
     </div>
   </div>
 
@@ -34,43 +28,25 @@
   <div
     class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-end"
   >
-    <!-- Pay Date -->
-    <div class="w-full">
+    <!-- Pay Period Date -->
+    <div class="w-full md:col-span-2 xl:col-span-2">
       <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
         >Pay Period Date</label
       >
-      <input
-        id="shiftHistoryPayDate"
-        type="date"
-        class="w-full px-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]"
-        onchange="refreshShiftHistory()"
-      />
-    </div>
-
-    <!-- Mode Buttons -->
-    <div class="w-full">
-      <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
-        >Mode</label
-      >
-      <div
-        class="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-lg p-1 w-full"
-      >
-        <button
-          id="shiftHistoryWeeklyBtn"
-          type="button"
-          onclick="setShiftHistoryPayPeriodMode('Weekly')"
-          class="flex-1 px-3 py-1.5 rounded-md text-sm font-semibold transition-colors"
-        >
-          Weekly
-        </button>
-        <button
-          id="shiftHistoryBiweeklyBtn"
-          type="button"
-          onclick="setShiftHistoryPayPeriodMode('Biweekly')"
-          class="flex-1 px-3 py-1.5 rounded-md text-sm font-semibold transition-colors"
-        >
-          Biweekly
-        </button>
+      <div class="flex items-center gap-2">
+        <input
+          id="shiftHistoryStartDate"
+          type="date"
+          class="w-full px-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]"
+          onchange="refreshShiftHistory()"
+        />
+        <span class="text-gray-400 font-medium text-xs uppercase">to</span>
+        <input
+          id="shiftHistoryEndDate"
+          type="date"
+          class="w-full px-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]"
+          onchange="refreshShiftHistory()"
+        />
       </div>
     </div>
 
