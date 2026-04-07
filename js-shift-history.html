@@ -654,8 +654,11 @@
     const schedOut = document.getElementById("evSchedOut").value;
 
     // Updates UI label
-    document.getElementById("evVisitScheduleRange").innerText =
-      (schedIn || "--:--") + " to " + (schedOut || "--:--");
+    const visitRangeEl = document.getElementById("evVisitScheduleRange");
+    if (visitRangeEl) {
+      visitRangeEl.innerText =
+        (schedIn || "--:--") + " to " + (schedOut || "--:--");
+    }
 
     const pIn = document.getElementById("evPayableIn").value;
     const pOut = document.getElementById("evPayableOut").value;
