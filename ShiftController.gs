@@ -953,3 +953,44 @@ function deleteShift(shiftId) {
 
   throw new Error("Shift not found");
 }
+function updateVisitDetails(payload) {
+  const sheet = getOrCreateShiftSheet();
+  const range = sheet.getDataRange();
+  const values = range.getValues();
+  const headers = values[0];
+
+  let rowIndex = -1;
+  for (let i = 1; i < values.length; i++) {
+    if (values[i][0] === payload.shiftId) {
+      rowIndex = i + 1;
+      break;
+    }
+  }
+
+  if (rowIndex === -1) {
+    throw new Error("Shift not found");
+  }
+
+  const updateMap = {
+    "Billable Hours": payload.billableHrs,
+    "Payable Hours": payload.payableHrs,
+    "Billing Type": payload.billingType,
+    Service: payload.service,
+    Type: payload.type,
+    "Client Rate": payload.clientRate,
+    "CG Rate": payload.cgRate,
+    "Schedule Note": payload.scheduleReason,
+    "Admin Note": payload.adminNote,
+    "Last Modified By": "System",
+    "Last Modified At": new Date(),
+  };
+
+  for (const [header, value] of Object.entries(updateMap)) {
+    const colIdx = headers.indexOf(header);
+    if (colIdx !== -1) {
+      sheet.getRange(rowIndex, colIdx + 1).setValue(value);
+    }
+  }
+
+  return { success: true };
+}
