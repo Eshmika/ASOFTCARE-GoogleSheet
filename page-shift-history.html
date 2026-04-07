@@ -48,25 +48,54 @@
   <div
     class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-end"
   >
-    <!-- Pay Period Date -->
-    <div class="w-full md:col-span-2 xl:col-span-2">
-      <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
-        >Pay Period Date</label
-      >
-      <div class="flex items-center gap-2">
-        <input
-          id="shiftHistoryStartDate"
-          type="date"
-          class="w-full px-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]"
-          onchange="refreshShiftHistory()"
-        />
-        <span class="text-gray-400 font-medium text-xs uppercase">to</span>
-        <input
-          id="shiftHistoryEndDate"
-          type="date"
-          class="w-full px-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]"
-          onchange="refreshShiftHistory()"
-        />
+    <!-- Pay Period Date & Mode -->
+    <div
+      class="w-full md:col-span-2 xl:col-span-2 flex flex-col md:flex-row gap-4"
+    >
+      <div class="flex-grow">
+        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
+          >Pay Period Date</label
+        >
+        <div class="flex items-center gap-2">
+          <input
+            id="shiftHistoryStartDate"
+            type="date"
+            class="w-full px-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]"
+            onchange="refreshShiftHistory()"
+          />
+          <span class="text-gray-400 font-medium text-xs uppercase">to</span>
+          <input
+            id="shiftHistoryEndDate"
+            type="date"
+            class="w-full px-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027]"
+            onchange="refreshShiftHistory()"
+          />
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
+          >Mode</label
+        >
+        <div
+          class="flex items-center bg-gray-100 p-1 rounded-lg h-[38px] min-w-[160px]"
+        >
+          <button
+            id="modeWeeklyBtn"
+            onclick="setPayPeriodMode('Weekly')"
+            type="button"
+            class="px-4 py-1.5 text-[13px] font-bold rounded-md flex-1 bg-white shadow-sm text-[#65c027] transition-all text-center"
+          >
+            Weekly
+          </button>
+          <button
+            id="modeBiweeklyBtn"
+            onclick="setPayPeriodMode('Biweekly')"
+            type="button"
+            class="px-4 py-1.5 text-[13px] font-semibold rounded-md flex-1 text-gray-500 hover:text-gray-800 transition-all text-center"
+          >
+            Biweekly
+          </button>
+        </div>
       </div>
     </div>
 
