@@ -819,6 +819,29 @@
       payableHrs: document.getElementById("evPayableHrs").value,
       billableHrs: document.getElementById("evBillableHrs").value,
       bonusHrs: document.getElementById("evExtendedHrs").value,
+
+      agencyShare: document.getElementById("evAgencyShare").value,
+      softcareShare: document.getElementById("evSoftcareShare").value,
+      totClient: document
+        .getElementById("evTotClient")
+        .innerText.replace("$", "")
+        .trim(),
+      totCaregiver: document
+        .getElementById("evTotCaregiver")
+        .innerText.replace("$", "")
+        .trim(),
+      totAgency: document
+        .getElementById("evTotAgency")
+        .innerText.replace("$", "")
+        .trim(),
+      totSoftcare: document
+        .getElementById("evTotSoftcare")
+        .innerText.replace("$", "")
+        .trim(),
+      totBonus: document
+        .getElementById("evTotBonus")
+        .innerText.replace("$", "")
+        .trim(),
     };
 
     const btn = document.getElementById("btnSaveVisit");

@@ -586,6 +586,17 @@ function getOrCreateShiftSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName(SHIFT_SHEET_NAME);
 
+  const additionalHeaders = [
+    "Billable Hours",
+    "Payable Hours",
+    "Bonus Rate",
+    "Bonus Hours",
+    "Total Bonus",
+    "Admin Note",
+    "Last Modified By",
+    "Last Modified At",
+  ];
+
   if (!sheet) {
     sheet = ss.insertSheet(SHIFT_SHEET_NAME);
     const headers = [
@@ -610,12 +621,31 @@ function getOrCreateShiftSheet() {
       "Total Softcare Price",
       "Notes",
       "Created At",
+      ...additionalHeaders,
     ];
     sheet.appendRow(headers);
     sheet
       .getRange(1, 1, 1, headers.length)
       .setFontWeight("bold")
       .setBackground("#f3f4f6");
+  } else {
+    const currentHeaders = sheet
+      .getRange(1, 1, 1, sheet.getLastColumn())
+      .getValues()[0];
+
+    const missingHeaders = additionalHeaders.filter(
+      (h) => !currentHeaders.includes(h)
+    );
+    if (missingHeaders.length > 0) {
+      const startCol = currentHeaders.length + 1;
+      sheet
+        .getRange(1, startCol, 1, missingHeaders.length)
+        .setValues([missingHeaders]);
+      sheet
+        .getRange(1, startCol, 1, missingHeaders.length)
+        .setBackground("#f3f4f6")
+        .setFontWeight("bold");
+    }
   }
   return sheet;
 }
@@ -972,16 +1002,27 @@ function updateVisitDetails(payload) {
   }
 
   const updateMap = {
+    "Clock In": payload.payableIn,
+    "Clock Out": payload.payableOut,
     "Billable Hours": payload.billableHrs,
     "Payable Hours": payload.payableHrs,
     "Billing Type": payload.billingType,
-    Service: payload.service,
-    Type: payload.type,
+    "Service Type": payload.service,
+    "Shift Type": payload.type,
     "Client Rate": payload.clientRate,
-    "CG Rate": payload.cgRate,
-    "Schedule Note": payload.scheduleReason,
+    "Caregiver Rate": payload.cgRate,
+    "Bonus Rate": payload.bonusRate,
+    "Bonus Hours": payload.bonusHrs,
+    Notes: payload.scheduleReason,
     "Admin Note": payload.adminNote,
-    "Last Modified By": "System",
+    "Agency Share": payload.agencyShare,
+    "Softcare Share": payload.softcareShare,
+    "Total Client Price": payload.totClient,
+    "Total Caregiver Price": payload.totCaregiver,
+    "Total Agency Price": payload.totAgency,
+    "Total Softcare Price": payload.totSoftcare,
+    "Total Bonus": payload.totBonus,
+    "Last Modified By": "System Admin",
     "Last Modified At": new Date(),
   };
 
