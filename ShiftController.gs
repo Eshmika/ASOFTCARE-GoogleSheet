@@ -9,30 +9,28 @@ const SHIFT_HISTORY_COLUMNS = [
   "Pay Period Start",
   "Pay Period End",
   "Segment Number",
-  "Original Start Time",
-  "Original End Time",
   "Error Flag",
   "System Check",
-  "Client Full Name / ID",
-  "Caregiver Full Name / ID",
+  "Client ID",
+  "Caregiver ID",
   "EVV",
   "Start Date",
   "End Date",
   "Clock In",
   "Clock Out",
-  "Total Hours",
+  "Hours",
   "In Method",
   "Out Method",
   "Billable Hours",
   "Payable Hours",
   "Billing Type",
-  "Service",
-  "Type",
+  "Service Type",
+  "Shift Type",
   "Authorization Code",
   "Client Rate",
-  "CG Rate",
-  "Softcare Rate",
-  "Agency Rate",
+  "Caregiver Rate",
+  "Softcare Share",
+  "Agency Share",
   "Mileage KM",
   "Mileage Price",
   "Confirmation Indicator",
@@ -330,14 +328,6 @@ function buildShiftHistoryRows(
         ),
         payPeriodEnd: Utilities.formatDate(period.end, timeZone, "yyyy-MM-dd"),
         segmentNumber: segment.segmentNumber,
-        originalStartTime:
-          shift.clockIn instanceof Date
-            ? Utilities.formatDate(shift.clockIn, timeZone, "HH:mm")
-            : String(shift.clockIn || ""),
-        originalEndTime:
-          shift.clockOut instanceof Date
-            ? Utilities.formatDate(shift.clockOut, timeZone, "HH:mm")
-            : String(shift.clockOut || ""),
         errorFlag,
         systemCheck,
         clientName: `${client.name} / ${shift.clientId}`,
@@ -346,23 +336,25 @@ function buildShiftHistoryRows(
         date: formatShiftDate(shift.date, timeZone),
         startDate: formatShiftDate(shift.date, timeZone),
         endDate: formatShiftDate(shift.endDate || shift.date, timeZone),
-        clockIn: formatShiftTime(segment.segmentStart, timeZone),
-        clockOut: formatShiftTime(segment.segmentEnd, timeZone),
-        totalHours: hours.toFixed(2),
+        clockIn:
+          formatShiftTime(segment.segmentStart, timeZone) ||
+          String(shift.clockIn || ""),
+        clockOut:
+          formatShiftTime(segment.segmentEnd, timeZone) ||
+          String(shift.clockOut || ""),
+        hours: hours.toFixed(2),
         inMethod: shift.inMethod || "GPS",
         outMethod: shift.outMethod || "GPS",
         billableHours: shift.billableHours || hours.toFixed(2),
         payableHours: shift.payableHours || hours.toFixed(2),
         billingType: shift.billingType || "Hourly",
-        service: shift.serviceType || "",
         serviceType: shift.serviceType || "",
-        type: shift.shiftType || "",
         shiftType: shift.shiftType || "",
         authorizationCode: shift.authorizationCode || "",
         clientRate: shift.clientRate || "",
-        cgRate: shift.caregiverRate || "",
-        softcareRate: shift.totalSoftcarePrice || "",
-        agencyRate: shift.totalAgencyPrice || "",
+        caregiverRate: shift.caregiverRate || "",
+        softcareShare: shift.totalSoftcarePrice || "",
+        agencyShare: shift.totalAgencyPrice || "",
         totalClientPrice: shift.totalClientPrice || "",
         totalCaregiverPrice: shift.totalCaregiverPrice || "",
         totalAgencyPrice: shift.totalAgencyPrice || "",
@@ -417,8 +409,8 @@ function buildShiftHistoryRows(
       row.adminNote,
       row.systemCheck,
       row.billingType,
-      row.service,
-      row.type,
+      row.serviceType,
+      row.shiftType,
     ]
       .join(" ")
       .toLowerCase();
@@ -439,7 +431,7 @@ function buildShiftHistoryRows(
       const seenShiftIds = new Set();
       return filteredRows.reduce(
         (acc, row) => {
-          acc.totalHours += Number(row.totalHours) || 0;
+          acc.hours += Number(row.hours) || 0;
           if (!seenShiftIds.has(row.shiftId)) {
             seenShiftIds.add(row.shiftId);
             acc.totalClient += Number(row.invoiceTotal) || 0;
@@ -456,7 +448,7 @@ function buildShiftHistoryRows(
           totalAgency: 0,
           totalSoftcare: 0,
           totalMileage: 0,
-          totalHours: 0,
+          hours: 0,
         }
       );
     })(),
@@ -488,7 +480,7 @@ function getShiftHistory(data) {
         totalAgency: 0,
         totalSoftcare: 0,
         totalMileage: 0,
-        totalHours: 0,
+        hours: 0,
       },
     };
   }
@@ -1007,10 +999,10 @@ function updateVisitDetails(payload) {
     "Billable Hours": payload.billableHrs,
     "Payable Hours": payload.payableHrs,
     "Billing Type": payload.billingType,
-    "Service Type": payload.service,
-    "Shift Type": payload.type,
+    "Service Type": payload.serviceType,
+    "Shift Type": payload.shiftType,
     "Client Rate": payload.clientRate,
-    "Caregiver Rate": payload.cgRate,
+    "Caregiver Rate": payload.caregiverRate,
     "Bonus Rate": payload.bonusRate,
     "Bonus Hours": payload.bonusHrs,
     Notes: payload.scheduleReason,

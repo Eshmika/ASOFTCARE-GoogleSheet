@@ -4,26 +4,26 @@
     { key: "shiftId", label: "Shift ID" },
     { key: "invoiceId", label: "Invoice ID" },
     { key: "invoiceStatus", label: "Invoice Status" },
-    { key: "clientName", label: "Client Full Name / ID" },
-    { key: "caregiverName", label: "Caregiver Full Name / ID" },
+    { key: "clientName", label: "Client ID" },
+    { key: "caregiverName", label: "Caregiver ID" },
     { key: "evv", label: "EVV" },
     { key: "startDate", label: "Start Date" },
     { key: "endDate", label: "End Date" },
     { key: "clockIn", label: "Clock In" },
     { key: "clockOut", label: "Clock Out" },
-    { key: "totalHours", label: "Total Hours" },
+    { key: "hours", label: "Hours" },
     { key: "inMethod", label: "In Method" },
     { key: "outMethod", label: "Out Method" },
     { key: "billableHours", label: "Billable Hours" },
     { key: "payableHours", label: "Payable Hours" },
     { key: "billingType", label: "Billing Type" },
-    { key: "service", label: "Service" },
-    { key: "type", label: "Type" },
+    { key: "serviceType", label: "Service Type" },
+    { key: "shiftType", label: "Shift Type" },
     { key: "authorizationCode", label: "Authorization Code" },
     { key: "clientRate", label: "Client Rate" },
-    { key: "cgRate", label: "CG Rate" },
-    { key: "softcareRate", label: "Softcare Rate" },
-    { key: "agencyRate", label: "Agency Rate" },
+    { key: "caregiverRate", label: "Caregiver Rate" },
+    { key: "softcareShare", label: "Softcare Share" },
+    { key: "agencyShare", label: "Agency Share" },
     { key: "mileageKm", label: 'Mileage "km"' },
     { key: "mileagePrice", label: "Mileage $" },
     { key: "invoiceTotal", label: "Invoice" },
@@ -199,7 +199,7 @@
       payload.summary?.totalMileage || 0
     );
     document.getElementById("summaryTotalHours").textContent = (
-      payload.summary?.totalHours || 0
+      payload.summary?.hours || 0
     ).toFixed(2);
 
     thead.innerHTML = `
@@ -298,9 +298,9 @@
     if (
       [
         "clientRate",
-        "cgRate",
-        "softcareRate",
-        "agencyRate",
+        "caregiverRate",
+        "softcareShare",
+        "agencyShare",
         "invoiceTotal",
         "mileagePrice",
       ].includes(key)
@@ -324,7 +324,7 @@
       )}</td>`;
     }
 
-    if (["totalHours", "billableHours", "payableHours"].includes(key)) {
+    if (["hours", "billableHours", "payableHours"].includes(key)) {
       return `<td class="${base} font-semibold text-gray-900">${escapeHtml(
         String(value || "0.00")
       )}</td>`;
@@ -400,7 +400,7 @@
         <div>Period: ${escapeHtml(row.payPeriodStart)} to ${escapeHtml(
         row.payPeriodEnd
       )}</div>
-        <div>Hours: ${escapeHtml(row.totalHours)}</div>
+        <div>Hours: ${escapeHtml(row.hours)}</div>
         <div>Invoice: ${escapeHtml(row.invoiceTotal)}</div>
       `;
       document.body.appendChild(temp);
@@ -580,13 +580,12 @@
     // Billing Types
     document.getElementById("evBillingType").value =
       row.billingType || "Hourly";
-    document.getElementById("evService").value = row.service || "Weekday";
-    document.getElementById("evType").value = row.type || "REG";
+    document.getElementById("evService").value = row.serviceType || "Weekday";
+    document.getElementById("evType").value = row.shiftType || "REG";
 
     // Rates
     document.getElementById("evClientRate").value = row.clientRate || "";
-    document.getElementById("evCaregiverRate").value =
-      row.cgRate || row.caregiverRate || "";
+    document.getElementById("evCaregiverRate").value = row.caregiverRate || "";
     document.getElementById("evBonusRate").value = row.bonusRate || "";
 
     // Reasons/Notes
@@ -808,10 +807,10 @@
       billableIn: bIn,
       billableOut: bOut,
       billingType: document.getElementById("evBillingType").value,
-      service: document.getElementById("evService").value,
-      type: document.getElementById("evType").value,
+      serviceType: document.getElementById("evService").value,
+      shiftType: document.getElementById("evType").value,
       clientRate: document.getElementById("evClientRate").value,
-      cgRate: document.getElementById("evCaregiverRate").value,
+      caregiverRate: document.getElementById("evCaregiverRate").value,
       bonusRate: document.getElementById("evBonusRate").value,
       scheduleReason: reason,
       adminNote: document.getElementById("evAdminNote").value,
