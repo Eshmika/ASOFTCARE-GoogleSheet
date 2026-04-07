@@ -333,6 +333,10 @@ function buildShiftHistoryRows(
         clientName: `${client.name} / ${shift.clientId}`,
         caregiverName: `${caregiver.name} / ${shift.caregiverId}`,
         evv: shift.evv || "GPS",
+        scheduledTime:
+          shift.schedIn && shift.schedOut
+            ? `${shift.schedIn} - ${shift.schedOut}`
+            : "",
         date: formatShiftDate(shift.date, timeZone),
         startDate: formatShiftDate(shift.date, timeZone),
         endDate: formatShiftDate(shift.endDate || shift.date, timeZone),

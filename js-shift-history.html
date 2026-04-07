@@ -7,6 +7,7 @@
     { key: "clientName", label: "Client ID" },
     { key: "caregiverName", label: "Caregiver ID" },
     { key: "evv", label: "EVV" },
+    { key: "scheduledTime", label: "Scheduled Time" },
     { key: "startDate", label: "Start Date" },
     { key: "endDate", label: "End Date" },
     { key: "clockIn", label: "Clock In" },
@@ -310,9 +311,20 @@
       )}</td>`;
     }
 
-    if (key === "clockIn" || key === "clockOut") {
+    if (key === "clockIn" || key === "clockOut" || key === "scheduledTime") {
       let displayTime = value;
-      if (value && typeof value === "string" && value.includes(":")) {
+      if (key === "scheduledTime" && value && value.includes(" - ")) {
+        const [start, end] = value.split(" - ");
+        displayTime = [start, end]
+          .map((t) => {
+            const parts = t.split(":");
+            const hNum = parseInt(parts[0], 10);
+            const ampm = hNum >= 12 ? "PM" : "AM";
+            const h12 = hNum % 12 || 12;
+            return `${h12}:${parts[1]} ${ampm}`;
+          })
+          .join(" - ");
+      } else if (value && typeof value === "string" && value.includes(":")) {
         const parts = value.split(":");
         const hNum = parseInt(parts[0], 10);
         const ampm = hNum >= 12 ? "PM" : "AM";
