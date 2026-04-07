@@ -310,6 +310,20 @@
       )}</td>`;
     }
 
+    if (key === "clockIn" || key === "clockOut") {
+      let displayTime = value;
+      if (value && typeof value === "string" && value.includes(":")) {
+        const parts = value.split(":");
+        const hNum = parseInt(parts[0], 10);
+        const ampm = hNum >= 12 ? "PM" : "AM";
+        const h12 = hNum % 12 || 12;
+        displayTime = `${h12}:${parts[1]} ${ampm}`;
+      }
+      return `<td class="${base} font-medium text-gray-900">${escapeHtml(
+        displayTime
+      )}</td>`;
+    }
+
     if (["totalHours", "billableHours", "payableHours"].includes(key)) {
       return `<td class="${base} font-semibold text-gray-900">${escapeHtml(
         String(value || "0.00")

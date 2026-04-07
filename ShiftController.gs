@@ -124,6 +124,25 @@ function formatShiftTime(dateValue, timeZone) {
   return String(dateValue);
 }
 
+function parseTo24HourTime(timeStr) {
+  if (!timeStr) return "";
+  const match = String(timeStr)
+    .trim()
+    .match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM|am|pm)?$/);
+  if (!match) return String(timeStr);
+
+  let hours = parseInt(match[1], 10);
+  const minutes = match[2];
+  const ampm = match[3] ? match[3].toUpperCase() : null;
+
+  if (ampm) {
+    if (ampm === "PM" && hours < 12) hours += 12;
+    if (ampm === "AM" && hours === 12) hours = 0;
+  }
+
+  return hours.toString().padStart(2, "0") + ":" + minutes;
+}
+
 function pad2(value) {
   return String(value).padStart(2, "0");
 }
@@ -449,6 +468,7 @@ function getShiftHistory(data) {
   ensureShiftSheetHeaders(sheet);
 
   const values = sheet.getDataRange().getValues();
+  const displayValues = sheet.getDataRange().getDisplayValues();
   if (values.length <= 1) {
     const timeZone = Session.getScriptTimeZone();
     const settingsMode = getShiftHistoryPayPeriodSetting();
@@ -486,10 +506,13 @@ function getShiftHistory(data) {
     caregiverMap[caregiver.id] = caregiver;
   });
 
-  const rawShifts = values.slice(1).map((row) => {
+  const rawShifts = values.slice(1).map((row, rowIndex) => {
+    const displayRow = displayValues[rowIndex + 1];
     const record = {};
+    const displayRecord = {};
     headers.forEach((header, index) => {
       record[header] = row[index];
+      displayRecord[header] = displayRow[index];
     });
     return {
       id: record["Shift ID"],
@@ -511,22 +534,12 @@ function getShiftHistory(data) {
               "yyyy-MM-dd"
             )
           : String(record["End Date"] || ""),
-      clockIn:
-        record["Clock In"] instanceof Date
-          ? Utilities.formatDate(
-              record["Clock In"],
-              Session.getScriptTimeZone(),
-              "HH:mm"
-            )
-          : String(record["Clock In"] || ""),
-      clockOut:
-        record["Clock Out"] instanceof Date
-          ? Utilities.formatDate(
-              record["Clock Out"],
-              Session.getScriptTimeZone(),
-              "HH:mm"
-            )
-          : String(record["Clock Out"] || ""),
+      clockIn: parseTo24HourTime(
+        displayRecord["Clock In"] || record["Clock In"]
+      ),
+      clockOut: parseTo24HourTime(
+        displayRecord["Clock Out"] || record["Clock Out"]
+      ),
       billingType: record["Billing Type"],
       serviceType: record["Service Type"],
       shiftType: record["Shift Type"],
@@ -610,6 +623,7 @@ function getOrCreateShiftSheet() {
 function getShifts(startDateStr, endDateStr) {
   const sheet = getOrCreateShiftSheet();
   const data = sheet.getDataRange().getValues();
+  const displayData = sheet.getDataRange().getDisplayValues();
   const headers = data[0];
 
   // Indices
@@ -660,8 +674,6 @@ function getShifts(startDateStr, endDateStr) {
 
     // Simple range check (could be improved for multi-day overlaps)
     if (rowDate >= start && rowDate <= end) {
-      const clockInVal = row[startIdx];
-      const clockOutVal = row[endIdx];
       const endDateVal = row[endDateIdx];
 
       // Fix: Use original string if available to avoid timezone shifts
@@ -693,20 +705,18 @@ function getShifts(startDateStr, endDateStr) {
         endDateOutput = String(endDateVal || "");
       }
 
+      const displayRow = displayData[i];
+      const clockInVal = displayRow[startIdx] || row[startIdx];
+      const clockOutVal = displayRow[endIdx] || row[endIdx];
+
       shifts.push({
         id: row[0],
         clientId: row[clientIdx],
         caregiverId: row[cgIdx],
         date: dateOutput,
         endDate: endDateOutput,
-        clockIn:
-          clockInVal instanceof Date
-            ? Utilities.formatDate(clockInVal, timeZone, "HH:mm")
-            : String(clockInVal || ""),
-        clockOut:
-          clockOutVal instanceof Date
-            ? Utilities.formatDate(clockOutVal, timeZone, "HH:mm")
-            : String(clockOutVal || ""),
+        clockIn: parseTo24HourTime(clockInVal),
+        clockOut: parseTo24HourTime(clockOutVal),
         hours: row[hoursIdx],
         billingType: row[billingTypeIdx],
         serviceType: row[serviceTypeIdx],
