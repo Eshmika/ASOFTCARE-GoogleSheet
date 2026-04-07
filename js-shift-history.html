@@ -288,9 +288,23 @@
       )}</td>`;
     }
 
-    if (
-      ["scheduleNote", "adminNote", "clientName", "caregiverName"].includes(key)
-    ) {
+    if (["clientName", "caregiverName"].includes(key)) {
+      const parts = value.split(" / ");
+      if (parts.length > 1) {
+        const name = parts.slice(0, -1).join(" / ");
+        const id = parts[parts.length - 1];
+        return `<td class="${base} whitespace-normal min-w-[180px] max-w-[260px]">
+          <div class="text-sm font-bold text-black">${escapeHtml(name)}</div>
+          <div class="text-xs text-gray-400 mt-0.5">${escapeHtml(id)}</div>
+        </td>`;
+      } else {
+        return `<td class="${base} whitespace-normal min-w-[180px] max-w-[260px]"><div class="text-sm font-bold text-black">${escapeHtml(
+          value
+        )}</div></td>`;
+      }
+    }
+
+    if (["scheduleNote", "adminNote"].includes(key)) {
       return `<td class="${base} whitespace-normal min-w-[180px] max-w-[260px]"><div class="text-sm text-gray-700">${escapeHtml(
         value
       )}</div></td>`;
