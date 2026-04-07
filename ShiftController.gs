@@ -526,6 +526,24 @@ function getShiftHistory(data) {
               "yyyy-MM-dd"
             )
           : String(record["End Date"] || ""),
+      schedIn: parseTo24HourTime(
+        displayRecord["Schedule In"] || record["Schedule In"] || ""
+      ),
+      schedOut: parseTo24HourTime(
+        displayRecord["Schedule Out"] || record["Schedule Out"] || ""
+      ),
+      payableTimeIn: parseTo24HourTime(
+        displayRecord["Payable In"] || record["Payable In"]
+      ),
+      payableTimeOut: parseTo24HourTime(
+        displayRecord["Payable Out"] || record["Payable Out"]
+      ),
+      billableTimeIn: parseTo24HourTime(
+        displayRecord["Billable In"] || record["Billable In"]
+      ),
+      billableTimeOut: parseTo24HourTime(
+        displayRecord["Billable Out"] || record["Billable Out"]
+      ),
       clockIn: parseTo24HourTime(
         displayRecord["Clock In"] || record["Clock In"]
       ),
@@ -579,6 +597,12 @@ function getOrCreateShiftSheet() {
   let sheet = ss.getSheetByName(SHIFT_SHEET_NAME);
 
   const additionalHeaders = [
+    "Schedule In",
+    "Schedule Out",
+    "Payable In",
+    "Payable Out",
+    "Billable In",
+    "Billable Out",
     "Billable Hours",
     "Payable Hours",
     "Bonus Rate",
@@ -994,8 +1018,12 @@ function updateVisitDetails(payload) {
   }
 
   const updateMap = {
-    "Clock In": payload.payableIn,
-    "Clock Out": payload.payableOut,
+    "Schedule In": payload.schedIn,
+    "Schedule Out": payload.schedOut,
+    "Payable In": payload.payableIn,
+    "Payable Out": payload.payableOut,
+    "Billable In": payload.billableIn,
+    "Billable Out": payload.billableOut,
     "Billable Hours": payload.billableHrs,
     "Payable Hours": payload.payableHrs,
     "Billing Type": payload.billingType,

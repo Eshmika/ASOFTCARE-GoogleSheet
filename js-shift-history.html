@@ -652,13 +652,6 @@
     const schedIn = document.getElementById("evSchedIn").value;
     const schedOut = document.getElementById("evSchedOut").value;
 
-    // Updates UI label
-    const visitRangeEl = document.getElementById("evVisitScheduleRange");
-    if (visitRangeEl) {
-      visitRangeEl.innerText =
-        (schedIn || "--:--") + " to " + (schedOut || "--:--");
-    }
-
     const pIn = document.getElementById("evPayableIn").value;
     const pOut = document.getElementById("evPayableOut").value;
     const bIn = document.getElementById("evBillableIn").value;
@@ -814,6 +807,9 @@
       bonusRate: document.getElementById("evBonusRate").value,
       scheduleReason: reason,
       adminNote: document.getElementById("evAdminNote").value,
+
+      schedIn: schedIn,
+      schedOut: schedOut,
 
       payableHrs: document.getElementById("evPayableHrs").value,
       billableHrs: document.getElementById("evBillableHrs").value,
