@@ -379,15 +379,12 @@
 
   function openShiftHistoryAction(action, row) {
     if (action === "edit") {
-      if (typeof loadShiftForEdit === "function") {
-        loadShiftForEdit(row);
-        return;
+      appNavigate("edit-shift-history");
+      if (typeof populateEditShiftHistoryView === "function") {
+        populateEditShiftHistoryView(row);
+      } else {
+        console.warn("populateEditShiftHistoryView is not defined.");
       }
-      Swal.fire(
-        "Unavailable",
-        "Shift editing is not available right now.",
-        "info"
-      );
       return;
     }
 
@@ -540,5 +537,328 @@
         Swal.fire("Error", err.message, "error");
       })
       .toggleShiftConfirmation(shiftId, currentStatus);
+  }
+
+  window._currentEditRow = null;
+
+  function populateEditShiftHistoryView(row) {
+    if (!row) return;
+    window._currentEditRow = row;
+
+    console.log("Populating edit view with:", row);
+
+    // Core (Locked) Information
+    document.getElementById("evShiftId").value = row.shiftId || "";
+    document.getElementById("evClientName").value = row.clientName || "";
+    document.getElementById("evCaregiverName").value = row.caregiverName || "";
+    document.getElementById("evStartDate").value = row.startDate || "";
+    document.getElementById("evEndDate").value = row.endDate || "";
+
+    // EVV (Clock-In/Clock-Out) Note: these are the actual system records
+    document.getElementById("evClockIn").value = row.clockIn || "";
+    document.getElementById("evClockOut").value = row.clockOut || "";
+
+    // Schedule Limits - typically coming from a schedule system, fallback to EVV times if missing
+    document.getElementById("evSchedIn").value =
+      row.schedIn || row.clockIn || "";
+    document.getElementById("evSchedOut").value =
+      row.schedOut || row.clockOut || "";
+
+    // Initialize Hours (Editable defaults based on Sched / EVV)
+    // Payable & Billable default to calculated scheduled snap
+    const defaultHours = computeDefaultHoursAndTimes(row);
+
+    document.getElementById("evPayableIn").value =
+      row.payableTimeIn || defaultHours.payableIn;
+    document.getElementById("evPayableOut").value =
+      row.payableTimeOut || defaultHours.payableOut;
+    document.getElementById("evBillableIn").value =
+      row.billableTimeIn || defaultHours.billableIn;
+    document.getElementById("evBillableOut").value =
+      row.billableTimeOut || defaultHours.billableOut;
+
+    // Billing Types
+    document.getElementById("evBillingType").value =
+      row.billingType || "Hourly";
+    document.getElementById("evService").value = row.service || "Weekday";
+    document.getElementById("evType").value = row.type || "REG";
+
+    // Rates
+    document.getElementById("evClientRate").value = row.clientRate || "";
+    document.getElementById("evCaregiverRate").value =
+      row.cgRate || row.caregiverRate || "";
+    document.getElementById("evBonusRate").value = row.bonusRate || "";
+
+    // Reasons/Notes
+    document.getElementById("evScheduleReason").value =
+      row.scheduleReason || "";
+    document.getElementById("evAdminNote").value = row.adminNote || "";
+
+    // Calculate all dependent totals/hours logic
+    calculateVisitHours();
+  }
+
+  function computeDefaultHoursAndTimes(row) {
+    // Rules:
+    // - If EVV In is within +/- 10 mins of Sched In, snap to Sched In for Payable.
+    // - Same for EVV Out and Sched Out.
+    // - Billable follows Sched.
+    const schedIn = row.schedIn || row.clockIn || "";
+    const schedOut = row.schedOut || row.clockOut || "";
+    const evvIn = row.clockIn || "";
+    const evvOut = row.clockOut || "";
+
+    let payableIn = evvIn;
+    let payableOut = evvOut;
+
+    if (schedIn && evvIn) {
+      const diffIn = getTimeDiffMins(schedIn, evvIn);
+      if (Math.abs(diffIn) <= 10) payableIn = schedIn;
+    }
+
+    if (schedOut && evvOut) {
+      const diffOut = getTimeDiffMins(schedOut, evvOut);
+      if (Math.abs(diffOut) <= 10) payableOut = schedOut;
+    }
+
+    return {
+      payableIn: payableIn,
+      payableOut: payableOut,
+      billableIn: schedIn,
+      billableOut: schedOut,
+    };
+  }
+
+  function getTimeDiffMins(time1, time2) {
+    if (!time1 || !time2) return 0;
+    const [h1, m1] = time1.split(":").map(Number);
+    const [h2, m2] = time2.split(":").map(Number);
+    const t1 = h1 * 60 + m1;
+    const t2 = h2 * 60 + m2;
+    return t2 - t1;
+  }
+
+  function calculatePassedHours(inTime, outTime) {
+    if (!inTime || !outTime) return 0;
+    let dOut = getTimeDiffMins("00:00", outTime);
+    let dIn = getTimeDiffMins("00:00", inTime);
+    if (dOut < dIn) dOut += 24 * 60; // overnight
+
+    let hours = (dOut - dIn) / 60;
+    // round to 2 decimals
+    return Math.round(hours * 100) / 100;
+  }
+
+  function calculateVisitHours() {
+    const schedIn = document.getElementById("evSchedIn").value;
+    const schedOut = document.getElementById("evSchedOut").value;
+
+    // Updates UI label
+    document.getElementById("evVisitScheduleRange").innerText =
+      (schedIn || "--:--") + " to " + (schedOut || "--:--");
+
+    const pIn = document.getElementById("evPayableIn").value;
+    const pOut = document.getElementById("evPayableOut").value;
+    const bIn = document.getElementById("evBillableIn").value;
+    const bOut = document.getElementById("evBillableOut").value;
+
+    const clockIn = document.getElementById("evClockIn").value;
+    const clockOut = document.getElementById("evClockOut").value;
+
+    // Check modification from raw EVV
+    document
+      .getElementById("evPayableModAlert")
+      .classList.toggle("hidden", pIn === clockIn && pOut === clockOut);
+    document
+      .getElementById("evBillableModAlert")
+      .classList.toggle("hidden", bIn === schedIn && bOut === schedOut);
+
+    const pHrs = calculatePassedHours(pIn, pOut);
+    const bHrs = calculatePassedHours(bIn, bOut);
+
+    document.getElementById("evPayableHrs").value = pHrs.toFixed(2);
+    document.getElementById("evBillableHrs").value = bHrs.toFixed(2);
+
+    // Update main billing field (defaults to Payable Hours for caregiver, Billable is just for client logic but calculation logic uses one main 'Hours')
+    // Wait, requirement: "Billable Hours follow authorized schedule and affect client payment. Payable Hours follow actual or corrected time and affect caregiver pay."
+    // We handle that in calculateVisitTotals by using both.
+
+    document.getElementById("evBillingHrs").value = pHrs.toFixed(2);
+
+    calculateVisitTotals();
+  }
+
+  function calculateVisitTotals() {
+    const billingType = document.getElementById("evBillingType").value;
+
+    const payableHrs =
+      parseFloat(document.getElementById("evPayableHrs").value) || 0;
+    const billableHrs =
+      parseFloat(document.getElementById("evBillableHrs").value) || 0;
+
+    const schedIn = document.getElementById("evSchedIn").value;
+    const schedOut = document.getElementById("evSchedOut").value;
+    const schedHrs = calculatePassedHours(schedIn, schedOut) || 0;
+
+    const cRate =
+      parseFloat(document.getElementById("evClientRate").value) || 0;
+    const cgRate =
+      parseFloat(document.getElementById("evCaregiverRate").value) || 0;
+    const bRate = parseFloat(document.getElementById("evBonusRate").value) || 0;
+
+    // Bonus applies to Payable hours beyond scheduled hours
+    let bonusHrs = 0;
+    if (payableHrs > schedHrs) {
+      bonusHrs = payableHrs - schedHrs;
+    }
+    document.getElementById("evExtendedHrs").value = bonusHrs.toFixed(2);
+
+    // Agency & Softcare share per unit
+    const margin = Math.max(0, cRate - cgRate);
+    const agencyRate = margin * 0.8;
+    const softcareRate = margin * 0.2;
+
+    document.getElementById("evAgencyShare").value = agencyRate.toFixed(2);
+    document.getElementById("evSoftcareShare").value = softcareRate.toFixed(2);
+
+    let totClient = 0;
+    let totCaregiver = 0;
+    let totAgency = 0;
+    let totSoftcare = 0;
+    let totBonus = 0;
+
+    if (billingType === "Hourly") {
+      totClient = cRate * billableHrs;
+      totCaregiver = cgRate * payableHrs;
+      totAgency = agencyRate * billableHrs; // or payable? usually agency captures billable. We'll stick to billable
+      totSoftcare = softcareRate * billableHrs;
+      totBonus = bRate * bonusHrs;
+    } else {
+      totClient = cRate;
+      totCaregiver = cgRate;
+      totAgency = agencyRate;
+      totSoftcare = softcareRate;
+      totBonus = bRate; // If fixed, maybe just static bonus
+    }
+
+    document.getElementById("evTotClient").innerText =
+      "$" + totClient.toFixed(2);
+    document.getElementById("evTotCaregiver").innerText =
+      "$" + totCaregiver.toFixed(2);
+    document.getElementById("evTotAgency").innerText =
+      "$" + totAgency.toFixed(2);
+    document.getElementById("evTotSoftcare").innerText =
+      "$" + totSoftcare.toFixed(2);
+    document.getElementById("evTotBonus").innerText = "$" + totBonus.toFixed(2);
+  }
+
+  function resetEditVisitData() {
+    if (window._currentEditRow) {
+      populateEditShiftHistoryView(window._currentEditRow);
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2000,
+        icon: "info",
+        title: "Data Reset",
+      });
+    }
+  }
+
+  function submitEditVisitDetails(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    // Check if reason is provided when hours modified
+    const pIn = document.getElementById("evPayableIn").value;
+    const pOut = document.getElementById("evPayableOut").value;
+    const bIn = document.getElementById("evBillableIn").value;
+    const bOut = document.getElementById("evBillableOut").value;
+    const clockIn = document.getElementById("evClockIn").value;
+    const clockOut = document.getElementById("evClockOut").value;
+    const schedIn = document.getElementById("evSchedIn").value;
+    const schedOut = document.getElementById("evSchedOut").value;
+
+    const modified =
+      pIn !== clockIn ||
+      pOut !== clockOut ||
+      bIn !== schedIn ||
+      bOut !== schedOut;
+    const reason = document.getElementById("evScheduleReason").value.trim();
+
+    if (modified && !reason) {
+      Swal.fire(
+        "Required",
+        "Schedule Reason is required when modifying payable or billable hours.",
+        "warning"
+      );
+      document.getElementById("evScheduleReason").focus();
+      return;
+    }
+
+    // Prepare payload
+    const payload = {
+      shiftId: document.getElementById("evShiftId").value,
+      payableIn: pIn,
+      payableOut: pOut,
+      billableIn: bIn,
+      billableOut: bOut,
+      billingType: document.getElementById("evBillingType").value,
+      service: document.getElementById("evService").value,
+      type: document.getElementById("evType").value,
+      clientRate: document.getElementById("evClientRate").value,
+      cgRate: document.getElementById("evCaregiverRate").value,
+      bonusRate: document.getElementById("evBonusRate").value,
+      scheduleReason: reason,
+      adminNote: document.getElementById("evAdminNote").value,
+
+      payableHrs: document.getElementById("evPayableHrs").value,
+      billableHrs: document.getElementById("evBillableHrs").value,
+      bonusHrs: document.getElementById("evExtendedHrs").value,
+    };
+
+    const btn = document.getElementById("btnSaveVisit");
+    btn.disabled = true;
+    btn.innerHTML =
+      '<i class="ph ph-spinner animate-spin text-lg"></i> Saving...';
+
+    // Typically you'd call a server-side function like updateVisitDetails
+    if (google && google.script && google.script.run) {
+      google.script.run
+        .withSuccessHandler((res) => {
+          btn.disabled = false;
+          btn.innerHTML =
+            '<i class="ph ph-check-circle text-lg"></i> Save changes';
+          if (res && res.success) {
+            Swal.fire("Saved", "Visit details updated successfully", "success");
+            refreshShiftHistory();
+            appNavigate("shift-history");
+          } else {
+            Swal.fire("Error", res?.message || "Failed to update", "error");
+          }
+        })
+        .withFailureHandler((err) => {
+          btn.disabled = false;
+          btn.innerHTML =
+            '<i class="ph ph-check-circle text-lg"></i> Save changes';
+          Swal.fire("Error", err.message, "error");
+        })
+        .updateVisitDetails(payload);
+    } else {
+      // Fallback for testing locally without server
+      console.log("Mock Save Payload:", payload);
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML =
+          '<i class="ph ph-check-circle text-lg"></i> Save changes';
+        Swal.fire(
+          "Saved",
+          "Visit details updated successfully (Mock)",
+          "success"
+        );
+        appNavigate("shift-history");
+      }, 1000);
+    }
   }
 </script>
