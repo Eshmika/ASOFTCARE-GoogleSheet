@@ -260,24 +260,67 @@
     tbody.innerHTML = payload.rows
       .map((row) => {
         return `
-          <tr class="hover:bg-gray-50/80 transition-colors">
+          <tr class="group hover:bg-gray-50/80 transition-colors">
             ${SHIFT_HISTORY_COLUMNS.map((column) =>
               renderHistoryCell(column.key, row)
             ).join("")}
             <td class="px-4 py-4 whitespace-nowrap text-right">
-              <div class="flex items-center justify-end gap-2">
-                <button type="button" onclick='openShiftHistoryAction("edit", ${JSON.stringify(
+              <div class="flex items-center justify-end gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+                <!-- Edit Action -->
+                <button type="button" title="Edit Shift Info" onclick='openShiftHistoryAction("edit", ${JSON.stringify(
                   row
                 ).replace(
                   /'/g,
                   "&#39;"
-                )})' class="px-3 py-2 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-50">Edit</button>
-                <button type="button" onclick='openShiftHistoryAction("pdf", ${JSON.stringify(
+                )})' class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white hover:shadow-md transition-all text-xs font-bold uppercase tracking-wider">
+                  <i class="ph ph-pencil-simple text-sm"></i>
+                  <span class="hidden 2xl:inline">Edit</span>
+                </button>
+
+                <!-- Confirm Action -->
+                <button type="button" title="Confirm Shift" onclick='openShiftHistoryAction("confirm", ${JSON.stringify(
                   row
                 ).replace(
                   /'/g,
                   "&#39;"
-                )})' class="px-3 py-2 rounded-lg bg-[#65c027] text-white text-xs font-bold hover:bg-[#54a51f]">PDF</button>
+                )})' class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white hover:shadow-md transition-all text-xs font-bold uppercase tracking-wider">
+                  <i class="ph ph-check-circle text-sm"></i>
+                  <span class="hidden 2xl:inline">Confirm</span>
+                </button>
+
+                <div class="h-6 w-px bg-gray-200 mx-0.5"></div>
+
+                <!-- Resend Client -->
+                <button type="button" title="Resend Client Confirm" onclick='openShiftHistoryAction("resend_client", ${JSON.stringify(
+                  row
+                ).replace(
+                  /'/g,
+                  "&#39;"
+                )})' class="flex items-center justify-center w-8 h-8 rounded-full bg-orange-50 text-orange-600 hover:bg-orange-500 hover:text-white hover:shadow-md transition-all">
+                  <i class="ph ph-user text-sm"></i>
+                </button>
+
+                <!-- Resend CG -->
+                <button type="button" title="Resend Caregiver Confirm" onclick='openShiftHistoryAction("resend_cg", ${JSON.stringify(
+                  row
+                ).replace(
+                  /'/g,
+                  "&#39;"
+                )})' class="flex items-center justify-center w-8 h-8 rounded-full bg-purple-50 text-purple-600 hover:bg-purple-500 hover:text-white hover:shadow-md transition-all">
+                  <i class="ph ph-stethoscope text-sm"></i>
+                </button>
+
+                <div class="h-6 w-px bg-gray-200 mx-0.5"></div>
+
+                <!-- PDF -->
+                <button type="button" title="Download PDF" onclick='openShiftHistoryAction("pdf", ${JSON.stringify(
+                  row
+                ).replace(
+                  /'/g,
+                  "&#39;"
+                )})' class="flex items-center justify-center w-8 h-8 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white hover:shadow-md transition-all">
+                  <i class="ph ph-file-pdf text-sm"></i>
+                </button>
               </div>
             </td>
           </tr>`;
@@ -448,6 +491,21 @@
       } else {
         console.warn("populateEditShiftHistoryView is not defined.");
       }
+      return;
+    }
+
+    if (action === "confirm") {
+      Swal.fire("Info", "Confirm Shift action placeholder.", "info");
+      return;
+    }
+
+    if (action === "resend_client") {
+      Swal.fire("Info", "Resend Client Confirm action placeholder.", "info");
+      return;
+    }
+
+    if (action === "resend_cg") {
+      Swal.fire("Info", "Resend Caregiver Confirm action placeholder.", "info");
       return;
     }
 
