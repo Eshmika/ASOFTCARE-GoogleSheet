@@ -18,7 +18,7 @@
   >
     <!-- 1st Row Desktop / 1st Row Tablet -->
     <!-- Pay Period Date -->
-    <div class="w-full md:col-span-3 xl:col-span-2">
+    <div class="w-full md:col-span-4 xl:col-span-2">
       <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
         >Pay Period Date</label
       >
@@ -57,7 +57,7 @@
     </div>
 
     <!-- Mode -->
-    <div class="w-full md:col-span-1 xl:col-span-1">
+    <div class="w-full md:col-span-2 xl:col-span-1">
       <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
         >Mode</label
       >
@@ -66,23 +66,25 @@
           id="modeWeeklyBtn"
           onclick="setPayPeriodMode('Weekly')"
           type="button"
-          class="px-2 py-1.5 text-[12px] font-bold rounded-md flex-1 bg-white shadow-sm text-[#65c027] transition-all text-center"
+          class="px-2 py-1.5 text-[12px] font-bold rounded-md flex-1 bg-white shadow-sm text-[#65c027] transition-all flex items-center justify-center gap-1.5"
         >
-          Weekly
+          <i class="ph ph-calendar-blank text-sm"></i>
+          <span>Weekly</span>
         </button>
         <button
           id="modeBiweeklyBtn"
           onclick="setPayPeriodMode('Biweekly')"
           type="button"
-          class="px-2 py-1.5 text-[12px] font-semibold rounded-md flex-1 text-gray-500 hover:text-gray-800 transition-all text-center"
+          class="px-2 py-1.5 text-[12px] font-semibold rounded-md flex-1 text-gray-500 hover:text-gray-800 transition-all flex items-center justify-center gap-1.5"
         >
-          Biweekly
+          <i class="ph ph-calendar-plus text-sm"></i>
+          <span>Biweekly</span>
         </button>
       </div>
     </div>
 
-    <!-- Caregiver Filter (2nd row Tablet, 1st row Desktop) -->
-    <div class="w-full md:col-span-3 xl:col-span-1">
+    <!-- Caregiver Filter -->
+    <div class="w-full md:col-span-2 xl:col-span-1">
       <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
         >Caregiver</label
       >
@@ -95,8 +97,8 @@
       </select>
     </div>
 
-    <!-- Client Filter (2nd row Tablet, 1st row Desktop) -->
-    <div class="w-full md:col-span-3 xl:col-span-1">
+    <!-- Client Filter -->
+    <div class="w-full md:col-span-2 xl:col-span-1">
       <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
         >Client</label
       >
@@ -163,7 +165,7 @@
 
     <!-- 4th Row Tablet / 2nd Row Desktop -->
     <!-- Search Input -->
-    <div class="w-full md:col-span-6 xl:col-span-2 relative">
+    <div class="w-full md:col-span-4 xl:col-span-2 relative">
       <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
         >Search</label
       >
@@ -184,10 +186,10 @@
     <!-- 5th Row Tablet / 2nd Row Desktop -->
     <!-- Reset Button -->
     <div
-      class="w-full md:col-span-6 xl:col-span-1 flex md:justify-end xl:justify-start"
+      class="w-full md:col-span-2 xl:col-span-1 flex md:justify-end xl:justify-start"
     >
       <label
-        class="block text-xs font-semibold text-white uppercase mb-1 hidden xl:block"
+        class="block text-xs font-semibold text-white uppercase mb-1 hidden md:block"
         >&nbsp;</label
       >
       <button
