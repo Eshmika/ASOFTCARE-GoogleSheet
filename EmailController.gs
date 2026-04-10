@@ -278,30 +278,55 @@ function sendCaregiverShiftApprovals(caregiverIds) {
 
     let count = 0;
     const subject = "Please Confirm Your Hours";
+    const webAppUrl = ScriptApp.getService().getUrl();
 
     selected.forEach((c) => {
       try {
+        const confirmLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=caregiver&action=Confirm`;
+        const declineLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=caregiver&action=Decline`;
+        const reviewLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=caregiver&action=Review`;
+
         const htmlBody = `
-          <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+          <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <!-- Header -->
             <div style="background-color: #65c027; padding: 24px; text-align: center;">
-              <h2 style="color: white; margin: 0; font-size: 24px;">Allevia Senior Care</h2>
+              <h2 style="color: white; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">Allevia Senior Care</h2>
+              <p style="color: #f0fdf4; margin: 5px 0 0; font-style: italic;">Timesheet Verification</p>
             </div>
+            
+            <!-- Body Content -->
             <div style="padding: 30px; background-color: #ffffff;">
-              <p>Hello <strong>${c.name}</strong>,</p>
-              <p>Your weekly/biweekly hours are ready for review.</p>
-              <p>Please confirm or decline each shift for the pay period.</p>
+              <p style="font-size: 16px; margin-top: 0;">Hello <strong>${c.name}</strong>,</p>
+              <p style="font-size: 15px; color: #4b5563;">Your weekly/biweekly hours are ready for review. Please choose an action below for your pending shifts in the current pay period.</p>
               
-              <p style="margin-top: 20px; font-weight: bold; color: #d97706;">Deadline:</p>
-              <p>Please complete your confirmation by Monday morning 10am.</p>
+              <!-- Action Buttons -->
+              <div style="margin: 30px 0; display: flex; flex-direction: column; gap: 12px; align-items: center;">
+                <a href="${confirmLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: #16a34a; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25); border: 1px solid #15803d;">
+                  ✅ Confirm All Shifts
+                </a>
+                <a href="${reviewLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: #2563eb; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25); border: 1px solid #1d4ed8;">
+                  🔍 Review Details
+                </a>
+                <a href="${declineLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: white; color: #dc2626; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; border: 2px solid #fee2e2; box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);">
+                  ❌ Decline Shifts
+                </a>
+              </div>
               
-              <p>If anything needs correction, add a note or contact the office.</p>
+              <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 25px 0;">
+                <p style="margin: 0; font-weight: bold; color: #b45309; font-size: 14px;">⏳ Action Required:</p>
+                <p style="margin: 5px 0 0 0; color: #92400e; font-size: 14px;">Please complete your confirmation by <strong>Monday morning 10am</strong>.</p>
+              </div>
+              
+              <p style="font-size: 14px; color: #6b7280; border-top: 1px solid #eee; padding-top: 20px;">If anything needs correction, please add a note in your portal or contact the office directly.</p>
 
               <br>
-              <p style="margin-bottom: 5px;">Thank you,</p>
-              <p style="margin: 0; font-weight: bold;">Allevia Senior Care Team</p>
-              <p style="margin: 0; color: #666; font-size: 14px;">Office: 440-907-9599 | contact@alleviaseniorcare.com</p>
+              <p style="margin-bottom: 5px; font-size: 15px;">Thank you,</p>
+              <p style="margin: 0; font-weight: bold; font-size: 15px;">Allevia Senior Care Team</p>
+              <p style="margin: 5px 0 0 0; color: #666; font-size: 13px;">📞 440-907-9599 &nbsp;|&nbsp; ✉️ contact@alleviaseniorcare.com</p>
             </div>
-            <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #9ca3af;">
+            
+            <!-- Footer -->
+            <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e7eb;">
               &copy; 2025 Allevia Senior Care. All rights reserved.
             </div>
           </div>
@@ -346,28 +371,53 @@ function sendClientShiftApprovals(clientIds) {
 
     let count = 0;
     const subject = "Weekly Service Approval Needed";
+    const webAppUrl = ScriptApp.getService().getUrl();
 
     selected.forEach((c) => {
       try {
-        const htmlBody = `
-          <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-            <div style="background-color: #2563eb; padding: 24px; text-align: center;">
-              <h2 style="color: white; margin: 0; font-size: 24px;">Allevia Senior Care</h2>
-            </div>
-            <div style="padding: 30px; background-color: #ffffff;">
-              <p>Hello <strong>${c.name}</strong>,</p>
-              <p>Your caregiver’s hours for this week are ready for your approval.</p>
-              <p>Please review the visit times and approve or decline them.</p>
+        const confirmLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=client&action=Confirm`;
+        const declineLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=client&action=Decline`;
+        const reviewLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=client&action=Review`;
 
-              <p style="margin-top: 20px; font-weight: bold; color: #d97706;">Deadline:</p>
-              <p>Please complete your approval by Tuesday morning 10 am so we can finalize billing and caregiver payroll on time.</p>
+        const htmlBody = `
+          <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <!-- Header -->
+            <div style="background-color: #2563eb; padding: 24px; text-align: center;">
+              <h2 style="color: white; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">Allevia Senior Care</h2>
+              <p style="color: #eff6ff; margin: 5px 0 0; font-style: italic;">Weekly Visit Approval</p>
+            </div>
+            
+            <!-- Body Content -->
+            <div style="padding: 30px; background-color: #ffffff;">
+              <p style="font-size: 16px; margin-top: 0;">Hello <strong>${c.name}</strong>,</p>
+              <p style="font-size: 15px; color: #4b5563;">Your caregiver’s hours for this week are ready for your review. Please choose an action below to approve or decline the visit times.</p>
+
+              <!-- Action Buttons -->
+              <div style="margin: 30px 0; display: flex; flex-direction: column; gap: 12px; align-items: center;">
+                <a href="${confirmLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: #16a34a; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25); border: 1px solid #15803d;">
+                  ✅ Approve All Visits
+                </a>
+                <a href="${reviewLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: #2563eb; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25); border: 1px solid #1d4ed8;">
+                  🔍 Review Times
+                </a>
+                <a href="${declineLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: white; color: #dc2626; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; border: 2px solid #fee2e2; box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);">
+                  ❌ Decline Visits
+                </a>
+              </div>
+
+              <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 25px 0;">
+                <p style="margin: 0; font-weight: bold; color: #b45309; font-size: 14px;">⏳ Action Required:</p>
+                <p style="margin: 5px 0 0 0; color: #92400e; font-size: 14px;">Please complete your approval by <strong>Tuesday morning 10 am</strong> so we can finalize billing and caregiver payroll on time.</p>
+              </div>
               
               <br>
-              <p style="margin-bottom: 5px;">Thank you,</p>
-              <p style="margin: 0; font-weight: bold;">Allevia Senior Care Team</p>
-              <p style="margin: 0; color: #666; font-size: 14px;">Office: 440-907-9599 | contact@alleviaseniorcare.com</p>
+              <p style="margin-bottom: 5px; font-size: 15px;">Thank you,</p>
+              <p style="margin: 0; font-weight: bold; font-size: 15px;">Allevia Senior Care Team</p>
+              <p style="margin: 5px 0 0 0; color: #666; font-size: 13px;">📞 440-907-9599 &nbsp;|&nbsp; ✉️ contact@alleviaseniorcare.com</p>
             </div>
-            <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #9ca3af;">
+            
+            <!-- Footer -->
+            <div style="background-color: #f3f4f6; padding: 15px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e7eb;">
                &copy; 2025 Allevia Senior Care. All rights reserved.
             </div>
           </div>

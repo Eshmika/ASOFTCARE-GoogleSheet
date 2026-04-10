@@ -361,6 +361,41 @@ function doGet(e) {
         "<h1 style='font-family:sans-serif; text-align:center; margin-top:50px;'>Error: Invalid or Expired Client Link.</h1>"
       );
     }
+  } else if (
+    e.parameter.page === "shift-action" &&
+    e.parameter.id &&
+    e.parameter.type &&
+    e.parameter.action
+  ) {
+    // Handle Confirm, Decline, Review from Emails
+    const result = processShiftAction(
+      e.parameter.id,
+      e.parameter.type,
+      e.parameter.action
+    );
+    return HtmlService.createHtmlOutput(
+      `
+      <div style="font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f3f4f6;">
+        <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; max-width: 500px;">
+          <div style="width: 80px; height: 80px; background-color: ${
+            result.color || "#dcfce7"
+          }; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            ${result.icon}
+          </div>
+          <h1 style="color: #1f2937; font-size: 24px; margin-bottom: 10px;">${
+            result.title
+          }</h1>
+          <p style="color: #4b5563; line-height: 1.5; margin-bottom: 20px;">
+            ${result.message}
+          </p>
+          <a href="${ScriptApp.getService().getUrl()}" style="display:inline-block; padding: 10px 20px; background-color: #65c027; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Return Home</a>
+        </div>
+      </div>
+    `
+    )
+      .setTitle("Shift Action - Allevia Senior Care")
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+      .addMetaTag("viewport", "width=device-width, initial-scale=1");
   }
   return HtmlService.createTemplateFromFile("index")
     .evaluate()

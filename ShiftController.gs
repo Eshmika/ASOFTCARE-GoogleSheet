@@ -1060,3 +1060,82 @@ function updateVisitDetails(payload) {
 
   return { success: true };
 }
+
+/**
+ * Handle Shift Actions from email buttons
+ */
+function processShiftAction(personId, personType, action) {
+  if (action === "Review") {
+    // Return a message that directs them to the web app login
+    return {
+      title: "Review Shifts",
+      message:
+        "Please log in to your Allevia Senior Care portal to review your individual shifts, or contact the office at 440-907-9599 if you need immediate assistance.",
+      color: "#dbeafe", // blue-100
+      icon: `<svg style="width: 40px; height: 40px; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.478 0-8.268-2.943-9.542-7z"></path></svg>`,
+    };
+  }
+
+  try {
+    const sheet = getOrCreateShiftSheet();
+    const range = sheet.getDataRange();
+    const values = range.getValues();
+    const headers = values[0];
+
+    const idCol =
+      personType === "client"
+        ? headers.indexOf("Client ID")
+        : headers.indexOf("Caregiver ID");
+    const statusCol =
+      personType === "client"
+        ? headers.indexOf("Client Shift Status")
+        : headers.indexOf("CG Shift Status");
+
+    if (idCol === -1 || statusCol === -1) {
+      throw new Error("Required columns not found in Shift History");
+    }
+
+    let updatedCount = 0;
+    const newStatus = action === "Confirm" ? "Confirmed" : "Declined";
+
+    for (let i = 1; i < values.length; i++) {
+      // Update any 'Pending' or empty status for this person
+      const currentStatus = values[i][statusCol];
+      if (
+        values[i][idCol] === personId &&
+        (currentStatus === "Pending" || !currentStatus)
+      ) {
+        sheet.getRange(i + 1, statusCol + 1).setValue(newStatus);
+        updatedCount++;
+      }
+    }
+
+    if (updatedCount === 0) {
+      return {
+        title: "No Pending Shifts",
+        message:
+          "We couldn't find any pending shifts that require your action. They may have already been confirmed or declined.",
+        color: "#fef3c7", // blue-100
+        icon: `<svg style="width: 40px; height: 40px; color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+      };
+    }
+
+    return {
+      title: `Shifts ${newStatus}`,
+      message: `Thank you for your response! We have ${newStatus.toLowerCase()} ${updatedCount} pending shift(s) on your account.`,
+      color: action === "Confirm" ? "#dcfce7" : "#fee2e2", // green-100 or red-100
+      icon:
+        action === "Confirm"
+          ? `<svg style="width: 40px; height: 40px; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`
+          : `<svg style="width: 40px; height: 40px; color: #dc2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`,
+    };
+  } catch (error) {
+    return {
+      title: "Error",
+      message:
+        "An error occurred while updating your shifts. Please contact the office at 440-907-9599.",
+      color: "#fee2e2",
+      icon: `<svg style="width: 40px; height: 40px; color: #dc2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+    };
+  }
+}
