@@ -367,7 +367,7 @@ function buildShiftHistoryRows(
         mileagePrice: shift.mileagePrice || "",
         confirmationIndicator:
           shift.confirmationIndicator ||
-          (segment.segmentNumber > 1 ? "Split" : "Confirmed"),
+          (segment.segmentNumber > 1 ? "Split" : "Unconfirmed"),
         invoiceTotal,
         scheduleNote: shift.notes || "",
         adminNote: shift.adminNote || "",
@@ -878,6 +878,7 @@ function saveShift(data) {
       "CG Shift Status": "Pending",
       "Client Shift Status": "Pending",
       "System Shift Status": "Pending",
+      "Confirmation Indicator": "Unconfirmed",
       "Created By": "System",
       "Created At": timestamp,
       "Last Modified By": "System",

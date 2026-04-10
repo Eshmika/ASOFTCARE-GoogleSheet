@@ -344,7 +344,7 @@
     }
 
     if (key === "confirmationIndicator") {
-      const isConfirmed = value === "Confirmed" || value === "";
+      const isConfirmed = value === "Confirmed";
       const iconClass = isConfirmed
         ? "ph-check-circle text-emerald-500 bg-emerald-50"
         : "ph-x-circle text-rose-500 bg-rose-50";
@@ -740,7 +740,7 @@
   }
 
   function toggleConfirmation(buttonEl, shiftId, currentStatus) {
-    const isConfirmed = currentStatus === "Confirmed" || currentStatus === "";
+    const isConfirmed = currentStatus === "Confirmed";
     const newStatus = isConfirmed ? "Unconfirmed" : "Confirmed";
 
     // Set loading state on button
