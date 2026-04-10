@@ -306,16 +306,30 @@ function sendCaregiverShiftApprovals(caregiverIds, shiftId = null) {
               <p style="font-size: 15px; color: #4b5563;">Your weekly/biweekly hours are ready for review. Please choose an action below for your pending shifts in the current pay period.</p>
               
               <!-- Action Buttons -->
-              <div style="margin: 30px 0; display: flex; flex-direction: column; gap: 12px; align-items: center;">
-                <a href="${confirmLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: #16a34a; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25); border: 1px solid #15803d;">
-                  ✅ Confirm All Shifts
+              <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin: 30px 0; text-align: center;">
+                <h3 style="margin: 0 0 20px 0; font-size: 17px; font-weight: 600; color: #1e293b;">Select an Option Below:</h3>
+                
+                <!-- Primary Action -->
+                <a href="${confirmLink}" style="display: inline-block; width: 100%; max-width: 320px; background-color: #10b981; color: #ffffff; padding: 16px 0; text-decoration: none; border-radius: 10px; font-weight: bold; font-size: 18px; margin-bottom: 12px; border-bottom: 3px solid #059669; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2), 0 2px 4px -1px rgba(16, 185, 129, 0.1);">
+                  <span style="font-size: 20px; margin-right: 6px; vertical-align: text-bottom;">✅</span> Confirm All Shifts
                 </a>
-                <a href="${reviewLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: #2563eb; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25); border: 1px solid #1d4ed8;">
-                  🔍 Review Details
-                </a>
-                <a href="${declineLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: white; color: #dc2626; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; border: 2px solid #fee2e2; box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);">
-                  ❌ Decline Shifts
-                </a>
+                
+                <!-- Secondary Actions -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 320px; margin: 0 auto;">
+                  <tr>
+                    <td width="48%" align="center">
+                      <a href="${reviewLink}" style="display: block; width: 100%; box-sizing: border-box; background-color: #ffffff; color: #2563eb; padding: 14px 5px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; border: 2px solid #bfdbfe;">
+                        🔍 Review Details
+                      </a>
+                    </td>
+                    <td width="4%"></td>
+                    <td width="48%" align="center">
+                      <a href="${declineLink}" style="display: block; width: 100%; box-sizing: border-box; background-color: #fff1f2; color: #e11d48; padding: 14px 5px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; border: 2px solid #fecdd3;">
+                        ❌ Decline Shifts
+                      </a>
+                    </td>
+                  </tr>
+                </table>
               </div>
               
               <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 25px 0;">
@@ -405,16 +419,30 @@ function sendClientShiftApprovals(clientIds, shiftId = null) {
               <p style="font-size: 15px; color: #4b5563;">Your caregiver’s hours for this week are ready for your review. Please choose an action below to approve or decline the visit times.</p>
 
               <!-- Action Buttons -->
-              <div style="margin: 30px 0; display: flex; flex-direction: column; gap: 12px; align-items: center;">
-                <a href="${confirmLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: #16a34a; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25); border: 1px solid #15803d;">
-                  ✅ Approve All Visits
+              <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin: 30px 0; text-align: center;">
+                <h3 style="margin: 0 0 20px 0; font-size: 17px; font-weight: 600; color: #1e293b;">Select an Option Below:</h3>
+                
+                <!-- Primary Action -->
+                <a href="${confirmLink}" style="display: inline-block; width: 100%; max-width: 320px; background-color: #10b981; color: #ffffff; padding: 16px 0; text-decoration: none; border-radius: 10px; font-weight: bold; font-size: 18px; margin-bottom: 12px; border-bottom: 3px solid #059669; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2), 0 2px 4px -1px rgba(16, 185, 129, 0.1);">
+                  <span style="font-size: 20px; margin-right: 6px; vertical-align: text-bottom;">✅</span> Approve All Visits
                 </a>
-                <a href="${reviewLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: #2563eb; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25); border: 1px solid #1d4ed8;">
-                  🔍 Review Times
-                </a>
-                <a href="${declineLink}" style="display: block; width: 80%; max-width: 300px; text-align: center; background-color: white; color: #dc2626; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; border: 2px solid #fee2e2; box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);">
-                  ❌ Decline Visits
-                </a>
+                
+                <!-- Secondary Actions -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 320px; margin: 0 auto;">
+                  <tr>
+                    <td width="48%" align="center">
+                      <a href="${reviewLink}" style="display: block; width: 100%; box-sizing: border-box; background-color: #ffffff; color: #2563eb; padding: 14px 5px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; border: 2px solid #bfdbfe;">
+                        🔍 Review Times
+                      </a>
+                    </td>
+                    <td width="4%"></td>
+                    <td width="48%" align="center">
+                      <a href="${declineLink}" style="display: block; width: 100%; box-sizing: border-box; background-color: #fff1f2; color: #e11d48; padding: 14px 5px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; border: 2px solid #fecdd3;">
+                        ❌ Decline Visits
+                      </a>
+                    </td>
+                  </tr>
+                </table>
               </div>
 
               <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 25px 0;">
