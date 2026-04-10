@@ -522,10 +522,16 @@
             .withSuccessHandler((res) => {
               if (res && res.success) {
                 if (caregiverId) {
-                  google.script.run.sendCaregiverShiftApprovals([caregiverId]);
+                  google.script.run.sendCaregiverShiftApprovals(
+                    [caregiverId],
+                    row.shiftId
+                  );
                 }
                 if (clientId) {
-                  google.script.run.sendClientShiftApprovals([clientId]);
+                  google.script.run.sendClientShiftApprovals(
+                    [clientId],
+                    row.shiftId
+                  );
                 }
                 Swal.fire(
                   "Confirmed!",
@@ -586,7 +592,7 @@
             .withFailureHandler((err) => {
               Swal.fire("Error", err.message, "error");
             })
-            .sendClientShiftApprovals([clientId]);
+            .sendClientShiftApprovals([clientId], row.shiftId);
         }
       });
       return;
@@ -628,7 +634,7 @@
             .withFailureHandler((err) => {
               Swal.fire("Error", err.message, "error");
             })
-            .sendCaregiverShiftApprovals([caregiverId]);
+            .sendCaregiverShiftApprovals([caregiverId], row.shiftId);
         }
       });
       return;

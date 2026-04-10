@@ -371,7 +371,8 @@ function doGet(e) {
     const result = processShiftAction(
       e.parameter.id,
       e.parameter.type,
-      e.parameter.action
+      e.parameter.action,
+      e.parameter.shiftId
     );
     return HtmlService.createHtmlOutput(
       `

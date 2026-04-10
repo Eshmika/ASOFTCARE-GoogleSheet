@@ -1064,7 +1064,7 @@ function updateVisitDetails(payload) {
 /**
  * Handle Shift Actions from email buttons
  */
-function processShiftAction(personId, personType, action) {
+function processShiftAction(personId, personType, action, specificShiftId) {
   if (action === "Review") {
     // Return a message that directs them to the web app login
     return {
@@ -1090,6 +1090,7 @@ function processShiftAction(personId, personType, action) {
       personType === "client"
         ? headers.indexOf("Client Shift Status")
         : headers.indexOf("CG Shift Status");
+    const shiftIdCol = headers.indexOf("Shift ID");
 
     if (idCol === -1 || statusCol === -1) {
       throw new Error("Required columns not found in Shift History");
@@ -1101,8 +1102,13 @@ function processShiftAction(personId, personType, action) {
     for (let i = 1; i < values.length; i++) {
       // Update any 'Pending' or empty status for this person
       const currentStatus = values[i][statusCol];
+      const matchPerson = values[i][idCol] === personId;
+      const matchShift =
+        !specificShiftId || values[i][shiftIdCol] == specificShiftId;
+
       if (
-        values[i][idCol] === personId &&
+        matchPerson &&
+        matchShift &&
         (currentStatus === "Pending" || !currentStatus)
       ) {
         sheet.getRange(i + 1, statusCol + 1).setValue(newStatus);

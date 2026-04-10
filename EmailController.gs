@@ -258,7 +258,7 @@ function sendRejectionEmail(caregiverId) {
   }
 }
 
-function sendCaregiverShiftApprovals(caregiverIds) {
+function sendCaregiverShiftApprovals(caregiverIds, shiftId = null) {
   try {
     if (!caregiverIds || caregiverIds.length === 0) {
       return { success: false, message: "No caregivers selected." };
@@ -282,9 +282,15 @@ function sendCaregiverShiftApprovals(caregiverIds) {
 
     selected.forEach((c) => {
       try {
-        const confirmLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=caregiver&action=Confirm`;
-        const declineLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=caregiver&action=Decline`;
-        const reviewLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=caregiver&action=Review`;
+        let confirmLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=caregiver&action=Confirm`;
+        let declineLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=caregiver&action=Decline`;
+        let reviewLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=caregiver&action=Review`;
+
+        if (shiftId) {
+          confirmLink += `&shiftId=${shiftId}`;
+          declineLink += `&shiftId=${shiftId}`;
+          reviewLink += `&shiftId=${shiftId}`;
+        }
 
         const htmlBody = `
           <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
@@ -351,7 +357,7 @@ function sendCaregiverShiftApprovals(caregiverIds) {
   }
 }
 
-function sendClientShiftApprovals(clientIds) {
+function sendClientShiftApprovals(clientIds, shiftId = null) {
   try {
     if (!clientIds || clientIds.length === 0) {
       return { success: false, message: "No clients selected." };
@@ -375,9 +381,15 @@ function sendClientShiftApprovals(clientIds) {
 
     selected.forEach((c) => {
       try {
-        const confirmLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=client&action=Confirm`;
-        const declineLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=client&action=Decline`;
-        const reviewLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=client&action=Review`;
+        let confirmLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=client&action=Confirm`;
+        let declineLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=client&action=Decline`;
+        let reviewLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=client&action=Review`;
+
+        if (shiftId) {
+          confirmLink += `&shiftId=${shiftId}`;
+          declineLink += `&shiftId=${shiftId}`;
+          reviewLink += `&shiftId=${shiftId}`;
+        }
 
         const htmlBody = `
           <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
