@@ -495,17 +495,142 @@
     }
 
     if (action === "confirm") {
-      Swal.fire("Info", "Confirm Shift action placeholder.", "info");
+      const caregiverId =
+        row.caregiverId ||
+        (row.caregiverName ? row.caregiverName.split(" / ")[1] : null);
+      const clientId =
+        row.clientId ||
+        (row.clientName ? row.clientName.split(" / ")[1] : null);
+
+      Swal.fire({
+        title: "Confirm Shift?",
+        text: "This will confirm the shift and automatically send approval emails to the client and caregiver.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#65c027",
+        confirmButtonText: "Yes, Confirm",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Confirming...",
+            text: "Please wait.",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+          });
+
+          google.script.run
+            .withSuccessHandler((res) => {
+              if (res && res.success) {
+                if (caregiverId) {
+                  google.script.run.sendCaregiverShiftApprovals([caregiverId]);
+                }
+                if (clientId) {
+                  google.script.run.sendClientShiftApprovals([clientId]);
+                }
+                Swal.fire(
+                  "Confirmed!",
+                  "Shift confirmed and emails have been sent.",
+                  "success"
+                );
+                refreshShiftHistory(); // Refreshes table so confirmation column turns green
+              } else {
+                Swal.fire(
+                  "Error",
+                  res?.message || "Failed to confirm shift",
+                  "error"
+                );
+              }
+            })
+            .withFailureHandler((err) => {
+              Swal.fire("Error", err.message, "error");
+            })
+            .toggleShiftConfirmation(row.shiftId, "Unconfirmed"); // Pass Unconfirmed to force state to Confirmed
+        }
+      });
       return;
     }
 
     if (action === "resend_client") {
-      Swal.fire("Info", "Resend Client Confirm action placeholder.", "info");
+      const clientId =
+        row.clientId ||
+        (row.clientName ? row.clientName.split(" / ")[1] : null);
+      if (!clientId) {
+        Swal.fire("Error", "No client ID found for this shift.", "error");
+        return;
+      }
+
+      Swal.fire({
+        title: "Resend Client Email?",
+        text: "This will resend the approval email to the client.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#65c027",
+        confirmButtonText: "Yes, Resend",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Sending...",
+            text: "Please wait.",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+          });
+
+          google.script.run
+            .withSuccessHandler((res) => {
+              Swal.fire(
+                "Sent!",
+                "Approval email has been resent to the client.",
+                "success"
+              );
+            })
+            .withFailureHandler((err) => {
+              Swal.fire("Error", err.message, "error");
+            })
+            .sendClientShiftApprovals([clientId]);
+        }
+      });
       return;
     }
 
     if (action === "resend_cg") {
-      Swal.fire("Info", "Resend Caregiver Confirm action placeholder.", "info");
+      const caregiverId =
+        row.caregiverId ||
+        (row.caregiverName ? row.caregiverName.split(" / ")[1] : null);
+      if (!caregiverId) {
+        Swal.fire("Error", "No caregiver ID found for this shift.", "error");
+        return;
+      }
+
+      Swal.fire({
+        title: "Resend Caregiver Email?",
+        text: "This will resend the approval email to the caregiver.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#65c027",
+        confirmButtonText: "Yes, Resend",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Sending...",
+            text: "Please wait.",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+          });
+
+          google.script.run
+            .withSuccessHandler((res) => {
+              Swal.fire(
+                "Sent!",
+                "Approval email has been resent to the caregiver.",
+                "success"
+              );
+            })
+            .withFailureHandler((err) => {
+              Swal.fire("Error", err.message, "error");
+            })
+            .sendCaregiverShiftApprovals([caregiverId]);
+        }
+      });
       return;
     }
 
