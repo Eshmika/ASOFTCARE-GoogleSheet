@@ -38,7 +38,6 @@
     { key: "createdAt", label: "Created At" },
     { key: "lastModifiedBy", label: "Last Modified By" },
     { key: "lastModifiedAt", label: "Last Modified At" },
-    { key: "confirmationIndicator", label: "Confirmation" },
   ];
 
   const shiftHistoryState = {
@@ -259,6 +258,13 @@
 
     tbody.innerHTML = payload.rows
       .map((row) => {
+        const isConfirmed = row.confirmationIndicator === "Confirmed";
+        const confirmBtnClass = isConfirmed
+          ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+          : "bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white";
+        const confirmIcon = isConfirmed ? "ph-check-circle" : "ph-x-circle";
+        const confirmLabel = isConfirmed ? "Confirmed" : "Confirm";
+
         return `
           <tr class="group hover:bg-gray-50/80 transition-colors">
             ${SHIFT_HISTORY_COLUMNS.map((column) =>
@@ -278,14 +284,13 @@
                 </button>
 
                 <!-- Confirm Action -->
-                <button type="button" title="Confirm Shift" onclick='openShiftHistoryAction("confirm", ${JSON.stringify(
-                  row
-                ).replace(
-                  /'/g,
-                  "&#39;"
-                )})' class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white hover:shadow-md transition-all text-xs font-bold uppercase tracking-wider">
-                  <i class="ph ph-check-circle text-sm"></i>
-                  <span class="hidden 2xl:inline">Confirm</span>
+                <button type="button" title="Toggle Confirmation" onclick="toggleConfirmation(this, '${
+                  row.shiftId
+                }', '${
+          row.confirmationIndicator
+        }')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md ${confirmBtnClass} hover:shadow-md transition-all text-xs font-bold uppercase tracking-wider">
+                  <i class="ph ${confirmIcon} text-sm"></i>
+                  <span class="hidden 2xl:inline">${confirmLabel}</span>
                 </button>
 
                 <div class="h-6 w-px bg-gray-200 mx-0.5"></div>
@@ -341,22 +346,6 @@
 
     if (key === "invoiceStatus") {
       return `<td class="${base}">${renderInvoiceBadge(value)}</td>`;
-    }
-
-    if (key === "confirmationIndicator") {
-      const isConfirmed = value === "Confirmed";
-      const iconClass = isConfirmed
-        ? "ph-check-circle text-emerald-500 bg-emerald-50"
-        : "ph-x-circle text-rose-500 bg-rose-50";
-
-      return `<td class="${base}">
-        <button type="button" 
-          onclick="toggleConfirmation(this, '${row.shiftId}', '${value}')"
-          class="flex items-center justify-center p-1.5 rounded-lg transition-colors hover:opacity-80"
-          title="Toggle Confirmation">
-          <i class="ph ${iconClass} text-xl rounded-full"></i>
-        </button>
-      </td>`;
     }
 
     if (key === "systemCheck") {
@@ -491,68 +480,6 @@
       } else {
         console.warn("populateEditShiftHistoryView is not defined.");
       }
-      return;
-    }
-
-    if (action === "confirm") {
-      const caregiverId =
-        row.caregiverId ||
-        (row.caregiverName ? row.caregiverName.split(" / ")[1] : null);
-      const clientId =
-        row.clientId ||
-        (row.clientName ? row.clientName.split(" / ")[1] : null);
-
-      Swal.fire({
-        title: "Confirm Shift?",
-        text: "This will confirm the shift and automatically send approval emails to the client and caregiver.",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#65c027",
-        confirmButtonText: "Yes, Confirm",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Swal.fire({
-            title: "Confirming...",
-            text: "Please wait.",
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading(),
-          });
-
-          google.script.run
-            .withSuccessHandler((res) => {
-              if (res && res.success) {
-                if (caregiverId) {
-                  google.script.run.sendCaregiverShiftApprovals(
-                    [caregiverId],
-                    row.shiftId
-                  );
-                }
-                if (clientId) {
-                  google.script.run.sendClientShiftApprovals(
-                    [clientId],
-                    row.shiftId
-                  );
-                }
-                Swal.fire(
-                  "Confirmed!",
-                  "Shift confirmed and emails have been sent.",
-                  "success"
-                );
-                refreshShiftHistory(); // Refreshes table so confirmation column turns green
-              } else {
-                Swal.fire(
-                  "Error",
-                  res?.message || "Failed to confirm shift",
-                  "error"
-                );
-              }
-            })
-            .withFailureHandler((err) => {
-              Swal.fire("Error", err.message, "error");
-            })
-            .toggleShiftConfirmation(row.shiftId, "Unconfirmed"); // Pass Unconfirmed to force state to Confirmed
-        }
-      });
       return;
     }
 
@@ -748,47 +675,123 @@
   function toggleConfirmation(buttonEl, shiftId, currentStatus) {
     const isConfirmed = currentStatus === "Confirmed";
     const newStatus = isConfirmed ? "Unconfirmed" : "Confirmed";
+    const row = shiftHistoryState.rows.find((r) => r.shiftId === shiftId);
 
-    // Set loading state on button
-    const iconEl = buttonEl.querySelector("i");
-    const originalClass = iconEl.className;
-    iconEl.className = "ph ph-spinner animate-spin text-xl text-gray-400";
-    buttonEl.disabled = true;
+    const promptTitle = isConfirmed ? "Unconfirm Shift?" : "Confirm Shift?";
+    const promptText = isConfirmed
+      ? "Are you sure you want to unconfirm this shift?"
+      : "This will confirm the shift and automatically send approval emails to the client and caregiver.";
+    const confirmBtnText = isConfirmed ? "Yes, Unconfirm" : "Yes, Confirm";
+    const confirmBtnColor = isConfirmed ? "#d33" : "#65c027";
 
-    google.script.run
-      .withSuccessHandler((res) => {
-        buttonEl.disabled = false;
-        if (res && res.success) {
-          // Update the DOM to reflect new state
-          const updatedIconClass =
-            res.newStatus === "Confirmed"
-              ? "ph-check-circle text-emerald-500 bg-emerald-50"
-              : "ph-x-circle text-rose-500 bg-rose-50";
+    Swal.fire({
+      title: promptTitle,
+      text: promptText,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: confirmBtnColor,
+      confirmButtonText: confirmBtnText,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Set loading state on button
+        const iconEl = buttonEl.querySelector("i");
+        const originalClass = iconEl.className;
+        iconEl.className = "ph ph-spinner animate-spin text-sm";
+        buttonEl.disabled = true;
 
-          iconEl.className = `ph ${updatedIconClass} text-xl rounded-full`;
+        google.script.run
+          .withSuccessHandler((res) => {
+            buttonEl.disabled = false;
+            if (res && res.success) {
+              const isNowConfirmed = res.newStatus === "Confirmed";
 
-          // Update the onclick handler to pass the new status
-          buttonEl.setAttribute(
-            "onclick",
-            `toggleConfirmation(this, '${shiftId}', '${res.newStatus}')`
-          );
+              // Send emails if confirming
+              if (isNowConfirmed && row) {
+                const caregiverId =
+                  row.caregiverId ||
+                  (row.caregiverName
+                    ? row.caregiverName.split(" / ")[1]
+                    : null);
+                const clientId =
+                  row.clientId ||
+                  (row.clientName ? row.clientName.split(" / ")[1] : null);
 
-          // Update local state if it's cached in rows
-          const row = shiftHistoryState.rows.find((r) => r.shiftId === shiftId);
-          if (row) {
-            row.confirmationIndicator = res.newStatus;
-          }
-        } else {
-          iconEl.className = originalClass;
-          Swal.fire("Error", "Failed to update confirmation status.", "error");
-        }
-      })
-      .withFailureHandler((err) => {
-        buttonEl.disabled = false;
-        iconEl.className = originalClass;
-        Swal.fire("Error", err.message, "error");
-      })
-      .toggleShiftConfirmation(shiftId, currentStatus);
+                if (caregiverId) {
+                  google.script.run.sendCaregiverShiftApprovals(
+                    [caregiverId],
+                    row.shiftId
+                  );
+                }
+                if (clientId) {
+                  google.script.run.sendClientShiftApprovals(
+                    [clientId],
+                    row.shiftId
+                  );
+                }
+
+                Swal.fire({
+                  toast: true,
+                  position: "top-end",
+                  showConfirmButton: false,
+                  timer: 3000,
+                  icon: "success",
+                  title: "Confirmed & emails sent!",
+                });
+              } else if (!isNowConfirmed) {
+                Swal.fire({
+                  toast: true,
+                  position: "top-end",
+                  showConfirmButton: false,
+                  timer: 3000,
+                  icon: "info",
+                  title: "Shift unconfirmed",
+                });
+              }
+
+              // Update the DOM to reflect new state
+              const updatedIconClass = isNowConfirmed
+                ? "ph-check-circle"
+                : "ph-x-circle";
+              const updatedBtnClass = isNowConfirmed
+                ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                : "bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white";
+              const confirmLabel = isNowConfirmed ? "Confirmed" : "Confirm";
+
+              iconEl.className = `ph ${updatedIconClass} text-sm`;
+              buttonEl.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-md ${updatedBtnClass} hover:shadow-md transition-all text-xs font-bold uppercase tracking-wider`;
+
+              const spanEl = buttonEl.querySelector("span");
+              if (spanEl) {
+                spanEl.textContent = confirmLabel;
+              }
+
+              // Update the onclick handler to pass the new status
+              buttonEl.setAttribute(
+                "onclick",
+                `toggleConfirmation(this, '${shiftId}', '${res.newStatus}')`
+              );
+
+              // Update local state
+              if (row) {
+                row.confirmationIndicator = res.newStatus;
+              }
+            } else {
+              iconEl.className = originalClass;
+              Swal.fire(
+                "Error",
+                res?.message || "Failed to update confirmation status.",
+                "error"
+              );
+            }
+          })
+          .withFailureHandler((err) => {
+            buttonEl.disabled = false;
+            iconEl.className = originalClass;
+            Swal.fire("Error", err.message, "error");
+          })
+          .toggleShiftConfirmation(shiftId, currentStatus);
+      }
+    });
   }
 
   window._currentEditRow = null;
