@@ -346,15 +346,19 @@ function buildShiftHistoryRows(
         shiftId: shift.id,
         clientId: shift.clientId,
         caregiverId: shift.caregiverId,
-        invoiceId: buildInvoiceId(period.start, settings.payPeriodMode),
+        invoiceId: buildInvoiceId(filterPeriod.start, settings.payPeriodMode),
         invoiceStatus: shift.invoiceStatus || "Unpaid",
         payPeriodType: settings.payPeriodMode,
         payPeriodStart: Utilities.formatDate(
-          period.start,
+          filterPeriod.start,
           timeZone,
           "yyyy-MM-dd"
         ),
-        payPeriodEnd: Utilities.formatDate(period.end, timeZone, "yyyy-MM-dd"),
+        payPeriodEnd: Utilities.formatDate(
+          filterPeriod.end,
+          timeZone,
+          "yyyy-MM-dd"
+        ),
         segmentNumber: segment.segmentNumber,
         errorFlag,
         systemCheck,
