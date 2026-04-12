@@ -173,8 +173,10 @@
 
         const sDate = document.getElementById("shiftHistoryStartDate");
         const eDate = document.getElementById("shiftHistoryEndDate");
-        if (sDate && payload.period?.start) sDate.value = payload.period.start;
-        if (eDate && payload.period?.end) eDate.value = payload.period.end;
+        if (sDate && !sDate.value && payload.period?.start)
+          sDate.value = payload.period.start;
+        if (eDate && !eDate.value && payload.period?.end)
+          eDate.value = payload.period.end;
 
         renderShiftHistory(payload);
       })

@@ -164,10 +164,36 @@ function getShiftHistoryPeriod(anchorDate, payPeriodMode) {
     anchorDate instanceof Date ? new Date(anchorDate) : new Date();
   normalizedAnchor.setHours(0, 0, 0, 0);
 
-  const periodStart = startOfWeekSunday(normalizedAnchor);
+  let periodStart;
   const periodLengthDays = payPeriodMode === "Biweekly" ? 14 : 7;
+
+  if (payPeriodMode === "Biweekly") {
+    // Anchor to April 5, 2026 (Sunday)
+    const baseAnchor = new Date(2026, 3, 5); // Month is 0-indexed: 3 = April
+    baseAnchor.setHours(0, 0, 0, 0);
+
+    // Calculate difference in days safely without daylight saving timezone shifts
+    // by using Math.floor after shifting the time correctly or Math.round
+    const diffTime = normalizedAnchor.getTime() - baseAnchor.getTime();
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+    const cycles = Math.floor(diffDays / 14);
+    periodStart = new Date(baseAnchor);
+    periodStart.setDate(periodStart.getDate() + cycles * 14);
+  } else {
+    periodStart = startOfWeekSunday(normalizedAnchor);
+  }
+
   const periodEnd = new Date(periodStart);
-  periodEnd.setDate(periodStart.getDate() + periodLengthDays - 1);
+  // Subtract 1 because 14 days length is inclusive of start day, so +13 stops at 11:59pm on 14th day.
+  // Wait, the user specifically mentioned "Apr5 th to Apr 19". April 5 + 14 = April 19.
+  // So we add 'periodLengthDays' directly to match the user's specific requested text (Apr 19) instead of -1.
+  if (payPeriodMode === "Biweekly") {
+    periodEnd.setDate(periodStart.getDate() + 14);
+  } else {
+    periodEnd.setDate(periodStart.getDate() + periodLengthDays - 1);
+  }
+
   periodEnd.setHours(23, 59, 59, 999);
 
   return {
@@ -224,24 +250,26 @@ function buildShiftHistoryRows(
   const selectedCaregiverId = String(filters.caregiverId || "all");
   const selectedSystemCheck = String(filters.systemCheck || "all");
 
-  let period;
+  const filterCurrentPeriod = getShiftHistoryPeriod(
+    new Date(),
+    settings.payPeriodMode
+  );
+
+  const fixedBiweeklyPeriod = getShiftHistoryPeriod(new Date(), "Biweekly");
+
+  let filterPeriod;
   if (filters.startDate && filters.endDate) {
     const start = new Date(`${filters.startDate}T00:00:00`);
     const end = new Date(`${filters.endDate}T23:59:59`);
-    period = {
+    filterPeriod = {
       start: start,
       end: end,
-      label: `${Utilities.formatDate(
-        start,
-        timeZone,
-        "MMM d, yyyy"
-      )} - ${Utilities.formatDate(end, timeZone, "MMM d, yyyy")}`,
     };
   } else if (filters.startDate) {
     const start = new Date(`${filters.startDate}T00:00:00`);
-    period = getShiftHistoryPeriod(start, settings.payPeriodMode);
+    filterPeriod = getShiftHistoryPeriod(start, settings.payPeriodMode);
   } else {
-    period = getShiftHistoryPeriod(new Date(), settings.payPeriodMode);
+    filterPeriod = filterCurrentPeriod;
   }
 
   const rows = [];
@@ -287,12 +315,12 @@ function buildShiftHistoryRows(
 
     segments.forEach((segment) => {
       const segmentDateKey = toDateKey(segment.segmentStart);
-      const periodStartKey = toDateKey(period.start);
-      const periodEndKey = toDateKey(period.end);
+      const periodStartKey = toDateKey(filterPeriod.start);
+      const periodEndKey = toDateKey(filterPeriod.end);
 
       if (
-        segment.segmentStart < period.start ||
-        segment.segmentStart > period.end
+        segment.segmentStart < filterPeriod.start ||
+        segment.segmentStart > filterPeriod.end
       ) {
         return;
       }
@@ -425,9 +453,9 @@ function buildShiftHistoryRows(
 
   return {
     period: {
-      start: Utilities.formatDate(period.start, timeZone, "yyyy-MM-dd"),
-      end: Utilities.formatDate(period.end, timeZone, "yyyy-MM-dd"),
-      label: period.label,
+      start: Utilities.formatDate(filterPeriod.start, timeZone, "yyyy-MM-dd"),
+      end: Utilities.formatDate(filterPeriod.end, timeZone, "yyyy-MM-dd"),
+      label: fixedBiweeklyPeriod.label,
       payPeriodMode: settings.payPeriodMode,
     },
     rows: filteredRows,
@@ -469,12 +497,13 @@ function getShiftHistory(data) {
     const timeZone = Session.getScriptTimeZone();
     const settingsMode = getShiftHistoryPayPeriodSetting();
     const period = getShiftHistoryPeriod(new Date(), settingsMode);
+    const fixedBiweeklyPeriod = getShiftHistoryPeriod(new Date(), "Biweekly");
 
     return {
       period: {
         start: Utilities.formatDate(period.start, timeZone, "yyyy-MM-dd"),
         end: Utilities.formatDate(period.end, timeZone, "yyyy-MM-dd"),
-        label: period.label,
+        label: fixedBiweeklyPeriod.label,
         payPeriodMode: settingsMode,
       },
       rows: [],
