@@ -427,6 +427,44 @@
       )}</td>`;
     }
 
+    if (
+      ["cgShiftStatus", "clientShiftStatus", "systemShiftStatus"].includes(key)
+    ) {
+      const vStr = String(value || "").trim();
+      const lowerValue = vStr.toLowerCase();
+      let badgeHtml = "";
+
+      if (lowerValue === "pending") {
+        badgeHtml = `
+          <div class="inline-flex items-center gap-1.5 border-b-[2px] border-yellow-400 pb-0.5 group-hover:-translate-y-0.5 transition-all">
+            <i class="ph-fill ph-clock text-yellow-500 text-[13px]"></i>
+            <span class="text-yellow-700 font-bold text-[11px] uppercase tracking-wider">${escapeHtml(
+              vStr
+            )}</span>
+          </div>`;
+      } else if (lowerValue === "confirm" || lowerValue === "confirmed") {
+        badgeHtml = `
+          <div class="inline-flex items-center gap-1.5 border-b-[2px] border-emerald-400 pb-0.5 group-hover:-translate-y-0.5 transition-all">
+            <i class="ph-fill ph-check-circle text-emerald-500 text-[13px]"></i>
+            <span class="text-emerald-700 font-bold text-[11px] uppercase tracking-wider">${escapeHtml(
+              vStr
+            )}</span>
+          </div>`;
+      } else if (lowerValue === "decline" || lowerValue === "declined") {
+        badgeHtml = `
+          <div class="inline-flex items-center gap-1.5 border-b-[2px] border-rose-400 pb-0.5 group-hover:-translate-y-0.5 transition-all">
+            <i class="ph-fill ph-x-circle text-rose-500 text-[13px]"></i>
+            <span class="text-rose-700 font-bold text-[11px] uppercase tracking-wider">${escapeHtml(
+              vStr
+            )}</span>
+          </div>`;
+      } else {
+        badgeHtml = `<span class="text-gray-700">${escapeHtml(vStr)}</span>`;
+      }
+
+      return `<td class="${base}">${badgeHtml}</td>`;
+    }
+
     return `<td class="${base} text-gray-700">${escapeHtml(
       String(value || "")
     )}</td>`;
