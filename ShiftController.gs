@@ -1178,3 +1178,36 @@ function processShiftAction(personId, personType, action, specificShiftId) {
     };
   }
 }
+
+function checkShiftOverlap(clientId, startDate, clockIn, clockOut) {
+  try {
+    const shifts = getShifts(startDate, startDate);
+
+    // Convert new clock times to minutes
+    const [inH, inM] = clockIn.split(":").map(Number);
+    const [outH, outM] = clockOut.split(":").map(Number);
+    const newStartMins = inH * 60 + inM;
+    let newEndMins = outH * 60 + outM;
+    if (newEndMins <= newStartMins) newEndMins += 24 * 60; // overnight
+
+    for (const shift of shifts) {
+      if (shift.clientId === clientId && shift.status !== "Cancelled") {
+        const [sInH, sInM] = shift.clockIn.split(":").map(Number);
+        const [sOutH, sOutM] = shift.clockOut.split(":").map(Number);
+
+        const existStartMins = sInH * 60 + sInM;
+        let existEndMins = sOutH * 60 + sOutM;
+        if (existEndMins <= existStartMins) existEndMins += 24 * 60;
+
+        // Check for overlap
+        if (newStartMins < existEndMins && newEndMins > existStartMins) {
+          return true; // Overlap detected
+        }
+      }
+    }
+    return false;
+  } catch (e) {
+    Logger.log("Error checking overlap: " + e.message);
+    return false; // let it pass on error rather than block completely
+  }
+}

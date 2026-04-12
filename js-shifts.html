@@ -43,6 +43,13 @@
 
     // Reset form state slightly
     resetShiftFormState();
+
+    // Default start date to today to prevent past dates and set min
+    const todayStr = new Date().toISOString().split("T")[0];
+    const startDateInput = document.querySelector('input[name="startDate"]');
+    const endDateInput = document.querySelector('input[name="endDate"]');
+    if (startDateInput) startDateInput.setAttribute("min", todayStr);
+    if (endDateInput) endDateInput.setAttribute("min", todayStr);
   }
 
   function resetShiftFormState() {
@@ -260,8 +267,12 @@
       "$" + totalSoftcare.toFixed(2);
   }
 
-  function submitShift(e) {
-    e.preventDefault();
+  function submitShift(
+    e,
+    confirmedOverlap = false,
+    secondCaregiverPolicy = null
+  ) {
+    if (e) e.preventDefault();
     const btn = document.getElementById("btnSaveShift");
     const originalText = btn.innerHTML;
 
@@ -275,7 +286,30 @@
     if (!data.caregiverId)
       data.caregiverId = document.getElementById("shiftCaregiver").value;
 
+    // Validate past dates for new shifts
+    const isUpdate = !!data.shiftId;
+    if (!isUpdate) {
+      if (!data.startDate) {
+        Swal.fire("Warning", "Start date is required.", "warning");
+        return;
+      }
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const parts = data.startDate.split("-");
+      const sDate = new Date(parts[0], parts[1] - 1, parts[2]);
+      if (sDate < today) {
+        Swal.fire({
+          icon: "warning",
+          title: "Past Date Error",
+          text: "You cannot schedule a new shift in the past. Please select today or a future date.",
+          confirmButtonColor: "#3b82f6",
+        });
+        return;
+      }
+    }
+
     // Add calculated values
+    data.secondCaregiverPolicy = secondCaregiverPolicy; // e.g. "Full", "NoCharge", "Custom"
     data.agencyShare = document.getElementById("agencyShare").value;
     data.softcareShare = document.getElementById("softcareShare").value;
     data.totalClientPrice = document
@@ -291,11 +325,85 @@
       .getElementById("totalSoftcarePrice")
       .value.replace("$", "");
 
+    // Phase 2: Overlap Check
+    if (!isUpdate && !confirmedOverlap) {
+      btn.disabled = true;
+      btn.innerHTML =
+        '<i class="ph ph-spinner animate-spin"></i> Checking Schedule...';
+
+      google.script.run
+        .withSuccessHandler((hasOverlap) => {
+          if (hasOverlap) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+
+            Swal.fire({
+              title:
+                '<div class="text-orange-500"><i class="ph ph-calendar-warning text-4xl"></i><br/>Schedule Conflict</div>',
+              html: `
+                <div class="text-sm text-gray-600 mb-4">
+                  This client already has a shift scheduled at this time. Are you assigning a <b>Second Caregiver</b>?
+                  <br><br>Who will be charged for this overlapping shift?
+                </div>
+                <div class="space-y-3 text-left">
+                  <label class="flex items-center p-3 border rounded hover:bg-gray-50 cursor-pointer">
+                    <input type="radio" name="overlapCharge" value="Full" class="mr-3" checked> 
+                    <span><b>Client pays full rate</b><br><small class="text-gray-500">Duplicate charge</small></span>
+                  </label>
+                  <label class="flex items-center p-3 border rounded hover:bg-gray-50 cursor-pointer">
+                    <input type="radio" name="overlapCharge" value="NoCharge" class="mr-3"> 
+                    <span><b>No Extra Charge to Client</b><br><small class="text-gray-500">Client Rate becomes $0</small></span>
+                  </label>
+                </div>
+              `,
+              showCancelButton: true,
+              confirmButtonText: "Assign Second Caregiver",
+              cancelButtonText: "Cancel Shift",
+              confirmButtonColor: "#f97316",
+              preConfirm: () => {
+                const choice = document.querySelector(
+                  'input[name="overlapCharge"]:checked'
+                ).value;
+                return choice;
+              },
+            }).then((result) => {
+              if (result.isConfirmed) {
+                const policy = result.value;
+                if (policy === "NoCharge") {
+                  document.getElementById("clientRate").value = "0";
+                  calculateShiftCosts(); // Updates UI and values
+                }
+                // Resubmit with override
+                submitShift(null, true, policy);
+              }
+            });
+            return;
+          } else {
+            // No overlap, proceed with save
+            proceedWithSave(btn, originalText, isUpdate, data);
+          }
+        })
+        .withFailureHandler((err) => {
+          Swal.fire("Error", "Validation failed: " + err.message, "error");
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+        })
+        .checkShiftOverlap(
+          data.clientId,
+          data.startDate,
+          data.clockIn,
+          data.clockOut
+        );
+      return;
+    }
+
+    proceedWithSave(btn, originalText, isUpdate, data);
+  }
+
+  function proceedWithSave(btn, originalText, isUpdate, data) {
+    const handler = isUpdate ? "updateShift" : "saveShift";
     btn.disabled = true;
     btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Saving...';
-
-    const isUpdate = !!data.shiftId;
-    const handler = isUpdate ? "updateShift" : "saveShift";
 
     google.script.run
       .withSuccessHandler(() => {
@@ -306,15 +414,7 @@
             : "Shift saved successfully!",
           "success"
         );
-        if (isUpdate) {
-          // Return to calendar? Or just reset?
-          // Often better to stay or offer to go back.
-          // For now, let's reset to add mode.
-          resetShiftFormState();
-        } else {
-          resetShiftFormState();
-        }
-
+        resetShiftFormState();
         btn.disabled = false;
         btn.innerHTML = originalText;
       })
