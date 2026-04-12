@@ -389,7 +389,7 @@ function doGet(e) {
           <p style="color: #4b5563; line-height: 1.5; margin-bottom: 20px;">
             ${result.message}
           </p>
-          <a href="${ScriptApp.getService().getUrl()}" style="display:inline-block; padding: 10px 20px; background-color: #65c027; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Return Home</a>
+          <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">Action done. You may now close this window.</p>
         </div>
       </div>
     `
