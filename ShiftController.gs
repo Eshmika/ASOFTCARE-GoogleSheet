@@ -255,8 +255,6 @@ function buildShiftHistoryRows(
     settings.payPeriodMode
   );
 
-  const fixedBiweeklyPeriod = getShiftHistoryPeriod(new Date(), "Biweekly");
-
   let filterPeriod;
   if (filters.startDate && filters.endDate) {
     const start = new Date(`${filters.startDate}T00:00:00`);
@@ -325,7 +323,10 @@ function buildShiftHistoryRows(
         return;
       }
 
-      const client = clientMap[shift.clientId] || { name: "Unknown Client" };
+      const client = clientMap[shift.clientId] || {
+        name: "Unknown Client",
+        type: "",
+      };
       const caregiver = caregiverMap[shift.caregiverId] || {
         name: "Unknown Caregiver",
       };
@@ -364,6 +365,8 @@ function buildShiftHistoryRows(
         systemCheck,
         clientName: `${client.name} / ${shift.clientId}`,
         caregiverName: `${caregiver.name} / ${shift.caregiverId}`,
+        clientType: client.type || "--",
+        paymentMethod: client.type || "--",
         evv: shift.evv || "GPS",
         scheduledTime:
           shift.schedIn && shift.schedOut
@@ -447,6 +450,8 @@ function buildShiftHistoryRows(
       row.billingType,
       row.serviceType,
       row.shiftType,
+      row.clientType,
+      row.paymentMethod,
     ]
       .join(" ")
       .toLowerCase();
@@ -455,11 +460,17 @@ function buildShiftHistoryRows(
     return clientMatches && caregiverMatches && systemMatches && searchMatches;
   });
 
+  const periodLabel = `${Utilities.formatDate(
+    filterPeriod.start,
+    timeZone,
+    "MMM d, yyyy"
+  )} - ${Utilities.formatDate(filterPeriod.end, timeZone, "MMM d, yyyy")}`;
+
   return {
     period: {
       start: Utilities.formatDate(filterPeriod.start, timeZone, "yyyy-MM-dd"),
       end: Utilities.formatDate(filterPeriod.end, timeZone, "yyyy-MM-dd"),
-      label: fixedBiweeklyPeriod.label,
+      label: periodLabel,
       payPeriodMode: settings.payPeriodMode,
     },
     rows: filteredRows,
@@ -501,13 +512,12 @@ function getShiftHistory(data) {
     const timeZone = Session.getScriptTimeZone();
     const settingsMode = getShiftHistoryPayPeriodSetting();
     const period = getShiftHistoryPeriod(new Date(), settingsMode);
-    const fixedBiweeklyPeriod = getShiftHistoryPeriod(new Date(), "Biweekly");
 
     return {
       period: {
         start: Utilities.formatDate(period.start, timeZone, "yyyy-MM-dd"),
         end: Utilities.formatDate(period.end, timeZone, "yyyy-MM-dd"),
-        label: fixedBiweeklyPeriod.label,
+        label: period.label,
         payPeriodMode: settingsMode,
       },
       rows: [],

@@ -1,0 +1,532 @@
+<script>
+  const invoiceState = {
+    payPeriodMode: "Weekly",
+    period: null,
+    rows: [],
+    loading: false,
+  };
+
+  function loadInvoiceView() {
+    setupInvoiceToolbarActions();
+
+    google.script.run
+      .withSuccessHandler((settings) => {
+        invoiceState.payPeriodMode = settings.payPeriodMode || "Weekly";
+        loadInvoiceLists();
+        refreshInvoiceView();
+      })
+      .getInvoiceSettings();
+  }
+
+  function setupInvoiceToolbarActions() {
+    const cgBtn = document.getElementById("btnInvoiceCaregivers");
+    const clBtn = document.getElementById("btnInvoiceClients");
+
+    if (cgBtn && !cgBtn.dataset.bound) {
+      cgBtn.addEventListener("click", () => sendInvoiceEmails("caregiver"));
+      cgBtn.dataset.bound = "1";
+    }
+
+    if (clBtn && !clBtn.dataset.bound) {
+      clBtn.addEventListener("click", () => sendInvoiceEmails("client"));
+      clBtn.dataset.bound = "1";
+    }
+  }
+
+  function loadInvoiceLists() {
+    const caregiverSelect = document.getElementById("invoiceCaregiverFilter");
+    const clientSelect = document.getElementById("invoiceClientFilter");
+
+    if (caregiverSelect) {
+      caregiverSelect.innerHTML = '<option value="all">All Caregivers</option>';
+    }
+    if (clientSelect) {
+      clientSelect.innerHTML = '<option value="all">All Clients</option>';
+    }
+
+    google.script.run
+      .withSuccessHandler((data) => {
+        const active = (data || []).filter(
+          (item) => String(item.status || "").toLowerCase() === "active"
+        );
+        if (!caregiverSelect) return;
+
+        active.forEach((item) => {
+          const option = document.createElement("option");
+          option.value = item.id;
+          option.textContent = `${item.name} / ${item.id}`;
+          caregiverSelect.appendChild(option);
+        });
+      })
+      .getCaregiverList();
+
+    google.script.run
+      .withSuccessHandler((data) => {
+        const active = (data || []).filter(
+          (item) => String(item.status || "").toLowerCase() === "active"
+        );
+        if (!clientSelect) return;
+
+        active.forEach((item) => {
+          const option = document.createElement("option");
+          option.value = item.id;
+          option.textContent = `${item.name} / ${item.id}`;
+          clientSelect.appendChild(option);
+        });
+      })
+      .getClientList();
+  }
+
+  function getInvoiceFilters() {
+    return {
+      startDate: document.getElementById("invoiceStartDate")?.value || "",
+      endDate: document.getElementById("invoiceEndDate")?.value || "",
+      caregiverId:
+        document.getElementById("invoiceCaregiverFilter")?.value || "all",
+      clientId: document.getElementById("invoiceClientFilter")?.value || "all",
+      search: document.getElementById("invoiceSearch")?.value || "",
+      clientType:
+        document.getElementById("invoiceClientTypeFilter")?.value || "all",
+      paymentMethod:
+        document.getElementById("invoicePaymentMethodFilter")?.value || "all",
+    };
+  }
+
+  function refreshInvoiceView() {
+    const tbody = document.getElementById("invoiceTbody");
+    const emptyState = document.getElementById("invoiceEmptyState");
+    if (!tbody) return;
+
+    const filters = getInvoiceFilters();
+    invoiceState.loading = true;
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="13" class="px-6 py-16 text-center text-gray-400">Loading invoices...</td>
+      </tr>`;
+    if (emptyState) emptyState.classList.add("hidden");
+
+    google.script.run
+      .withSuccessHandler((payload) => {
+        invoiceState.loading = false;
+        if (!payload) {
+          renderInvoiceRows({ rows: [], period: null }, filters);
+          return;
+        }
+
+        invoiceState.period = payload.period || null;
+        invoiceState.rows = payload.rows || [];
+
+        const sDate = document.getElementById("invoiceStartDate");
+        const eDate = document.getElementById("invoiceEndDate");
+        if (sDate && !sDate.value && payload.period?.start) {
+          sDate.value = payload.period.start;
+        }
+        if (eDate && !eDate.value && payload.period?.end) {
+          eDate.value = payload.period.end;
+        }
+
+        populateInvoiceDynamicFilters(invoiceState.rows, filters);
+        renderInvoiceRows(payload, filters);
+      })
+      .withFailureHandler((error) => {
+        invoiceState.loading = false;
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="13" class="px-6 py-16 text-center text-red-500">Unable to load invoices: ${invoiceEscapeHtml(
+              error.message || "Unknown error"
+            )}</td>
+          </tr>`;
+        if (emptyState) emptyState.classList.add("hidden");
+      })
+      .getInvoiceHistory({
+        startDate: filters.startDate,
+        endDate: filters.endDate,
+        caregiverId: filters.caregiverId,
+        clientId: filters.clientId,
+        search: filters.search,
+      });
+  }
+
+  function populateInvoiceDynamicFilters(rows, currentFilters) {
+    const clientTypeSelect = document.getElementById("invoiceClientTypeFilter");
+    const paymentMethodSelect = document.getElementById(
+      "invoicePaymentMethodFilter"
+    );
+    if (!clientTypeSelect || !paymentMethodSelect) return;
+
+    const selectedClientType = currentFilters.clientType || "all";
+    const selectedPaymentMethod = currentFilters.paymentMethod || "all";
+
+    const clientTypes = [...new Set((rows || []).map((row) => row.clientType))]
+      .map((v) => String(v || "").trim())
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b));
+
+    const paymentMethods = [
+      ...new Set((rows || []).map((row) => row.paymentMethod)),
+    ]
+      .map((v) => String(v || "").trim())
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b));
+
+    clientTypeSelect.innerHTML =
+      '<option value="all">All Client Types</option>';
+    clientTypes.forEach((type) => {
+      const option = document.createElement("option");
+      option.value = type;
+      option.textContent = type;
+      clientTypeSelect.appendChild(option);
+    });
+
+    paymentMethodSelect.innerHTML =
+      '<option value="all">All Payment Types</option>';
+    paymentMethods.forEach((method) => {
+      const option = document.createElement("option");
+      option.value = method;
+      option.textContent = method;
+      paymentMethodSelect.appendChild(option);
+    });
+
+    clientTypeSelect.value =
+      selectedClientType === "all" || clientTypes.includes(selectedClientType)
+        ? selectedClientType
+        : "all";
+
+    paymentMethodSelect.value =
+      selectedPaymentMethod === "all" ||
+      paymentMethods.includes(selectedPaymentMethod)
+        ? selectedPaymentMethod
+        : "all";
+  }
+
+  function renderInvoiceRows(payload, filters) {
+    const tbody = document.getElementById("invoiceTbody");
+    const emptyState = document.getElementById("invoiceEmptyState");
+    const periodLabel = document.getElementById("invoicePeriodLabel");
+    if (!tbody) return;
+
+    if (periodLabel) {
+      periodLabel.textContent = payload?.period?.label || "--";
+    }
+
+    const selectedClientType = String(filters.clientType || "all");
+    const selectedPaymentMethod = String(filters.paymentMethod || "all");
+
+    const rows = (payload?.rows || []).filter((row) => {
+      const clientTypeMatches =
+        selectedClientType === "all" ||
+        String(row.clientType || "") === selectedClientType;
+      const paymentMatches =
+        selectedPaymentMethod === "all" ||
+        String(row.paymentMethod || "") === selectedPaymentMethod;
+      return clientTypeMatches && paymentMatches;
+    });
+
+    if (!rows.length) {
+      tbody.innerHTML = "";
+      if (emptyState) emptyState.classList.remove("hidden");
+      return;
+    }
+
+    if (emptyState) emptyState.classList.add("hidden");
+
+    tbody.innerHTML = rows
+      .map((row) => {
+        const [clientName, clientId] = splitInvoiceNameId(row.clientName);
+        const [caregiverName, caregiverId] = splitInvoiceNameId(
+          row.caregiverName
+        );
+        const invoiceDate = row.startDate || row.date || "";
+
+        return `
+          <tr class="hover:bg-gray-50/70 transition-colors">
+            <td class="px-4 py-3 text-sm text-gray-500">${invoiceEscapeHtml(
+              invoiceDate
+            )}</td>
+            <td class="px-4 py-3 font-semibold text-gray-700">${invoiceEscapeHtml(
+              row.invoiceId || "--"
+            )}</td>
+            <td class="px-4 py-3 font-semibold text-gray-800">${invoiceFormatCurrency(
+              row.invoiceTotal
+            )}</td>
+            <td class="px-4 py-3">${invoiceRenderInvoiceBadge(
+              row.invoiceStatus || "Unpaid"
+            )}</td>
+            <td class="px-4 py-3 align-top whitespace-normal min-w-[180px] max-w-[260px]">
+              <div class="text-sm font-bold text-black">${invoiceEscapeHtml(
+                clientName
+              )}</div>
+              <div class="text-xs text-gray-400 mt-0.5">${invoiceEscapeHtml(
+                clientId
+              )}</div>
+            </td>
+            <td class="px-4 py-3 font-semibold text-gray-800">${invoiceFormatCurrency(
+              row.totalClientPrice || row.invoiceTotal
+            )}</td>
+            <td class="px-4 py-3 align-top whitespace-normal min-w-[180px] max-w-[260px]">
+              <div class="text-sm font-bold text-black">${invoiceEscapeHtml(
+                caregiverName
+              )}</div>
+              <div class="text-xs text-gray-400 mt-0.5">${invoiceEscapeHtml(
+                caregiverId
+              )}</div>
+            </td>
+            <td class="px-4 py-3 text-gray-700">${invoiceFormatCurrency(
+              row.totalCaregiverPrice
+            )}</td>
+            <td class="px-4 py-3 text-gray-700">${invoiceEscapeHtml(
+              row.clientType || "--"
+            )}</td>
+            <td class="px-4 py-3 text-gray-700">${invoiceEscapeHtml(
+              row.paymentMethod || "--"
+            )}</td>
+            <td class="px-4 py-3 text-gray-700">${invoiceFormatCurrency(
+              row.totalAgencyPrice
+            )}</td>
+            <td class="px-4 py-3 text-gray-700">${invoiceFormatCurrency(
+              row.totalSoftcarePrice
+            )}</td>
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  onclick='downloadInvoicePdf(${JSON.stringify(row).replace(
+                    /'/g,
+                    "&#39;"
+                  )})'
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 transition-colors font-semibold text-xs"
+                >
+                  <i class="ph ph-file-pdf text-sm"></i>
+                  PDF
+                </button>
+                <button
+                  type="button"
+                  onclick='openInvoiceEmailDialog(${JSON.stringify(row).replace(
+                    /'/g,
+                    "&#39;"
+                  )})'
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-colors font-semibold text-xs"
+                >
+                  <i class="ph ph-paper-plane-tilt text-sm"></i>
+                  Send Email
+                </button>
+              </div>
+            </td>
+          </tr>`;
+      })
+      .join("");
+  }
+
+  function splitInvoiceNameId(value) {
+    const raw = String(value || "");
+    if (!raw.includes(" / ")) return [raw || "--", "--"];
+    const parts = raw.split(" / ");
+    const id = parts.pop() || "--";
+    return [parts.join(" / ") || "--", id || "--"];
+  }
+
+  function openInvoiceEmailDialog(row) {
+    const clientId = row.clientId || splitInvoiceNameId(row.clientName)[1];
+    if (!clientId || clientId === "--") {
+      Swal.fire("Missing Data", "No client found for this invoice.", "error");
+      return;
+    }
+
+    Swal.fire({
+      title: "Send Invoice Email?",
+      text: `Send invoice ${row.invoiceId || ""} to the client now?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#65c027",
+      confirmButtonText: "Yes, Send",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      Swal.fire({
+        title: "Sending...",
+        text: "Please wait.",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      google.script.run
+        .withSuccessHandler(() => {
+          Swal.fire("Sent", "Invoice email sent successfully.", "success");
+        })
+        .withFailureHandler((err) => {
+          Swal.fire("Error", err.message || "Unable to send email.", "error");
+        })
+        .sendClientShiftApprovals([clientId], row.shiftId || "");
+    });
+  }
+
+  function resetInvoiceFilters() {
+    const startDate = document.getElementById("invoiceStartDate");
+    const endDate = document.getElementById("invoiceEndDate");
+    const caregiver = document.getElementById("invoiceCaregiverFilter");
+    const client = document.getElementById("invoiceClientFilter");
+    const clientType = document.getElementById("invoiceClientTypeFilter");
+    const payment = document.getElementById("invoicePaymentMethodFilter");
+    const search = document.getElementById("invoiceSearch");
+
+    if (startDate) startDate.value = "";
+    if (endDate) endDate.value = "";
+    if (caregiver) caregiver.value = "all";
+    if (client) client.value = "all";
+    if (clientType) clientType.value = "all";
+    if (payment) payment.value = "all";
+    if (search) search.value = "";
+
+    refreshInvoiceView();
+  }
+
+  function getVisibleInvoiceRows() {
+    const filters = getInvoiceFilters();
+    return (invoiceState.rows || []).filter((row) => {
+      const clientTypeMatches =
+        filters.clientType === "all" ||
+        String(row.clientType || "") === String(filters.clientType || "");
+      const paymentMatches =
+        filters.paymentMethod === "all" ||
+        String(row.paymentMethod || "") === String(filters.paymentMethod || "");
+      return clientTypeMatches && paymentMatches;
+    });
+  }
+
+  function sendInvoiceEmails(type) {
+    const rows = getVisibleInvoiceRows();
+    if (!rows.length) {
+      Swal.fire("No Data", "There are no invoices displayed to email.", "info");
+      return;
+    }
+
+    const ids = [
+      ...new Set(
+        rows
+          .map((row) => {
+            if (type === "caregiver") {
+              return (
+                row.caregiverId || splitInvoiceNameId(row.caregiverName)[1]
+              );
+            }
+            return row.clientId || splitInvoiceNameId(row.clientName)[1];
+          })
+          .filter((v) => v && v !== "--")
+      ),
+    ];
+
+    if (!ids.length) {
+      Swal.fire(
+        "No Data",
+        `No valid ${type}s found in the current view.`,
+        "info"
+      );
+      return;
+    }
+
+    const label = type === "caregiver" ? "Caregivers" : "Clients";
+    Swal.fire({
+      title: `Send ${label} Emails?`,
+      text: `This will send to ${ids.length} unique ${type}(s) currently shown in Invoice.`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Send Emails",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#65c027",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      Swal.fire({
+        title: "Sending...",
+        text: "Please wait while emails are sent.",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const serverFunc =
+        type === "caregiver"
+          ? "sendCaregiverShiftApprovals"
+          : "sendClientShiftApprovals";
+
+      google.script.run
+        .withSuccessHandler((res) => {
+          if (res && res.success) {
+            Swal.fire("Sent!", res.message, "success");
+          } else {
+            Swal.fire(
+              "Error",
+              res?.message || "Failed to send emails.",
+              "error"
+            );
+          }
+        })
+        .withFailureHandler((err) => {
+          Swal.fire("Error", err.message || "Failed to send emails.", "error");
+        })
+        [serverFunc](ids);
+    });
+  }
+
+  function downloadInvoicePdf(row) {
+    const temp = document.createElement("div");
+    temp.className = "p-6 text-sm text-gray-800 bg-white";
+    temp.innerHTML = `
+      <h1 class="text-xl font-bold mb-3">Invoice Summary</h1>
+      <div>Invoice ID: ${invoiceEscapeHtml(row.invoiceId)}</div>
+      <div>Status: ${invoiceEscapeHtml(row.invoiceStatus || "Unpaid")}</div>
+      <div>Client: ${invoiceEscapeHtml(row.clientName)}</div>
+      <div>Caregiver: ${invoiceEscapeHtml(row.caregiverName)}</div>
+      <div>Invoice Date: ${invoiceEscapeHtml(
+        row.startDate || row.date || ""
+      )}</div>
+      <div>Total Invoice: ${invoiceEscapeHtml(row.invoiceTotal || "0")}</div>
+    `;
+    document.body.appendChild(temp);
+    html2pdf()
+      .from(temp)
+      .save(`invoice-${row.invoiceId || row.shiftId || "record"}.pdf`)
+      .then(() => temp.remove());
+  }
+
+  function invoiceRenderBadge(text, tone) {
+    const palette = {
+      green: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      red: "bg-rose-50 text-rose-700 border-rose-200",
+      amber: "bg-amber-50 text-amber-700 border-amber-200",
+      orange: "bg-orange-50 text-orange-700 border-orange-200",
+      gray: "bg-gray-100 text-gray-600 border-gray-200",
+    };
+    return `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border ${
+      palette[tone] || palette.gray
+    }">${invoiceEscapeHtml(String(text))}</span>`;
+  }
+
+  function invoiceRenderInvoiceBadge(text) {
+    const tone =
+      text === "Paid"
+        ? "green"
+        : text === "Partially"
+        ? "amber"
+        : text === "Voided"
+        ? "gray"
+        : "orange";
+    return invoiceRenderBadge(text || "Unpaid", tone);
+  }
+
+  function invoiceFormatCurrency(value) {
+    const number = Number(String(value).replace(/[^0-9.-]/g, "")) || 0;
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(number);
+  }
+
+  function invoiceEscapeHtml(value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+</script>
