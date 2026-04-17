@@ -59,6 +59,131 @@
       .getShiftHistorySettings();
   }
 
+  function updatePayPeriodToggleUI(mode) {
+    const weeklyBtn = document.getElementById("modeWeeklyBtn");
+    const biweeklyBtn = document.getElementById("modeBiweeklyBtn");
+    if (!weeklyBtn || !biweeklyBtn) return;
+
+    const normalizedMode = mode === "Biweekly" ? "Biweekly" : "Weekly";
+    const isWeekly = normalizedMode === "Weekly";
+
+    const activeClasses = [
+      "bg-white",
+      "shadow-sm",
+      "text-[#65c027]",
+      "font-bold",
+    ];
+    const inactiveClasses = [
+      "text-gray-500",
+      "hover:text-gray-800",
+      "font-semibold",
+    ];
+
+    weeklyBtn.classList.remove(...activeClasses, ...inactiveClasses);
+    biweeklyBtn.classList.remove(...activeClasses, ...inactiveClasses);
+
+    if (isWeekly) {
+      weeklyBtn.classList.add(...activeClasses);
+      biweeklyBtn.classList.add(...inactiveClasses);
+    } else {
+      biweeklyBtn.classList.add(...activeClasses);
+      weeklyBtn.classList.add(...inactiveClasses);
+    }
+  }
+
+  function setPayPeriodMode(mode) {
+    const normalizedMode = mode === "Biweekly" ? "Biweekly" : "Weekly";
+
+    if (shiftHistoryState.payPeriodMode === normalizedMode) {
+      updatePayPeriodToggleUI(normalizedMode);
+      return;
+    }
+
+    shiftHistoryState.payPeriodMode = normalizedMode;
+    updatePayPeriodToggleUI(normalizedMode);
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        shiftHistoryState.payPeriodMode = res?.payPeriodMode || normalizedMode;
+        updatePayPeriodToggleUI(shiftHistoryState.payPeriodMode);
+
+        // Reset date filters so server recomputes the selected weekly/biweekly period.
+        const startDate = document.getElementById("shiftHistoryStartDate");
+        const endDate = document.getElementById("shiftHistoryEndDate");
+        if (startDate) startDate.value = "";
+        if (endDate) endDate.value = "";
+
+        refreshShiftHistory();
+      })
+      .withFailureHandler((error) => {
+        shiftHistoryState.payPeriodMode =
+          normalizedMode === "Weekly" ? "Biweekly" : "Weekly";
+        updatePayPeriodToggleUI(shiftHistoryState.payPeriodMode);
+        Swal.fire(
+          "Error",
+          error?.message || "Unable to update pay period mode.",
+          "error"
+        );
+      })
+      .saveShiftHistoryPayPeriodSetting(normalizedMode);
+  }
+
+  function loadShiftHistoryLists() {
+    const caregiverFilter = document.getElementById(
+      "shiftHistoryCaregiverFilter"
+    );
+    const clientFilter = document.getElementById("shiftHistoryClientFilter");
+
+    if (caregiverFilter) {
+      caregiverFilter.innerHTML = '<option value="all">All Caregivers</option>';
+    }
+    if (clientFilter) {
+      clientFilter.innerHTML = '<option value="all">All Clients</option>';
+    }
+
+    google.script.run
+      .withSuccessHandler((caregivers) => {
+        if (!caregiverFilter) return;
+        const options = (caregivers || [])
+          .filter((item) => item && item.id)
+          .sort((a, b) =>
+            String(a.name || "").localeCompare(String(b.name || ""))
+          )
+          .map(
+            (item) =>
+              `<option value="${escapeHtml(item.id)}">${escapeHtml(
+                item.name || item.id
+              )}</option>`
+          )
+          .join("");
+
+        caregiverFilter.innerHTML =
+          '<option value="all">All Caregivers</option>' + options;
+      })
+      .getCaregiverList();
+
+    google.script.run
+      .withSuccessHandler((clients) => {
+        if (!clientFilter) return;
+        const options = (clients || [])
+          .filter((item) => item && item.id)
+          .sort((a, b) =>
+            String(a.name || "").localeCompare(String(b.name || ""))
+          )
+          .map(
+            (item) =>
+              `<option value="${escapeHtml(item.id)}">${escapeHtml(
+                item.name || item.id
+              )}</option>`
+          )
+          .join("");
+
+        clientFilter.innerHTML =
+          '<option value="all">All Clients</option>' + options;
+      })
+      .getClientList();
+  }
+
   function getShiftHistoryFilters() {
     return {
       startDate: document.getElementById("shiftHistoryStartDate")?.value || "",
