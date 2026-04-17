@@ -88,6 +88,10 @@ function getShiftHistorySettings() {
   return { payPeriodMode: getShiftHistoryPayPeriodSetting() };
 }
 
+function getCurrentBiweeklyPeriod(anchorDate) {
+  return getShiftHistoryPeriod(anchorDate, "Biweekly");
+}
+
 function parseShiftDate(dateValue) {
   if (!dateValue) return null;
   if (dateValue instanceof Date) return new Date(dateValue);
@@ -465,6 +469,7 @@ function buildShiftHistoryRows(
     timeZone,
     "MMM d, yyyy"
   )} - ${Utilities.formatDate(filterPeriod.end, timeZone, "MMM d, yyyy")}`;
+  const currentPeriod = getCurrentBiweeklyPeriod(new Date());
 
   return {
     period: {
@@ -472,6 +477,12 @@ function buildShiftHistoryRows(
       end: Utilities.formatDate(filterPeriod.end, timeZone, "yyyy-MM-dd"),
       label: periodLabel,
       payPeriodMode: settings.payPeriodMode,
+    },
+    currentPeriod: {
+      start: Utilities.formatDate(currentPeriod.start, timeZone, "yyyy-MM-dd"),
+      end: Utilities.formatDate(currentPeriod.end, timeZone, "yyyy-MM-dd"),
+      label: currentPeriod.label,
+      payPeriodMode: "Biweekly",
     },
     rows: filteredRows,
     summary: (() => {
@@ -512,6 +523,7 @@ function getShiftHistory(data) {
     const timeZone = Session.getScriptTimeZone();
     const settingsMode = getShiftHistoryPayPeriodSetting();
     const period = getShiftHistoryPeriod(new Date(), settingsMode);
+    const currentPeriod = getCurrentBiweeklyPeriod(new Date());
 
     return {
       period: {
@@ -519,6 +531,16 @@ function getShiftHistory(data) {
         end: Utilities.formatDate(period.end, timeZone, "yyyy-MM-dd"),
         label: period.label,
         payPeriodMode: settingsMode,
+      },
+      currentPeriod: {
+        start: Utilities.formatDate(
+          currentPeriod.start,
+          timeZone,
+          "yyyy-MM-dd"
+        ),
+        end: Utilities.formatDate(currentPeriod.end, timeZone, "yyyy-MM-dd"),
+        label: currentPeriod.label,
+        payPeriodMode: "Biweekly",
       },
       rows: [],
       summary: {

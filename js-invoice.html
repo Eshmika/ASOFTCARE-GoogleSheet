@@ -206,7 +206,8 @@
     if (!tbody) return;
 
     if (periodLabel) {
-      periodLabel.textContent = payload?.period?.label || "--";
+      periodLabel.textContent =
+        payload?.currentPeriod?.label || payload?.period?.label || "--";
     }
 
     const selectedClientType = String(filters.clientType || "all");

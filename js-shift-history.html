@@ -274,7 +274,9 @@
 
     if (!thead || !tbody) return;
 
-    if (periodLabel) periodLabel.textContent = payload.period?.label || "--";
+    if (periodLabel)
+      periodLabel.textContent =
+        payload.currentPeriod?.label || payload.period?.label || "--";
     if (invoiceLabel)
       invoiceLabel.textContent = payload.rows?.[0]?.invoiceId || "Auto";
 
