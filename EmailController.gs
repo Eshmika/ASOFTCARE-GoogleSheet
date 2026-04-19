@@ -258,7 +258,7 @@ function sendRejectionEmail(caregiverId) {
   }
 }
 
-function sendCaregiverShiftApprovals(caregiverIds, shiftId = null) {
+function sendCaregiverShiftApprovals(caregiverIds, invoiceId = null) {
   try {
     if (!caregiverIds || caregiverIds.length === 0) {
       return { success: false, message: "No caregivers selected." };
@@ -286,10 +286,10 @@ function sendCaregiverShiftApprovals(caregiverIds, shiftId = null) {
         let declineLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=caregiver&action=Decline`;
         let reviewLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=caregiver&action=Review`;
 
-        if (shiftId) {
-          confirmLink += `&shiftId=${shiftId}`;
-          declineLink += `&shiftId=${shiftId}`;
-          reviewLink += `&shiftId=${shiftId}`;
+        if (invoiceId) {
+          confirmLink += `&invoiceId=${invoiceId}`;
+          declineLink += `&invoiceId=${invoiceId}`;
+          reviewLink += `&invoiceId=${invoiceId}`;
         }
 
         const htmlBody = `
@@ -334,7 +334,7 @@ function sendCaregiverShiftApprovals(caregiverIds, shiftId = null) {
               
               <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 25px 0;">
                 <p style="margin: 0; font-weight: bold; color: #b45309; font-size: 14px;">⏳ Action Required:</p>
-                <p style="margin: 5px 0 0 0; color: #92400e; font-size: 14px;">Please complete your confirmation by <strong>Monday morning 10am</strong>.</p>
+                <p style="margin: 5px 0 0 0; color: #92400e; font-size: 14px;">Please complete your confirmation by <strong>Tuesday 10 AM</strong>.</p>
               </div>
               
               <p style="font-size: 14px; color: #6b7280; border-top: 1px solid #eee; padding-top: 20px;">If anything needs correction, please add a note in your portal or contact the office directly.</p>
@@ -371,7 +371,7 @@ function sendCaregiverShiftApprovals(caregiverIds, shiftId = null) {
   }
 }
 
-function sendClientShiftApprovals(clientIds, shiftId = null) {
+function sendClientShiftApprovals(clientIds, invoiceId = null) {
   try {
     if (!clientIds || clientIds.length === 0) {
       return { success: false, message: "No clients selected." };
@@ -399,10 +399,10 @@ function sendClientShiftApprovals(clientIds, shiftId = null) {
         let declineLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=client&action=Decline`;
         let reviewLink = `${webAppUrl}?page=shift-action&id=${c.id}&type=client&action=Review`;
 
-        if (shiftId) {
-          confirmLink += `&shiftId=${shiftId}`;
-          declineLink += `&shiftId=${shiftId}`;
-          reviewLink += `&shiftId=${shiftId}`;
+        if (invoiceId) {
+          confirmLink += `&invoiceId=${invoiceId}`;
+          declineLink += `&invoiceId=${invoiceId}`;
+          reviewLink += `&invoiceId=${invoiceId}`;
         }
 
         const htmlBody = `
@@ -447,7 +447,7 @@ function sendClientShiftApprovals(clientIds, shiftId = null) {
 
               <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 25px 0;">
                 <p style="margin: 0; font-weight: bold; color: #b45309; font-size: 14px;">⏳ Action Required:</p>
-                <p style="margin: 5px 0 0 0; color: #92400e; font-size: 14px;">Please complete your approval by <strong>Tuesday morning 10 am</strong> so we can finalize billing and caregiver payroll on time.</p>
+                <p style="margin: 5px 0 0 0; color: #92400e; font-size: 14px;">Please complete your approval by <strong>Tuesday 10 AM</strong> so we can finalize billing and caregiver payroll on time.</p>
               </div>
               
               <br>

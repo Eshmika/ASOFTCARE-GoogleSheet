@@ -282,9 +282,6 @@
               row.totalCaregiverPrice
             )}</td>
             <td class="px-4 py-3 text-gray-700">${invoiceEscapeHtml(
-              row.clientType || "--"
-            )}</td>
-            <td class="px-4 py-3 text-gray-700">${invoiceEscapeHtml(
               row.paymentMethod || "--"
             )}</td>
             <td class="px-4 py-3 text-gray-700">${invoiceFormatCurrency(
@@ -472,6 +469,8 @@
           ? "sendCaregiverShiftApprovals"
           : "sendClientShiftApprovals";
 
+      const currentInvoiceId = rows.length ? rows[0].invoiceId : null;
+
       google.script.run
         .withSuccessHandler((res) => {
           if (res && res.success) {
@@ -487,7 +486,7 @@
         .withFailureHandler((err) => {
           Swal.fire("Error", err.message || "Failed to send emails.", "error");
         })
-        [serverFunc](ids);
+        [serverFunc](ids, currentInvoiceId);
     });
   }
 

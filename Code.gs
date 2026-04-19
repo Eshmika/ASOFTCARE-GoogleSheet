@@ -372,7 +372,8 @@ function doGet(e) {
       e.parameter.id,
       e.parameter.type,
       e.parameter.action,
-      e.parameter.shiftId
+      e.parameter.shiftId,
+      e.parameter.invoiceId
     );
     return HtmlService.createHtmlOutput(
       `

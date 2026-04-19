@@ -748,6 +748,10 @@
             ? "sendCaregiverShiftApprovals"
             : "sendClientShiftApprovals";
 
+        const currentInvoiceId = shiftHistoryState.rows.length
+          ? shiftHistoryState.rows[0].invoiceId
+          : null;
+
         google.script.run
           .withSuccessHandler((res) => {
             if (res && res.success) {
@@ -763,7 +767,7 @@
           .withFailureHandler((err) => {
             Swal.fire("Error", err.message, "error");
           })
-          [serverFunc](ids);
+          [serverFunc](ids, currentInvoiceId);
       }
     });
   }
