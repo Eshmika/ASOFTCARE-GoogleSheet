@@ -190,10 +190,9 @@ function getShiftHistoryPeriod(anchorDate, payPeriodMode) {
 
   const periodEnd = new Date(periodStart);
   // Subtract 1 because 14 days length is inclusive of start day, so +13 stops at 11:59pm on 14th day.
-  // Wait, the user specifically mentioned "Apr5 th to Apr 19". April 5 + 14 = April 19.
-  // So we add 'periodLengthDays' directly to match the user's specific requested text (Apr 19) instead of -1.
+  // The user specifically mentioned "Apr 5–18" -> April 5 + 13 = April 18.
   if (payPeriodMode === "Biweekly") {
-    periodEnd.setDate(periodStart.getDate() + 14);
+    periodEnd.setDate(periodStart.getDate() + 13);
   } else {
     periodEnd.setDate(periodStart.getDate() + periodLengthDays - 1);
   }
@@ -345,21 +344,31 @@ function buildShiftHistoryRows(
       });
       const errorFlag = systemCheck === "OK" ? "" : systemCheck;
 
+      // Always fix the Invoice ID to the biweekly pay period boundary of the shift
+      const trueBiweeklyPeriod = getShiftHistoryPeriod(
+        segment.segmentStart,
+        "Biweekly"
+      );
+      const generatedInvoiceId = buildInvoiceId(
+        trueBiweeklyPeriod.start,
+        trueBiweeklyPeriod.end
+      );
+
       rows.push({
         id: shift.id,
         shiftId: shift.id,
         clientId: shift.clientId,
         caregiverId: shift.caregiverId,
-        invoiceId: buildInvoiceId(filterPeriod.start, filterPeriod.end),
+        invoiceId: shift.invoiceId || generatedInvoiceId,
         invoiceStatus: shift.invoiceStatus || "Unpaid",
         payPeriodType: settings.payPeriodMode,
         payPeriodStart: Utilities.formatDate(
-          filterPeriod.start,
+          trueBiweeklyPeriod.start,
           timeZone,
           "yyyy-MM-dd"
         ),
         payPeriodEnd: Utilities.formatDate(
-          filterPeriod.end,
+          trueBiweeklyPeriod.end,
           timeZone,
           "yyyy-MM-dd"
         ),
@@ -628,6 +637,7 @@ function getShiftHistory(data) {
       totalClientPrice: record["Total Client Price"],
       totalCaregiverPrice: record["Total Caregiver Price"],
       notes: record["Notes"],
+      invoiceId: record["Invoice ID"],
       invoiceStatus: record["Invoice Status"],
       authorizationCode: record["Authorization Code"],
       billableHours: record["Billable Hours"],
@@ -677,6 +687,8 @@ function getOrCreateShiftSheet() {
     "Bonus Hours",
     "Total Bonus",
     "Admin Note",
+    "Invoice ID",
+    "Invoice Status",
     "Last Modified By",
     "Last Modified At",
   ];
@@ -937,7 +949,15 @@ function saveShift(data) {
     const headerMap = sheet
       .getRange(1, 1, 1, sheet.getLastColumn())
       .getValues()[0];
+
+    const invoicePeriod = getShiftHistoryPeriod(date, "Biweekly");
+    const generatedInvoiceId = buildInvoiceId(
+      invoicePeriod.start,
+      invoicePeriod.end
+    );
+
     const metaUpdates = {
+      "Invoice ID": generatedInvoiceId,
       "Invoice Status": "Unpaid",
       "CG Shift Status": "Pending",
       "Client Shift Status": "Pending",
