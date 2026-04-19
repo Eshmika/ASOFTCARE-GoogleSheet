@@ -87,6 +87,8 @@
       search: document.getElementById("invoiceSearch")?.value || "",
       clientType:
         document.getElementById("invoiceClientTypeFilter")?.value || "all",
+      paymentStatus:
+        document.getElementById("invoicePaymentStatusFilter")?.value || "all",
       paymentMethod:
         document.getElementById("invoicePaymentMethodFilter")?.value || "all",
     };
@@ -211,16 +213,20 @@
     }
 
     const selectedClientType = String(filters.clientType || "all");
+    const selectedPaymentStatus = String(filters.paymentStatus || "all");
     const selectedPaymentMethod = String(filters.paymentMethod || "all");
 
     const rows = (payload?.rows || []).filter((row) => {
       const clientTypeMatches =
         selectedClientType === "all" ||
         String(row.clientType || "") === selectedClientType;
+      const statusMatches =
+        selectedPaymentStatus === "all" ||
+        normalizeInvoiceStatus(row.invoiceStatus) === selectedPaymentStatus;
       const paymentMatches =
         selectedPaymentMethod === "all" ||
         String(row.paymentMethod || "") === selectedPaymentMethod;
-      return clientTypeMatches && paymentMatches;
+      return clientTypeMatches && statusMatches && paymentMatches;
     });
 
     if (!rows.length) {
@@ -367,6 +373,7 @@
     const caregiver = document.getElementById("invoiceCaregiverFilter");
     const client = document.getElementById("invoiceClientFilter");
     const clientType = document.getElementById("invoiceClientTypeFilter");
+    const paymentStatus = document.getElementById("invoicePaymentStatusFilter");
     const payment = document.getElementById("invoicePaymentMethodFilter");
     const search = document.getElementById("invoiceSearch");
 
@@ -375,6 +382,7 @@
     if (caregiver) caregiver.value = "all";
     if (client) client.value = "all";
     if (clientType) clientType.value = "all";
+    if (paymentStatus) paymentStatus.value = "all";
     if (payment) payment.value = "all";
     if (search) search.value = "";
 
@@ -387,11 +395,26 @@
       const clientTypeMatches =
         filters.clientType === "all" ||
         String(row.clientType || "") === String(filters.clientType || "");
+      const statusMatches =
+        filters.paymentStatus === "all" ||
+        normalizeInvoiceStatus(row.invoiceStatus) ===
+          String(filters.paymentStatus || "all");
       const paymentMatches =
         filters.paymentMethod === "all" ||
         String(row.paymentMethod || "") === String(filters.paymentMethod || "");
-      return clientTypeMatches && paymentMatches;
+      return clientTypeMatches && statusMatches && paymentMatches;
     });
+  }
+
+  function normalizeInvoiceStatus(status) {
+    const value = String(status || "")
+      .trim()
+      .toLowerCase();
+    if (value === "partially") return "Partial";
+    if (value === "partial") return "Partial";
+    if (value === "paid") return "Paid";
+    if (value === "unpaid") return "Unpaid";
+    return String(status || "");
   }
 
   function sendInvoiceEmails(type) {

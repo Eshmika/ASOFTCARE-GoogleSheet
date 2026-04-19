@@ -55,17 +55,22 @@
       </div>
     </div>
 
-    <!-- Client Type -->
+    <!-- Payment Method -->
     <div class="w-full md:col-span-2 xl:col-span-1">
       <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
-        >Client Type</label
+        >Payment Method</label
       >
       <select
-        id="invoiceClientTypeFilter"
+        id="invoicePaymentMethodFilter"
         onchange="refreshInvoiceView()"
         class="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027] appearance-none"
       >
-        <option value="all">All Client Types</option>
+        <option value="all">All Payment Types</option>
+        <option value="private-pay">Private Pay</option>
+        <option value="lead-insurance">Lead Insurance</option>
+        <option value="medicaid">Medicaid</option>
+        <option value="va">VA</option>
+        <option value="other">Other</option>
       </select>
     </div>
 
@@ -97,22 +102,20 @@
       </select>
     </div>
 
-    <!-- Payment Method -->
+    <!-- Payment Status -->
     <div class="w-full md:col-span-2 xl:col-span-1">
       <label class="block text-xs font-semibold text-gray-500 uppercase mb-1"
-        >Payment Method</label
+        >Payment Status</label
       >
       <select
-        id="invoicePaymentMethodFilter"
+        id="invoicePaymentStatusFilter"
         onchange="refreshInvoiceView()"
         class="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-[#65c027] appearance-none"
       >
-        <option value="all">All Payment Types</option>
-        <option value="private-pay">Private Pay</option>
-        <option value="lead-insurance">Lead Insurance</option>
-        <option value="medicaid">Medicaid</option>
-        <option value="va">VA</option>
-        <option value="other">Other</option>
+        <option value="all">All Payment Status</option>
+        <option value="Paid">Paid</option>
+        <option value="Unpaid">Unpaid</option>
+        <option value="Partial">Partial</option>
       </select>
     </div>
 
