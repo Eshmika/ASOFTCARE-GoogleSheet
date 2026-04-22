@@ -117,3 +117,93 @@ function generateCaregiverInvoicePDF(startDate, endDate, caregiverId) {
     return { success: false, message: e.message };
   }
 }
+
+function generateClientInvoicePDF(startDate, endDate, clientId) {
+  try {
+    if (!clientId || clientId === "all")
+      throw new Error("A specific Client must be selected.");
+    if (!startDate || !endDate)
+      throw new Error("Start and End dates are required.");
+
+    // Get client details
+    const clList = getClientList();
+    const cl = clList.find((c) => c.id === clientId);
+    if (!cl) throw new Error("Client not found.");
+
+    // Get caregiver list for initials
+    const cgList = getCaregiverList();
+    const getInitials = (caregiverId, name) => {
+      const cg = cgList.find((c) => c.id === caregiverId);
+      let cgName = cg ? cg.name : name || "";
+      cgName = cgName.split("/")[0].trim(); // Remove "/ ID" part if present
+      const parts = cgName.split(" ").filter((p) => p.length > 0);
+      if (parts.length === 0) return "";
+      if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    };
+
+    // Get shifts
+    const history = getShiftHistory({
+      startDate: startDate,
+      endDate: endDate,
+      caregiverId: "all",
+      clientId: clientId,
+      systemCheck: "all",
+    });
+
+    const shiftRows = history.rows || [];
+    const shiftsData = [];
+    let totalDue = 0;
+
+    shiftRows.forEach((row) => {
+      const rate = parseFloat(row.clientRate) || 0;
+      const amount = parseFloat(row.totalClientPrice) || 0;
+      totalDue += amount;
+
+      shiftsData.push({
+        invoiceId: row.invoiceId || "N/A",
+        caregiverInitials: getInitials(row.caregiverId, row.caregiverName),
+        service: row.serviceType || "N/A",
+        startDate: row.startDate || "",
+        endDate: row.endDate || "",
+        clockIn: row.clockIn || "",
+        clockOut: row.clockOut || "",
+        hours: row.hours || "",
+        rate: rate.toFixed(2),
+        total: amount.toFixed(2),
+      });
+    });
+
+    const templateData = {
+      clientName: cl.name || "",
+      clientId: cl.id || "",
+      payPeriod: `${startDate} to ${endDate}`,
+      printDate: new Date().toLocaleDateString(),
+      shifts: shiftsData,
+      totalDue: totalDue.toFixed(2),
+    };
+
+    const template = HtmlService.createTemplateFromFile(
+      "view-client-invoice-pdf"
+    );
+    template.data = templateData;
+    const html = template.evaluate().getContent();
+
+    const blob = Utilities.newBlob(html, MimeType.HTML).getAs(MimeType.PDF);
+    blob.setName(
+      `Invoice_Receipt_${cl.name.replace(
+        /[^a-zA-Z0-9]/g,
+        "_"
+      )}_${startDate}.pdf`
+    );
+
+    return {
+      success: true,
+      filename: blob.getName(),
+      base64: Utilities.base64Encode(blob.getBytes()),
+    };
+  } catch (e) {
+    Logger.log(e);
+    return { success: false, message: e.message };
+  }
+}

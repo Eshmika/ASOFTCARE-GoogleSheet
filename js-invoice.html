@@ -39,6 +39,7 @@
       "invoiceExportCaregiver"
     );
     const clientSelect = document.getElementById("invoiceClientFilter");
+    const exportClientSelect = document.getElementById("invoiceExportClient");
 
     if (caregiverSelect) {
       caregiverSelect.innerHTML = '<option value="all">All Caregivers</option>';
@@ -49,6 +50,10 @@
     }
     if (clientSelect) {
       clientSelect.innerHTML = '<option value="all">All Clients</option>';
+    }
+    if (exportClientSelect) {
+      exportClientSelect.innerHTML =
+        '<option value="">-- Choose Client --</option>';
     }
 
     google.script.run
@@ -80,14 +85,22 @@
         const active = (data || []).filter(
           (item) => String(item.status || "").toLowerCase() === "active"
         );
-        if (!clientSelect) return;
-
-        active.forEach((item) => {
-          const option = document.createElement("option");
-          option.value = item.id;
-          option.textContent = `${item.name} / ${item.id}`;
-          clientSelect.appendChild(option);
-        });
+        if (clientSelect) {
+          active.forEach((item) => {
+            const option = document.createElement("option");
+            option.value = item.id;
+            option.textContent = `${item.name} / ${item.id}`;
+            clientSelect.appendChild(option);
+          });
+        }
+        if (exportClientSelect) {
+          active.forEach((item) => {
+            const option = document.createElement("option");
+            option.value = item.id;
+            option.textContent = `${item.name} / ${item.id}`;
+            exportClientSelect.appendChild(option);
+          });
+        }
       })
       .getClientList();
   }
@@ -625,5 +638,66 @@
         Swal.fire("Error", "Could not generate PDF: " + error.message, "error");
       })
       .generateCaregiverInvoicePDF(startDate, endDate, caregiverId);
+  }
+
+  function triggerClientExport() {
+    const clientId = document.getElementById("invoiceExportClient")?.value;
+    const startDate = document.getElementById(
+      "invoiceClientExportStartDate"
+    )?.value;
+    const endDate = document.getElementById(
+      "invoiceClientExportEndDate"
+    )?.value;
+
+    if (!clientId) {
+      Swal.fire("Required", "Please select a client to export.", "warning");
+      return;
+    }
+    if (!startDate || !endDate) {
+      Swal.fire("Required", "Please select a date range.", "warning");
+      return;
+    }
+
+    Swal.fire({
+      title: "Generating PDF...",
+      text: "Please wait while the invoice receipt is being generated.",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    google.script.run
+      .withSuccessHandler((response) => {
+        if (!response || !response.success) {
+          Swal.fire(
+            "Export Failed",
+            response?.message || "An unknown error occurred.",
+            "error"
+          );
+          return;
+        }
+
+        Swal.fire({
+          title: "Success",
+          text: "Invoice receipt generated successfully!",
+          icon: "success",
+          confirmButtonText: "Download PDF",
+          confirmButtonColor: "#3b82f6",
+        }).then((result) => {
+          if (result.isConfirmed && response.base64) {
+            const link = document.createElement("a");
+            link.href = "data:application/pdf;base64," + response.base64;
+            link.download = response.filename || "Invoice_Receipt.pdf";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }
+        });
+      })
+      .withFailureHandler((error) => {
+        Swal.fire("Error", "Could not generate PDF: " + error.message, "error");
+      })
+      .generateClientInvoicePDF(startDate, endDate, clientId);
   }
 </script>
