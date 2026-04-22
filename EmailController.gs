@@ -258,10 +258,23 @@ function sendRejectionEmail(caregiverId) {
   }
 }
 
-function sendCaregiverShiftApprovals(caregiverIds, invoiceId = null) {
+function sendCaregiverShiftApprovals(
+  caregiverIds,
+  invoiceId = null,
+  startDate = null,
+  endDate = null
+) {
   try {
     if (!caregiverIds || caregiverIds.length === 0) {
       return { success: false, message: "No caregivers selected." };
+    }
+
+    // Default to current Biweekly period if dates are omitted (e.g. triggered automatically)
+    if (!startDate || !endDate) {
+      const period = getCurrentBiweeklyPeriod(new Date());
+      const timeZone = Session.getScriptTimeZone();
+      startDate = Utilities.formatDate(period.start, timeZone, "yyyy-MM-dd");
+      endDate = Utilities.formatDate(period.end, timeZone, "yyyy-MM-dd");
     }
 
     const list = getCaregiverList();
@@ -290,6 +303,18 @@ function sendCaregiverShiftApprovals(caregiverIds, invoiceId = null) {
           confirmLink += `&invoiceId=${invoiceId}`;
           declineLink += `&invoiceId=${invoiceId}`;
           reviewLink += `&invoiceId=${invoiceId}`;
+        }
+
+        // Generate the PDF Attachment dynamically
+        let attachments = [];
+        const pdfRes = generateCaregiverInvoicePDF(startDate, endDate, c.id);
+        if (pdfRes.success && pdfRes.base64) {
+          const blob = Utilities.newBlob(
+            Utilities.base64Decode(pdfRes.base64),
+            "application/pdf",
+            pdfRes.filename
+          );
+          attachments.push(blob);
         }
 
         const htmlBody = `
@@ -355,6 +380,7 @@ function sendCaregiverShiftApprovals(caregiverIds, invoiceId = null) {
           to: c.email,
           subject: subject,
           htmlBody: htmlBody,
+          attachments: attachments,
         });
         count++;
       } catch (err) {
@@ -371,10 +397,23 @@ function sendCaregiverShiftApprovals(caregiverIds, invoiceId = null) {
   }
 }
 
-function sendClientShiftApprovals(clientIds, invoiceId = null) {
+function sendClientShiftApprovals(
+  clientIds,
+  invoiceId = null,
+  startDate = null,
+  endDate = null
+) {
   try {
     if (!clientIds || clientIds.length === 0) {
       return { success: false, message: "No clients selected." };
+    }
+
+    // Default to current Biweekly period if dates are omitted
+    if (!startDate || !endDate) {
+      const period = getCurrentBiweeklyPeriod(new Date());
+      const timeZone = Session.getScriptTimeZone();
+      startDate = Utilities.formatDate(period.start, timeZone, "yyyy-MM-dd");
+      endDate = Utilities.formatDate(period.end, timeZone, "yyyy-MM-dd");
     }
 
     const list = getClientList();
@@ -403,6 +442,18 @@ function sendClientShiftApprovals(clientIds, invoiceId = null) {
           confirmLink += `&invoiceId=${invoiceId}`;
           declineLink += `&invoiceId=${invoiceId}`;
           reviewLink += `&invoiceId=${invoiceId}`;
+        }
+
+        // Generate the PDF Attachment dynamically
+        let attachments = [];
+        const pdfRes = generateClientInvoicePDF(startDate, endDate, c.id);
+        if (pdfRes.success && pdfRes.base64) {
+          const blob = Utilities.newBlob(
+            Utilities.base64Decode(pdfRes.base64),
+            "application/pdf",
+            pdfRes.filename
+          );
+          attachments.push(blob);
         }
 
         const htmlBody = `
@@ -466,6 +517,7 @@ function sendClientShiftApprovals(clientIds, invoiceId = null) {
           to: c.email,
           subject: subject,
           htmlBody: htmlBody,
+          attachments: attachments,
         });
         count++;
       } catch (err) {
