@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 30px;
+        font-size: 13px;
+      }
+      .header-table {
+        width: 100%;
+        margin-bottom: 25px;
+        border-bottom: 3px solid #65c027;
+        padding-bottom: 15px;
+      }
+      .header-left,
+      .header-right {
+        vertical-align: top;
+      }
+      .header-right {
+        text-align: right;
+      }
+      .topic {
+        font-size: 24px;
+        color: #555;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+      }
+      .company-name {
+        color: #65c027;
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+      .info-text {
+        color: #666;
+        margin-bottom: 2px;
+        line-height: 1.4;
+      }
+      .info-label {
+        font-weight: bold;
+        color: #444;
+      }
+
+      .details-table {
+        margin-bottom: 20px;
+        width: 100%;
+      }
+      .details-table td {
+        padding: 4px 0;
+        vertical-align: top;
+      }
+      .details-line {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .main-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+      .main-table th,
+      .main-table td {
+        border: 1px solid #e5e7eb;
+        padding: 10px 8px;
+        text-align: left;
+        font-size: 11px;
+      }
+      .main-table th {
+        background-color: #f3f4f6;
+        color: #374151;
+        font-weight: bold;
+        text-transform: uppercase;
+        border-bottom: 2px solid #d1d5db;
+      }
+      .main-table tr:nth-child(even) {
+        background-color: #f9fafb;
+      }
+      .text-right {
+        text-align: right !important;
+      }
+      .text-center {
+        text-align: center !important;
+      }
+
+      .totals-box {
+        margin-top: 25px;
+        text-align: right;
+        font-size: 15px;
+        font-weight: bold;
+        color: #374151;
+        padding: 15px;
+        background-color: #f3f4f6;
+        border-radius: 4px;
+        display: inline-block;
+        float: right;
+      }
+      .totals-box span {
+        color: #65c027;
+        font-size: 20px;
+        margin-left: 15px;
+      }
+      .clear {
+        clear: both;
+      }
+
+      .footer {
+        margin-top: 50px;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 11px;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <table class="header-table">
+      <tr>
+        <td class="header-left">
+          <div class="topic">Earning Statement</div>
+          <div class="company-name">Allevia Senior Care</div>
+          <div class="info-text">27300 Center Ridge Rd</div>
+          <div class="info-text">Westlake, OH 44145</div>
+          <div class="info-text">+1 (440) 907-9599</div>
+        </td>
+        <td class="header-right" width="50%">
+          <div class="info-text">
+            <span class="info-label">SSN:</span>
+            <?= data.ssnMasked ?>
+          </div>
+          <div class="info-text">
+            <span class="info-label">Caregiver ID:</span>
+            <?= data.caregiverId ?>
+          </div>
+          <div class="info-text">
+            <span class="info-label">Full Name:</span>
+            <?= data.caregiverName ?>
+          </div>
+          <div class="info-text">
+            <span class="info-label">Address:</span>
+            <?= data.caregiverAddress ?>
+          </div>
+          <div class="info-text">
+            <span class="info-label">Phone:</span>
+            <?= data.caregiverPhone ?>
+          </div>
+          <div
+            class="info-text"
+            style="margin-top: 8px; color: #111; font-weight: bold"
+          >
+            <span class="info-label">Pay Period:</span>
+            <?= data.payPeriod ?>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <table class="main-table">
+      <thead>
+        <tr>
+          <th>Inv #</th>
+          <th>Client Initials</th>
+          <th>Employee Name</th>
+          <th>Service</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Clock In</th>
+          <th>Clock Out</th>
+          <th class="text-right">Hours</th>
+          <th class="text-right">Rate</th>
+          <th class="text-right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <? for (var i = 0; i < data.shifts.length; i++) { ?>
+        <tr>
+          <td><?= data.shifts[i].invoiceId ?></td>
+          <td><?= data.shifts[i].clientInitials ?></td>
+          <td><?= data.caregiverName ?></td>
+          <td><?= data.shifts[i].service ?></td>
+          <td><?= data.shifts[i].startDate ?></td>
+          <td><?= data.shifts[i].endDate ?></td>
+          <td><?= data.shifts[i].clockIn ?></td>
+          <td><?= data.shifts[i].clockOut ?></td>
+          <td class="text-right"><?= data.shifts[i].hours ?></td>
+          <td class="text-right">$<?= data.shifts[i].rate ?></td>
+          <td class="text-right">$<?= data.shifts[i].total ?></td>
+        </tr>
+        <? } ?>
+        <? if (data.shifts.length === 0) { ?>
+        <tr>
+          <td
+            colspan="11"
+            class="text-center"
+            style="padding: 30px; color: #888"
+          >
+            No shifts recorded for this period.
+          </td>
+        </tr>
+        <? } ?>
+      </tbody>
+    </table>
+
+    <div class="totals-box">
+      Total Earnings: <span>$<?= data.totalEarnings ?></span>
+    </div>
+    <div class="clear"></div>
+
+    <div class="footer">
+      Generated on
+      <?= data.printDate ?>
+      | Earning Statement | Allevia Senior Care Confidential
+    </div>
+  </body>
+</html>
