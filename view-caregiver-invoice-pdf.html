@@ -132,6 +132,10 @@
         </td>
         <td class="header-right" width="50%">
           <div class="info-text">
+            <span class="info-label">Invoice ID:</span>
+            <?= data.invoiceId ?>
+          </div>
+          <div class="info-text">
             <span class="info-label">SSN:</span>
             <?= data.ssnMasked ?>
           </div>
@@ -165,7 +169,7 @@
     <table class="main-table">
       <thead>
         <tr>
-          <th>Inv #</th>
+          <th>Shift ID</th>
           <th>Client Initials</th>
           <th>Employee Name</th>
           <th>Service</th>
@@ -181,7 +185,7 @@
       <tbody>
         <? for (var i = 0; i < data.shifts.length; i++) { ?>
         <tr>
-          <td><?= data.shifts[i].invoiceId ?></td>
+          <td><?= data.shifts[i].shiftId ?></td>
           <td><?= data.shifts[i].clientInitials ?></td>
           <td><?= data.caregiverName ?></td>
           <td><?= data.shifts[i].service ?></td>

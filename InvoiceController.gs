@@ -2,6 +2,14 @@ function getInvoiceSettings() {
   return { payPeriodMode: getShiftHistoryPayPeriodSetting() };
 }
 
+function maskSsn(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+  if (digits.length < 4) {
+    return "XXX-XX-XXXX";
+  }
+  return "XXX-XX-" + digits.slice(-4);
+}
+
 function getInvoiceHistory(filters) {
   const input = filters || {};
 
@@ -36,13 +44,7 @@ function generateCaregiverInvoicePDF(startDate, endDate, caregiverId) {
     const cg = cgList.find((c) => c.id === caregiverId);
     if (!cg) throw new Error("Caregiver not found.");
 
-    let ssnMasked = "XXX-XX-XXXX";
-    if (cg.ssn) {
-      const ssnStr = String(cg.ssn).replace(/\D/g, "");
-      if (ssnStr.length >= 4) {
-        ssnMasked = "XXX-XX-" + ssnStr.slice(-4);
-      }
-    }
+    const ssnMasked = maskSsn(cg.ssn);
 
     // Get client list for initials
     const clList = getClientList();
@@ -70,6 +72,7 @@ function generateCaregiverInvoicePDF(startDate, endDate, caregiverId) {
     );
     const shiftsData = [];
     let totalEarnings = 0;
+    const invoiceId = shiftRows[0]?.invoiceId || "N/A";
 
     shiftRows.forEach((row) => {
       const rate = parseFloat(row.caregiverRate) || 0;
@@ -78,6 +81,7 @@ function generateCaregiverInvoicePDF(startDate, endDate, caregiverId) {
 
       shiftsData.push({
         invoiceId: row.invoiceId || "N/A",
+        shiftId: row.shiftId || row.id || "N/A",
         clientInitials: getInitials(row.clientId, row.clientName),
         service: row.serviceType || "N/A",
         startDate: row.startDate || "",
@@ -91,6 +95,7 @@ function generateCaregiverInvoicePDF(startDate, endDate, caregiverId) {
     });
 
     const templateData = {
+      invoiceId: invoiceId,
       caregiverName: cg.name || "",
       caregiverId: cg.id || "",
       ssnMasked: ssnMasked,
