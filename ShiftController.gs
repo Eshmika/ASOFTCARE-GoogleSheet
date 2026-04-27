@@ -222,6 +222,23 @@ function buildInvoiceId(periodStart, periodEnd) {
   return `#${yearStr}-${startStr}-${endStr}`;
 }
 
+function isShiftApprovedForInvoice(row) {
+  const systemStatus = String(row.systemShiftStatus || "")
+    .trim()
+    .toLowerCase();
+  const confirmation = String(row.confirmationIndicator || "")
+    .trim()
+    .toLowerCase();
+
+  return (
+    systemStatus === "approved" ||
+    systemStatus === "confirm" ||
+    systemStatus === "confirmed" ||
+    confirmation === "confirmed" ||
+    confirmation === "approved"
+  );
+}
+
 function buildSystemCheckLabel(shiftRow) {
   const issues = [];
   if (!shiftRow.clockIn) issues.push("Missing Clock-In");
@@ -420,7 +437,7 @@ function buildShiftHistoryRows(
         adminNote: shift.adminNote || "",
         cgShiftStatus: shift.cgShiftStatus || "Pending",
         clientShiftStatus: shift.clientShiftStatus || "Pending",
-        systemShiftStatus: shift.systemShiftStatus || "Pending",
+        systemShiftStatus: shift.systemShiftStatus || "Pending Approval",
         createdBy: shift.createdBy || "System",
         createdAt: shift.createdAt
           ? shift.createdAt instanceof Date
@@ -961,7 +978,7 @@ function saveShift(data) {
       "Invoice Status": "Unpaid",
       "CG Shift Status": "Pending",
       "Client Shift Status": "Pending",
-      "System Shift Status": "Pending",
+      "System Shift Status": "Pending Approval",
       "Confirmation Indicator": "Unconfirmed",
       "Created By": "System",
       "Created At": timestamp,
@@ -1064,14 +1081,41 @@ function toggleShiftConfirmation(shiftId, currentStatus) {
     throw new Error("Shift not found");
   }
 
-  const colIdx = headers.indexOf("Confirmation Indicator");
-  if (colIdx === -1) {
+  const confirmationColIdx = headers.indexOf("Confirmation Indicator");
+  if (confirmationColIdx === -1) {
     throw new Error("Confirmation Indicator column not found");
   }
 
-  const newStatus = currentStatus === "Confirmed" ? "Unconfirmed" : "Confirmed";
-  sheet.getRange(rowIndex, colIdx + 1).setValue(newStatus);
-  return { success: true, newStatus: newStatus };
+  const systemStatusColIdx = headers.indexOf("System Shift Status");
+  const modifiedByColIdx = headers.indexOf("Last Modified By");
+  const modifiedAtColIdx = headers.indexOf("Last Modified At");
+
+  const currentlyConfirmed =
+    String(currentStatus || "")
+      .trim()
+      .toLowerCase() === "confirmed";
+  const newStatus = currentlyConfirmed ? "Unconfirmed" : "Confirmed";
+  const newSystemStatus = currentlyConfirmed ? "Pending Approval" : "Approved";
+
+  sheet.getRange(rowIndex, confirmationColIdx + 1).setValue(newStatus);
+
+  if (systemStatusColIdx !== -1) {
+    sheet.getRange(rowIndex, systemStatusColIdx + 1).setValue(newSystemStatus);
+  }
+
+  if (modifiedByColIdx !== -1) {
+    sheet.getRange(rowIndex, modifiedByColIdx + 1).setValue("System Admin");
+  }
+
+  if (modifiedAtColIdx !== -1) {
+    sheet.getRange(rowIndex, modifiedAtColIdx + 1).setValue(new Date());
+  }
+
+  return {
+    success: true,
+    newStatus: newStatus,
+    newSystemStatus: newSystemStatus,
+  };
 }
 
 function deleteShift(shiftId) {

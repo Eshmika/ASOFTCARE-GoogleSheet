@@ -32,7 +32,7 @@
     { key: "adminNote", label: "Admin Note" },
     { key: "cgShiftStatus", label: "CG Shift Status" },
     { key: "clientShiftStatus", label: "Client Shift Status" },
-    { key: "systemShiftStatus", label: "System Shift Status" },
+    { key: "systemShiftStatus", label: "Admin Approval" },
     { key: "systemCheck", label: "System Check" },
     { key: "createdBy", label: "Created By" },
     { key: "createdAt", label: "Created At" },
@@ -316,12 +316,14 @@
 
     tbody.innerHTML = payload.rows
       .map((row) => {
-        const isConfirmed = row.confirmationIndicator === "Confirmed";
-        const confirmBtnClass = isConfirmed
+        const approved =
+          String(row.systemShiftStatus || "").toLowerCase() === "approved" ||
+          String(row.confirmationIndicator || "").toLowerCase() === "confirmed";
+        const approveBtnClass = approved
           ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white"
-          : "bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white";
-        const confirmIcon = isConfirmed ? "ph-check-circle" : "ph-x-circle";
-        const confirmLabel = isConfirmed ? "Confirmed" : "Confirm";
+          : "bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white";
+        const approveIcon = approved ? "ph-check-circle" : "ph-seal-check";
+        const approveLabel = approved ? "Approved" : "Approve";
 
         return `
           <tr class="group hover:bg-gray-50/80 transition-colors">
@@ -341,16 +343,14 @@
                   <span class="hidden 2xl:inline">Edit</span>
                 </button>
 
-                <!-- Confirm Action (Commented Out)
-                <button type="button" title="Toggle Confirmation" onclick="toggleConfirmation(this, '${
+                <button type="button" title="Admin Approve For Invoice" onclick="toggleConfirmation(this, '${
                   row.shiftId
                 }', '${
-          row.confirmationIndicator
-        }')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md ${confirmBtnClass} hover:shadow-md transition-all text-xs font-bold uppercase tracking-wider">
-                  <i class="ph ${confirmIcon} text-sm"></i>
-                  <span class="hidden 2xl:inline">${confirmLabel}</span>
+          approved ? "Confirmed" : "Unconfirmed"
+        }')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md ${approveBtnClass} hover:shadow-md transition-all text-xs font-bold uppercase tracking-wider">
+                  <i class="ph ${approveIcon} text-sm"></i>
+                  <span class="hidden 2xl:inline">${approveLabel}</span>
                 </button>
-                -->
 
                 <div class="h-6 w-px bg-gray-200 mx-0.5"></div>
 
@@ -384,6 +384,15 @@
                   "&#39;"
                 )})' class="flex items-center justify-center w-8 h-8 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white hover:shadow-md transition-all">
                   <i class="ph ph-file-pdf text-sm"></i>
+                </button>
+
+                <button type="button" title="Delete Shift" onclick='openShiftHistoryAction("delete", ${JSON.stringify(
+                  row
+                ).replace(
+                  /'/g,
+                  "&#39;"
+                )})' class="flex items-center justify-center w-8 h-8 rounded-full bg-red-50 text-red-600 hover:bg-red-600 hover:text-white hover:shadow-md transition-all">
+                  <i class="ph ph-trash text-sm"></i>
                 </button>
               </div>
             </td>
@@ -491,11 +500,19 @@
       const lowerValue = vStr.toLowerCase();
       let badgeHtml = "";
 
-      if (lowerValue === "pending") {
+      if (lowerValue === "pending" || lowerValue === "pending approval") {
         badgeHtml = `
           <div class="inline-flex items-center gap-1.5 border-b-[2px] border-yellow-400 pb-0.5 group-hover:-translate-y-0.5 transition-all">
             <i class="ph-fill ph-clock text-yellow-500 text-[13px]"></i>
             <span class="text-yellow-700 font-bold text-[11px] uppercase tracking-wider">${escapeHtml(
+              vStr
+            )}</span>
+          </div>`;
+      } else if (lowerValue === "approved") {
+        badgeHtml = `
+          <div class="inline-flex items-center gap-1.5 border-b-[2px] border-emerald-400 pb-0.5 group-hover:-translate-y-0.5 transition-all">
+            <i class="ph-fill ph-seal-check text-emerald-500 text-[13px]"></i>
+            <span class="text-emerald-700 font-bold text-[11px] uppercase tracking-wider">${escapeHtml(
               vStr
             )}</span>
           </div>`;
@@ -686,6 +703,44 @@
         .then(() => temp.remove());
       return;
     }
+
+    if (action === "delete") {
+      Swal.fire({
+        title: "Delete Shift?",
+        text: "This will remove the shift from history and it will no longer appear in invoices.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#dc2626",
+        confirmButtonText: "Yes, Delete Shift",
+      }).then((result) => {
+        if (!result.isConfirmed) return;
+
+        Swal.fire({
+          title: "Deleting...",
+          text: "Please wait.",
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
+
+        google.script.run
+          .withSuccessHandler(() => {
+            Swal.fire("Deleted", "Shift removed successfully.", "success");
+            refreshShiftHistory();
+            if (typeof refreshInvoiceView === "function") {
+              refreshInvoiceView();
+            }
+          })
+          .withFailureHandler((err) => {
+            Swal.fire(
+              "Error",
+              err.message || "Unable to delete shift.",
+              "error"
+            );
+          })
+          .deleteShift(row.shiftId);
+      });
+      return;
+    }
   }
 
   function sendShiftHistoryEmails(type) {
@@ -778,12 +833,14 @@
     const newStatus = isConfirmed ? "Unconfirmed" : "Confirmed";
     const row = shiftHistoryState.rows.find((r) => r.shiftId === shiftId);
 
-    const promptTitle = isConfirmed ? "Unconfirm Shift?" : "Confirm Shift?";
+    const promptTitle = isConfirmed
+      ? "Revoke Admin Approval?"
+      : "Approve Shift For Invoice?";
     const promptText = isConfirmed
-      ? "Are you sure you want to unconfirm this shift?"
-      : "This will confirm the shift and automatically send approval emails to the client and caregiver.";
-    const confirmBtnText = isConfirmed ? "Yes, Unconfirm" : "Yes, Confirm";
-    const confirmBtnColor = isConfirmed ? "#d33" : "#65c027";
+      ? "This will remove the shift from the invoice page until it is approved again."
+      : "This shift will appear on the invoice page after approval.";
+    const confirmBtnText = isConfirmed ? "Yes, Revoke" : "Yes, Approve";
+    const confirmBtnColor = isConfirmed ? "#d33" : "#16a34a";
 
     Swal.fire({
       title: promptTitle,
@@ -836,7 +893,7 @@
                   showConfirmButton: false,
                   timer: 3000,
                   icon: "success",
-                  title: "Confirmed & emails sent!",
+                  title: "Approved & emails sent!",
                 });
               } else if (!isNowConfirmed) {
                 Swal.fire({
@@ -845,18 +902,18 @@
                   showConfirmButton: false,
                   timer: 3000,
                   icon: "info",
-                  title: "Shift unconfirmed",
+                  title: "Approval revoked",
                 });
               }
 
               // Update the DOM to reflect new state
               const updatedIconClass = isNowConfirmed
                 ? "ph-check-circle"
-                : "ph-x-circle";
+                : "ph-seal-check";
               const updatedBtnClass = isNowConfirmed
                 ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white"
-                : "bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white";
-              const confirmLabel = isNowConfirmed ? "Confirmed" : "Confirm";
+                : "bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white";
+              const confirmLabel = isNowConfirmed ? "Approved" : "Approve";
 
               iconEl.className = `ph ${updatedIconClass} text-sm`;
               buttonEl.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-md ${updatedBtnClass} hover:shadow-md transition-all text-xs font-bold uppercase tracking-wider`;
@@ -875,6 +932,12 @@
               // Update local state
               if (row) {
                 row.confirmationIndicator = res.newStatus;
+                row.systemShiftStatus =
+                  res.newSystemStatus || row.systemShiftStatus;
+              }
+
+              if (typeof refreshInvoiceView === "function") {
+                refreshInvoiceView();
               }
             } else {
               iconEl.className = originalClass;

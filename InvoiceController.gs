@@ -5,7 +5,7 @@ function getInvoiceSettings() {
 function getInvoiceHistory(filters) {
   const input = filters || {};
 
-  return getShiftHistory({
+  const history = getShiftHistory({
     startDate: input.startDate || "",
     endDate: input.endDate || "",
     caregiverId: input.caregiverId || "all",
@@ -13,6 +13,15 @@ function getInvoiceHistory(filters) {
     search: input.search || "",
     systemCheck: "all",
   });
+
+  const approvedRows = (history.rows || []).filter((row) =>
+    isShiftApprovedForInvoice(row)
+  );
+
+  return {
+    ...history,
+    rows: approvedRows,
+  };
 }
 
 function generateCaregiverInvoicePDF(startDate, endDate, caregiverId) {
@@ -56,7 +65,9 @@ function generateCaregiverInvoicePDF(startDate, endDate, caregiverId) {
       systemCheck: "all",
     });
 
-    const shiftRows = history.rows || [];
+    const shiftRows = (history.rows || []).filter((row) =>
+      isShiftApprovedForInvoice(row)
+    );
     const shiftsData = [];
     let totalEarnings = 0;
 
@@ -151,7 +162,9 @@ function generateClientInvoicePDF(startDate, endDate, clientId) {
       systemCheck: "all",
     });
 
-    const shiftRows = history.rows || [];
+    const shiftRows = (history.rows || []).filter((row) =>
+      isShiftApprovedForInvoice(row)
+    );
     const shiftsData = [];
     let totalDue = 0;
 
