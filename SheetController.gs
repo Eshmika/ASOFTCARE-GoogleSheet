@@ -626,7 +626,11 @@ function getCaregiverList() {
       email: row[4],
       title: row[5],
       status: row[6],
+      ssn: row[12] || "", // SSN
+      address: row[14] || "",
+      street: row[15] || "",
       city: row[16] || "--",
+      state: row[17] || "",
       zip: row[18] || "",
       appStatus: row[8], // App Status
       interviewStatus: interviewIdx > -1 ? row[interviewIdx] : "",
